@@ -1,0 +1,28 @@
+{
+  "name": "tutorias-fei",
+  "version": "1.0.0",
+  "description": "Sistema de reserva de tutorías de la Facultad de Estadística e Informática de la Universidad Veracruzana",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Deklok/tutorias-fei.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Deklok/tutorias-fei/issues"
+  },
+  "homepage": "https://github.com/Deklok/tutorias-fei#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "next": "^9.0.6",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
+}
