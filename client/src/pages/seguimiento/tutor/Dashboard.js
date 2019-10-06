@@ -19,7 +19,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
 import Deposits from './Deposits';
-import Orders from './Orders';
+import Tutorados from './Tutorados';
 
 function Copyright() {
   return (
@@ -172,21 +172,21 @@ export default function Dashboard() {
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
             {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
+            <Grid item xs={12} md={3} lg={4}>
               <Paper className={fixedHeightPaper}>
                 <Deposits />
               </Paper>
             </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
+            {/* Chart */}
+            <Grid item xs={12} md={3} lg={4}>
               <Paper className={fixedHeightPaper}>
                 <Deposits />
               </Paper>
             </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
+            {/* Recent Tutorados */}
+            <Grid item xs={12} md={6} lg={4}>
               <Paper className={classes.paper}>
-                <Orders />
+                <Tutorados />
               </Paper>
             </Grid>
           </Grid>
