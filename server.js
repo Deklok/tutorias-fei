@@ -18,6 +18,14 @@ app.post('/api/miuv/login', (req,res) => {
   });
 });
 
+app.post('/api/miuv/datos', (req,res) => {
+  var user = req.body["user"];
+  var pass = req.body["pass"];
+  miuvws.data(user,pass).then(function(response){
+    res.send(response);
+  });
+});
+
 // Use this code when is on production
 /* 
 app.use(express.static(path.join(__dirname, 'client/build')));
