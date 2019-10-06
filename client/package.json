@@ -2,6 +2,8 @@
   "name": "tutorias-fei",
   "version": "0.1.0",
   "dependencies": {
+    "@material-ui/core": "^4.5.0",
+    "@material-ui/icons": "^4.4.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.1.0",
