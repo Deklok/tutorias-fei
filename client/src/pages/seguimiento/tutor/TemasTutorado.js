@@ -12,21 +12,27 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Deposits() {
+function generateTemas(tema) {
+  return { tema };
+}
+
+const temas = [
+  generateTemas('Ver formas de titulación'),
+  generateTemas('Problemas con maestro fulano'),
+
+];
+
+export default function TemasTutorado() {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <Title>Recent Deposits</Title>
-      <Typography component="p" variant="h4">
-        $3,024.00
-      </Typography>
-      <Typography color="textSecondary" className={classes.depositContext}>
-        on 15 March, 2019
-      </Typography>
+      <Title>Temas propuestos por el estudiante</Title>
       <div>
-        <Link color="primary" href="javascript:;">
-          View balance
-        </Link>
+        {temas.map(row => (
+            <div className="row">
+              <p>{row.tema}</p>
+            </div>
+          ))}
       </div>
     </React.Fragment>
   );

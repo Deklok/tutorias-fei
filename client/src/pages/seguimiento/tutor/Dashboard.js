@@ -18,8 +18,10 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './listItems';
-import Deposits from './Deposits';
+import Agenda from './Agenda';
 import Tutorados from './Tutorados';
+import TemasTutorado from './TemasTutorado';
+import axios from 'axios';
 
 function Copyright() {
   return (
@@ -32,6 +34,11 @@ function Copyright() {
       {'.'}
     </Typography>
   );
+}
+
+let usuario = {
+  correo:'',
+  carrera:'',
 }
 
 const drawerWidth = 240;
@@ -115,6 +122,23 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+async function cargarDatos(){
+  await axios.post('http://localhost:5000/api/miuv/datos', {user: 'zS16011721',
+    pass: 'Barcelona_Benji2016',})
+    .then(result=>{
+      let usuario_aux = {
+        correo: '',
+        carrera: '',
+      }
+      console.log(result.data);
+      usuario_aux.correo = result.data['correo'];
+      usuario_aux.carrera=result.data['carrera'];
+      usuario = usuario_aux;
+    }).catch(console.log);
+}
+
+cargarDatos();
+
 export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -141,7 +165,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Tutorados
+            Tutorado {`${usuario.correo}, ${usuario.carrera}`}
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="#ffffff">
@@ -174,13 +198,13 @@ export default function Dashboard() {
             {/* Chart */}
             <Grid item xs={12} md={3} lg={4}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <Agenda />
               </Paper>
             </Grid>
             {/* Chart */}
             <Grid item xs={12} md={3} lg={4}>
               <Paper className={fixedHeightPaper}>
-                <Deposits />
+                <TemasTutorado />
               </Paper>
             </Grid>
             {/* Recent Tutorados */}
