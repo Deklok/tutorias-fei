@@ -36,11 +36,6 @@ function Copyright() {
   );
 }
 
-let usuario = {
-  correo:'',
-  carrera:'',
-}
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -122,26 +117,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-async function cargarDatos(){
-  await axios.post('http://localhost:5000/api/miuv/datos', {user: 'zS16011721',
-    pass: 'Barcelona_Benji2016',})
-    .then(result=>{
-      let usuario_aux = {
-        correo: '',
-        carrera: '',
-      }
-      console.log(result.data);
-      usuario_aux.correo = result.data['correo'];
-      usuario_aux.carrera=result.data['carrera'];
-      usuario = usuario_aux;
-    }).catch(console.log);
-}
-
-cargarDatos();
-
 export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [correo, setCorreo] = React.useState('');
+  const [carrera, setCarrera] = React.useState('');
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -149,6 +130,17 @@ export default function Dashboard() {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  async function cargarDatos(){
+    return axios.post('http://localhost:5000/api/miuv/datos', {user: 'zS16011721',
+      pass: '************' });
+  }
+
+  cargarDatos()
+  .then(result=>{
+      setCorreo(result.data['correo']);
+      setCarrera(result.data['carrera']);
+  }).catch(console.log);
 
   return (
     <div className={classes.root}>
@@ -165,7 +157,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Tutorado {`${usuario.correo}, ${usuario.carrera}`}
+            Tutorado {`${correo}, ${carrera}`}
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="#ffffff">
