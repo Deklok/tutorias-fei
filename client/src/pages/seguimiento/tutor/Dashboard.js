@@ -124,7 +124,7 @@ const useStyles = makeStyles(theme => ({
 
 async function cargarDatos(){
   await axios.post('http://localhost:5000/api/miuv/datos', {user: 'zS16011721',
-    pass: 'Barcelona_Benji2016',})
+    pass: '',})
     .then(result=>{
       let usuario_aux = {
         correo: '',
