@@ -116,8 +116,9 @@ const useStyles = makeStyles(theme => ({
     height: 240,
   },
 }));
-export default function Dashboard() {
-  const classes = useStyles();
+
+export default class Dashboard extends React.Component {
+  /*const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [correo, setCorreo] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
@@ -140,74 +141,97 @@ export default function Dashboard() {
       setCorreo(result.data['correo']);
       setCarrera(result.data['carrera']);
   }).catch(console.log);
+*/
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Tutorado {`${correo}, ${carrera}`}
-          </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="#ffffff">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
-        open={open}
-      >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <List>{mainListItems}</List>
-        <Divider />
-        <List>{secondaryListItems}</List>
-      </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={3} lg={4}>
-              <Paper className={fixedHeightPaper}>
-                <Agenda />
-              </Paper>
+  state={
+    correo: '',
+    carrera:'',
+    open:false,
+    classes: useStyles,
+    fixedHeightPaper: clsx(useStyles.paper, useStyles.fixedHeight),
+  }
+
+  constructor(props){
+    super(props);
+  }
+
+  handleDrawerOpen() {
+    this.setState({open: true});
+  };
+
+  handleDrawerClose(){
+    this.setState({open:false});
+  }
+
+  render(){
+    return (
+      <div className={this.state.classes.root}>
+        <CssBaseline />
+        <AppBar position="absolute" className={clsx(this.state.classes.appBar, this.state.open && useStyles.appBarShift)}>
+          <Toolbar className={useStyles.toolbar}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={this.handleDrawerOpen}
+              className={clsx(useStyles.menuButton, this.state.open && useStyles.menuButtonHidden)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography component="h1" variant="h6" color="inherit" noWrap className={useStyles.title}>
+              Tutorado {`${this.state.correo}, ${this.state.carrera}`}
+            </Typography>
+            <IconButton color="inherit">
+              <Badge badgeContent={4} color="#ffffff">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant="permanent"
+          classes={{
+            paper: clsx(useStyles.drawerPaper, !this.state.open && useStyles.drawerPaperClose),
+          }}
+          open={this.state.open}
+        >
+          <div className={useStyles.toolbarIcon}>
+            <IconButton onClick={this.handleDrawerClose}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </div>
+          <Divider />
+          <List>{mainListItems}</List>
+          <Divider />
+          <List>{secondaryListItems}</List>
+        </Drawer>
+        <main className={useStyles.content}>
+          <div className={useStyles.appBarSpacer} />
+          <Container maxWidth="lg" className={useStyles.container}>
+            <Grid container spacing={3}>
+              {/* Chart */}
+              <Grid item xs={12} md={3} lg={4}>
+                <Paper className={this.state.fixedHeightPaper}>
+                  <Agenda />
+                </Paper>
+              </Grid>
+              {/* Chart */}
+              <Grid item xs={12} md={3} lg={4}>
+                <Paper className={this.state.fixedHeightPaper}>
+                  <TemasTutorado />
+                </Paper>
+              </Grid>
+              {/* Recent Tutorados */}
+              <Grid item xs={12} md={6} lg={4}>
+                <Paper className={useStyles.paper}>
+                  <Tutorados />
+                </Paper>
+              </Grid>
             </Grid>
-            {/* Chart */}
-            <Grid item xs={12} md={3} lg={4}>
-              <Paper className={fixedHeightPaper}>
-                <TemasTutorado />
-              </Paper>
-            </Grid>
-            {/* Recent Tutorados */}
-            <Grid item xs={12} md={6} lg={4}>
-              <Paper className={classes.paper}>
-                <Tutorados />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-        <Copyright />
-      </main>
-    </div>
-  );
+          </Container>
+          <Copyright />
+        </main>
+      </div>
+    );
+  }
 }
