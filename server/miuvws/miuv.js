@@ -38,7 +38,7 @@ function getPersonalData(user,pass) {
             uri: urllogin,
             resolveWithFullResponse: true
         }
-        request(options)
+        var promiseResponse = request(options)
             .then(function (response) {
                 cleanhtml = response.body.substring(response.body.indexOf("<"));
                 var document = new JSDOM(cleanhtml).window.document;
@@ -70,17 +70,27 @@ function getPersonalData(user,pass) {
             }).then(function (responseLogin) {
                 return redirectToData(responseLogin, cookiejar, urldata);
             }).then(function (responseData) {
-                cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
-                var dom = new JSDOM(cleanhtml).window.document;
-                var mail = dom.getElementById("content_wucDatosGralAlum1_lblCorreoAlt").textContent;
-                var career = dom.getElementById("content_wucDatosGralAlum1_lblProg").textContent;
-                resolve(res = {
-                    mail: mail,
-                    career: career
-                });
+                if (responseData instanceof Error) {
+                    finalResponse = {
+                        error: responseData.message
+                    };
+                    console.log("error in log in");
+                } else {
+                    cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
+                    var dom = new JSDOM(cleanhtml).window.document;
+                    var mail = dom.getElementById("content_wucDatosGralAlum1_lblCorreoAlt").textContent;
+                    var career = dom.getElementById("content_wucDatosGralAlum1_lblProg").textContent;
+                    finalResponse = {
+                        mail: mail,
+                        career: career
+                    }
+                }
+                console.log(finalResponse);
+                return finalResponse;
             }).catch(function (err) {
                 console.log(err);
             });
+        resolve(promiseResponse);
     });
     return promise;
 }
@@ -93,6 +103,9 @@ function getTutorData(user,pass) {
             uri: urllogin,
             resolveWithFullResponse: true
         }
+        var finalResponse = {
+            msg: "no process"
+        };
         request(options)
             .then(function (response) {
                 cleanhtml = response.body.substring(response.body.indexOf("<"));
@@ -125,27 +138,34 @@ function getTutorData(user,pass) {
             }).then(function (responseLogin) {
                 return redirectToData(responseLogin, cookiejar, urlstudents);
             }).then(function (responseData) {
-                cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
-                var dom = new JSDOM(cleanhtml).window.document;
-                var response = {
-                    teacher: {},
-                    students: []
-                };
-                var numStudents = dom.getElementsByClassName("divNumero");
-                for (var i = 0; i < numStudents.length; i++){
-                    var name = dom.getElementById("content_ctl00_dlListaAlumnos_lblNombre_" + i.toString()).textContent;
-                    var studentId = dom.getElementById("content_ctl00_dlListaAlumnos_lblMatricula_" + i.toString()).textContent;
-                    var student = {
-                        name : name,
-                        studentId: studentId
+                if (responseData instanceof Error) {
+                    finalResponse = {
+                        error: responseData.message
                     };
-                    //console.log(student);
-                    response["students"].push(student);
+                } else {
+                    cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
+                    var dom = new JSDOM(cleanhtml).window.document;
+                    var response = {
+                        teacher: {},
+                        students: []
+                    };
+                    var numStudents = dom.getElementsByClassName("divNumero");
+                    for (var i = 0; i < numStudents.length; i++) {
+                        var name = dom.getElementById("content_ctl00_dlListaAlumnos_lblNombre_" + i.toString()).textContent;
+                        var studentId = dom.getElementById("content_ctl00_dlListaAlumnos_lblMatricula_" + i.toString()).textContent;
+                        var student = {
+                            name: name,
+                            studentId: studentId
+                        };
+                        //console.log(student);
+                        response["students"].push(student);
+                    }
+                    finalResponse = response;
                 }
-                resolve(response);
             }).catch(function (err) {
                 console.log(err);
             });
+        resolve(finalResponse);
     });
     return promise;
 }
@@ -198,20 +218,23 @@ function getRedirect(response) {
 }
 
 function redirectToData(response,cookiejar,url) {
-    session = response.headers['set-cookie'][0];
-    session = session.substring(0, session.indexOf(";"));
-    cookiejar = cookiejar + "; " + session;
-    var options = {
-        url: url,
-        headers: {
-            'Cookie': cookiejar,
-            //'Host': 'dsiapes.uv.mx',
-            'Set-Fetch-Mode': 'navigate'
-        },
-        method: 'GET',
-        resolveWithFullResponse: true
+    if (response.headers['set-cookie'] == undefined) {
+        return new Error("Error in log in");
+    } else {
+        session = response.headers['set-cookie'][0];
+        session = session.substring(0, session.indexOf(";"));
+        cookiejar = cookiejar + "; " + session;
+        var options = {
+            url: url,
+            headers: {
+                'Cookie': cookiejar,
+                'Set-Fetch-Mode': 'navigate'
+            },
+            method: 'GET',
+            resolveWithFullResponse: true
+        }
+        return request(options);
     }
-    return request(options);
 }
 
 function test() {
