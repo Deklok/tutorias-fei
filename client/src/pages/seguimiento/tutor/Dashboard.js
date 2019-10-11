@@ -143,24 +143,40 @@ export default class Dashboard extends React.Component {
   }).catch(console.log);
 */
 
-  state={
+  constructor(props){
+    super(props);
+
+    this.handleDrawerClose=this.handleDrawerClose.bind(this);
+    this.handleDrawerOpen=this.handleDrawerOpen.bind(this);
+    this.cargarDatos=this.cargarDatos.bind(this);
+  }
+
+  handleDrawerOpen = () => {
+    this.setState(this.increment);
+  };
+
+  handleDrawerClose = () => {
+    this.setState(this.decrement);
+  }
+
+  increment(state){
+    return {state, open: true};
+  }
+
+  decrement(state){
+    return {state, open:false};
+  }
+
+  cargarDatos = () => {
+    return useStyles();
+  }
+
+    state={
     correo: '',
     carrera:'',
     open:false,
-    classes: useStyles,
+    classes: this.cargarDatos,
     fixedHeightPaper: clsx(useStyles.paper, useStyles.fixedHeight),
-  }
-
-  constructor(props){
-    super(props);
-  }
-
-  handleDrawerOpen() {
-    this.setState({open: true});
-  };
-
-  handleDrawerClose(){
-    this.setState({open:false});
   }
 
   render(){
