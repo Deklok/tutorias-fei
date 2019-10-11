@@ -4,6 +4,7 @@ const { JSDOM } = jsdom;
 
 const urllogin = 'https://dsia.uv.mx/miuv/escritorio/login.aspx';
 const urldata = 'https://dsiapes.uv.mx/MiUVestudiantes/portales/estudiantes/szigral.aspx';
+const urlstudents = 'https://dsia.uv.mx/miuv/Portales/Academicos/sziatut.aspx';
 
 function login(user,pass) {
     var promise = new Promise(function (resolve,reject) {
@@ -67,15 +68,15 @@ function getPersonalData(user,pass) {
                 }
                 return request(options);
             }).then(function (responseLogin) {
-                return redirectToData(responseLogin, cookiejar);
+                return redirectToData(responseLogin, cookiejar, urldata);
             }).then(function (responseData) {
                 cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
                 var dom = new JSDOM(cleanhtml).window.document;
-                var correo = dom.getElementById("content_wucDatosGralAlum1_lblCorreoAlt").textContent;
-                var carrera = dom.getElementById("content_wucDatosGralAlum1_lblProg").textContent;
+                var mail = dom.getElementById("content_wucDatosGralAlum1_lblCorreoAlt").textContent;
+                var career = dom.getElementById("content_wucDatosGralAlum1_lblProg").textContent;
                 resolve(res = {
-                    correo: correo,
-                    carrera: carrera
+                    mail: mail,
+                    career: career
                 });
             }).catch(function (err) {
                 console.log(err);
@@ -84,13 +85,69 @@ function getPersonalData(user,pass) {
     return promise;
 }
 
-function getCredits(user,pass) {
-    var cookiejar;
-    var options = {
-        method: 'GET',
-        uri: urllogin,
-        resolveWithFullResponse: true
-    }
+function getTutorData(user,pass) {
+    var promise = new Promise(function (resolve,reject) {
+        var cookiejar;
+        var options = {
+            method: 'GET',
+            uri: urllogin,
+            resolveWithFullResponse: true
+        }
+        request(options)
+            .then(function (response) {
+                cleanhtml = response.body.substring(response.body.indexOf("<"));
+                var document = new JSDOM(cleanhtml).window.document;
+                aspnetcookie = response.headers['set-cookie'][0];
+                aspnetcookie = aspnetcookie.substring(0, aspnetcookie.indexOf(";"));
+                cookiejar = aspnetcookie;
+                eventvalidation = document.getElementById("__EVENTVALIDATION").getAttribute("value");
+                viewstate = document.getElementById("__VIEWSTATE").getAttribute("value");
+                viewstategenerator = document.getElementById("__VIEWSTATEGENERATOR").getAttribute("value");
+                var options = {
+                    url: urllogin,
+                    form: {
+                        __VIEWSTATE: viewstate,
+                        __VIEWSTATEGENERATOR: viewstategenerator,
+                        __EVENTVALIDATION: eventvalidation,
+                        txtUser: user,
+                        txtPassword: pass,
+                        btnValidacion: 'Iniciar sesión'
+                    },
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Cookie': cookiejar
+                    },
+                    method: 'POST',
+                    resolveWithFullResponse: true,
+                    simple: false
+                }
+                return request(options);
+            }).then(function (responseLogin) {
+                return redirectToData(responseLogin, cookiejar, urlstudents);
+            }).then(function (responseData) {
+                cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
+                var dom = new JSDOM(cleanhtml).window.document;
+                var response = {
+                    teacher: {},
+                    students: []
+                };
+                var numStudents = dom.getElementsByClassName("divNumero");
+                for (var i = 0; i < numStudents.length; i++){
+                    var name = dom.getElementById("content_ctl00_dlListaAlumnos_lblNombre_" + i.toString()).textContent;
+                    var studentId = dom.getElementById("content_ctl00_dlListaAlumnos_lblMatricula_" + i.toString()).textContent;
+                    var student = {
+                        name : name,
+                        studentId: studentId
+                    };
+                    //console.log(student);
+                    response["students"].push(student);
+                }
+                resolve(response);
+            }).catch(function (err) {
+                console.log(err);
+            });
+    });
+    return promise;
 }
 
 function tryLogin(response,user,pass) {
@@ -140,25 +197,21 @@ function getRedirect(response) {
     }
 }
 
-function redirectToData(response,cookiejar) {
+function redirectToData(response,cookiejar,url) {
     session = response.headers['set-cookie'][0];
     session = session.substring(0, session.indexOf(";"));
     cookiejar = cookiejar + "; " + session;
     var options = {
-        url: urldata,
+        url: url,
         headers: {
             'Cookie': cookiejar,
-            'Host': 'dsiapes.uv.mx',
+            //'Host': 'dsiapes.uv.mx',
             'Set-Fetch-Mode': 'navigate'
         },
         method: 'GET',
         resolveWithFullResponse: true
     }
     return request(options);
-}
-
-function redirectToCredits() {
-
 }
 
 function test() {
@@ -170,5 +223,6 @@ function test() {
 module.exports = {
     test: test,
     login: login,
-    data: getPersonalData
+    data: getPersonalData,
+    tutor: getTutorData
 }
