@@ -39,7 +39,7 @@ app.post('/api/user/login', function (request, response){
     }
     
   } else {
-    response.send("User not authenticated");
+    response.send("Parameters needed");
   }
 
 });

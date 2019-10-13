@@ -9,10 +9,10 @@ function authentication (userId, password) {
 	    baseDN: dnLdap, 
 	};
 	var adInstance = new ActiveDirectory(config);
-	if (userId.toLowerCase().includes("s")) {
+	if (isStudent(userId)) {
 		userId = "z".concat(userId, "@estudiantes.uv.mx");
 	} else {
-		response = "Professors are not supported yet";
+		userId = userId.concat("@uv.mx");
 	}
 	adInstance.authenticate(userId, password, function(err, auth) {
 	    if (err) {
@@ -27,6 +27,9 @@ function authentication (userId, password) {
 	    }
 	    return response;
 	});	
+}
+function isStudent(userId) {
+	return ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8))));
 }
 module.exports = {
     authentication: authentication
