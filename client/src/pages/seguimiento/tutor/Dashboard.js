@@ -21,6 +21,7 @@ import { mainListItems, secondaryListItems } from './listItems';
 import Agenda from './Agenda';
 import Tutorados from './Tutorados';
 import TemasTutorado from './TemasTutorado';
+import Feedback from './Feedback'
 import axios from 'axios';
 
 function Copyright() {
@@ -228,7 +229,7 @@ export default class Dashboard extends React.Component {
               {/* Chart */}
               <Grid item xs={12} md={3} lg={4}>
                 <Paper className={this.state.fixedHeightPaper}>
-                  <Agenda />
+                  <Feedback />
                 </Paper>
               </Grid>
               {/* Chart */}
