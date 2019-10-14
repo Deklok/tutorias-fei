@@ -1,6 +1,6 @@
 /* eslint-disable no-script-url */
 
-import React from 'react';
+import React, {memo} from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -23,7 +23,7 @@ const temas = [
   generateTemas('Resolución de dudas'),
 ];
 
-export default function Agenda() {
+const Agenda = memo(props =>{
   const classes = useStyles();
   return (
     <React.Fragment>
@@ -37,4 +37,6 @@ export default function Agenda() {
       </div>
     </React.Fragment>
   );
-}
+});
+
+export default Agenda;

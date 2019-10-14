@@ -1,6 +1,6 @@
 /* eslint-disable no-script-url */
 
-import React from 'react';
+import React, {memo} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
@@ -13,7 +13,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Feedback() {
+const Feedback = memo(props =>{
   const classes = useStyles();
   return (
     <React.Fragment>
@@ -26,4 +26,6 @@ export default function Feedback() {
       </div>
     </React.Fragment>
   );
-}
+});
+
+export default Feedback;

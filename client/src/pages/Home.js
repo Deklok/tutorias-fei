@@ -1,17 +1,19 @@
-import React, { Component } from 'react';
+import React, {memo, Component } from 'react';
 import logo from './logo.svg';
-import Dashboard from './seguimiento/tutor/Dashboard'
+import Dashboard from './seguimiento/tutor/Dashboard';
+import {useStyles} from './cargar-estilos';
 
-class Home extends Component {
-    render() {
-        return (
-            <div className="App">
-                <header className="App-header">
-                    <Dashboard/>
-                </header>
-            </div>
-        );
-    }
-}
+const Home = memo(props=>{
+	const classes = useStyles();
+    return (
+        <div className="App">
+            <header className="App-header">
+                <Dashboard
+                	classes={classes}
+                />
+            </header>
+        </div>
+    );
+});
 
 export default Home;
