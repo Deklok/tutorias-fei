@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const auth = require('./server/authws/auth.js');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,22 +28,18 @@ app.post('/api/miuv/datos', (req,res) => {
   });
 });
 
-app.post('/api/user/login', function (request, response){
+app.post('/api/user/login', function (request, res){
   var userId = request.body.user;
   var password = request.body.pass;
   if (userId && password) {
-    var authResponse = auth.authentication(userId, password);
-    if (authResponse) {
-      response.send(authResponse);
-    } else {
-      response.send("Service not available");
-    }
-    
+   auth.authentication(userId, password).then(function (response) {
+     res.send(response);
+   }); 
   } else {
-    response.send("Parameters needed");
+    res.send("Parameters needed");
   }
-
 });
+
 
 // Use this code when is on production
 /* 
