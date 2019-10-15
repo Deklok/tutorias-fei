@@ -44,6 +44,12 @@ app.post('/api/user/login', function (request, response){
 
 });
 
+app.get('/OneSignalSDKWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKWorker.js'));
+});
+app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKUpdaterWorker.js'));
+});
 // Use this code when is on production
 /* 
 app.use(express.static(path.join(__dirname, 'client/build')));
