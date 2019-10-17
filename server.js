@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
+const auth = require('./server/authws/auth.js');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
@@ -8,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/api/miuv/test', (req,res) =>{
   res.send(miuvws.test());
-});0
+});
 
 app.post('/api/miuv/login', (req,res) => {
   var user = req.body["user"];
@@ -25,6 +27,21 @@ app.post('/api/miuv/datos', (req,res) => {
     res.send(response);
   });
 });
+/* Code references
+* 400 = Parameters needed. 500 = Service not available. 200 = Authenticated. 404 = Not authenticated (not found/wrong password)
+*/
+app.post('/api/user/login', function (request, res){
+  var userId = request.body.user;
+  var password = request.body.pass;
+  if (userId && password) {
+   auth.authentication(userId, password).then(function (response) {
+     res.send(response);
+   }); 
+  } else {
+    res.send("400");
+  }
+});
+
 
 // Use this code when is on production
 /* 
