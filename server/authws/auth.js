@@ -10,11 +10,6 @@ function authentication (userId, password) {
 		    url: urlLdap,
 		    baseDN: dnLdap,
 		    connectTimeout: 5000,
-		    /*tlsOptions: {
-        		//ca: [fs.readFileSync("CA.crt")],
-        		requestCert: true,
-        		rejectUnauthorized: true // Force Certificate Verification 
-    		}*/
 		};
 		var adInstance = new ActiveDirectory(config);
 		
@@ -22,14 +17,14 @@ function authentication (userId, password) {
 		    if (err) {
 		    	response = 'ERROR: '+JSON.stringify(err); 
 		        if (response.includes("52e")) {
-		        	response = "User not authenticated";
+		        	response = "404";
 		        } else if (response.includes("timeout")) {
-		        	response = "Service not available";
+		        	response = "500";
 		        } else {
 		        	console.log(response);
 		        }   
 		    } else if (auth) {
-		        response = "User authenticated";
+		        response = "200";
 		    }
 		    resolve(response);
 		});

@@ -27,7 +27,9 @@ app.post('/api/miuv/datos', (req,res) => {
     res.send(response);
   });
 });
-
+/* Code references
+* 400 = Parameters needed. 500 = Service not available. 200 = Authenticated. 404 = Not authenticated (not found/wrong password)
+*/
 app.post('/api/user/login', function (request, res){
   var userId = request.body.user;
   var password = request.body.pass;
@@ -36,7 +38,7 @@ app.post('/api/user/login', function (request, res){
      res.send(response);
    }); 
   } else {
-    res.send("Parameters needed");
+    res.send("400");
   }
 });
 
