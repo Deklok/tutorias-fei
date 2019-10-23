@@ -83,7 +83,7 @@ function getTutorData(user,pass) {
         var finalResponse = {
             msg: "no process"
         };
-        request(options)
+        var promiseResponse = request(options)
             .then(function (response) {
                 cleanhtml = response.body.substring(response.body.indexOf("<"));
                 var document = new JSDOM(cleanhtml).window.document;
@@ -120,6 +120,7 @@ function getTutorData(user,pass) {
                         error: responseData.message
                     };
                 } else {
+                    cookiejar = responseData.request.headers['Cookie'];
                     cleanhtml = responseData.body.substring(responseData.body.indexOf("<"));
                     var dom = new JSDOM(cleanhtml).window.document;
                     var response = {
@@ -139,20 +140,21 @@ function getTutorData(user,pass) {
                         response["students"].push(student);
                     }
                     finalResponse = response;
+                    //console.log(cookiejar);
                     var options = {
                         url: urltutor,
                         headers: {
-                            'Cookie': cookiejar,
-                            'Set-Fetch-Mode': 'navigate'
+                            'Cookie': cookiejar
                         },
                         method: 'GET',
                         resolveWithFullResponse: true
                     };
+                    console.log(finalResponse);
                     return request(options);
                 }
             }).then(function(responseTutor){
                 if (responseTutor != undefined) {
-                    cleanhtml = responseTutor.body.substring(response.body.indexOf("<"));
+                    cleanhtml = responseTutor.body.substring(responseTutor.body.indexOf("<"));
                     var document = new JSDOM(cleanhtml).window.document;
                     var name = document.getElementById("nombreUsuario_lblNombre").textContent;
                     var personalNum = document.getElementById("content_wucDatosGralAcad_lblNumPer").textContent;
@@ -162,37 +164,14 @@ function getTutorData(user,pass) {
                     }
                     finalResponse.teacher = tutorinfo;
                 }
+                return finalResponse;
             }).catch(function (err) {
                 console.log(err);
             });
         console.log(finalResponse);
-        resolve(finalResponse);
+        resolve(promiseResponse);
     });
     return promise;
-}
-
-function getTutorInfo(url, cookies) {
-    var tutorinfo;
-    var options = {
-        url: url,
-        headers: {
-            'Cookie': cookies,
-            'Set-Fetch-Mode': 'navigate'
-        },
-        method: 'GET',
-        resolveWithFullResponse: true
-    }
-    request(options).then(function(response){
-        cleanhtml = response.body.substring(response.body.indexOf("<"));
-        var document = new JSDOM(cleanhtml).window.document;
-        var name = document.getElementById("nombreUsuario_lblNombre").textContent;
-        var personalNum = document.getElementById("content_wucDatosGralAcad_lblNumPer").textContent;
-        tutorinfo = {
-            name: name,
-            personalNumber: personalNum
-        }
-    });
-    return tutorinfo;
 }
 
 function redirectToData(response,cookiejar,url) {
@@ -219,13 +198,6 @@ function test() {
     return response = {
         test: "this is a test from new api",
         complexResponse: getComplex()
-    }
-}
-
-function getComplex() {
-    return complex = {
-        2: "value",
-        form: "some form"
     }
 }
 
