@@ -8,14 +8,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/api/miuv/test', (req,res) =>{
   res.send(miuvws.test());
-});0
-
-app.post('/api/miuv/login', (req,res) => {
-  var user = req.body["user"];
-  var pass = req.body["pass"];
-  miuvws.login(user,pass).then(function(response){
-    res.send(response);
-  });
 });
 
 app.post('/api/miuv/student', (req,res) => {
