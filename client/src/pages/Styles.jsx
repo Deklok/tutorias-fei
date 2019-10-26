@@ -103,6 +103,7 @@ export const useStyles = makeStyles(theme => ({
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
+    maxHeight: 400,
   },
   overlay: {
     position: 'absolute',
@@ -110,7 +111,7 @@ export const useStyles = makeStyles(theme => ({
     bottom: 0,
     right: 0,
     left: 0,
-    backgroundColor: 'rgba(0,0,0,.3)',
+    backgroundColor: 'rgba(0,0,0,.4)',
   },
   mainFeaturedPostContent: {
     position: 'relative',

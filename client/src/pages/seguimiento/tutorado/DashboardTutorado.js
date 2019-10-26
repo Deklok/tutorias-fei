@@ -71,7 +71,7 @@ const Dashboard = memo(props => {
           <Banner classes={classes} />
           <Grid container spacing={3}>
             {/* Agenda */}
-            <Grid item xs={12} sm={8} lg={8}>
+            <Grid item xs={12} sm={8} lg={8} id="agenda">
               <Typography variant="h6" gutterBottom>
                 Agenda
 		            </Typography>
