@@ -1,6 +1,7 @@
 import React, {memo, Component } from 'react';
 import logo from './logo.svg';
 import Dashboard from './seguimiento/tutor/Dashboard';
+import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado'
 import {useStyles} from './Styles';
 
 const Home = memo(props=>{
@@ -8,7 +9,7 @@ const Home = memo(props=>{
     return (
         <div className="App">
             <header className="App-header">
-                <Dashboard
+                <DashboardTutorado
                 	classes={classes}
                     path={props.path}
                 />

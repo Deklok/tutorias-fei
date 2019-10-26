@@ -94,4 +94,30 @@ export const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(1),
     paddingBottom: theme.spacing(1),
   },
+  mainFeaturedPost: {
+    position: 'relative',
+    backgroundColor: theme.palette.grey[800],
+    color: theme.palette.common.white,
+    marginBottom: theme.spacing(4),
+    backgroundImage: 'url(https://images.unsplash.com/photo-1504275107627-0c2ba7a43dba?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1334&q=80)',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    backgroundColor: 'rgba(0,0,0,.3)',
+  },
+  mainFeaturedPostContent: {
+    position: 'relative',
+    padding: theme.spacing(3),
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing(6),
+      paddingRight: 0,
+    },
+  },
 }));

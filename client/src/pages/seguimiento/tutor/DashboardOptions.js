@@ -7,7 +7,8 @@ import LowPriority from '@material-ui/icons/LowPriority';
 import UpdateIcon from '@material-ui/icons/Update';
 import CancelPresentation from '@material-ui/icons/CancelPresentation';
 import BarChartIcon from '@material-ui/icons/BarChart';
-import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import DasboardIcon from '@material-ui/icons/Dashboard';
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,9 +18,10 @@ import {
 
 export const mainListItems = (
   <div>
+    <ListSubheader inset>Tutoría</ListSubheader>
     <ListItem button component="a" href="/">
       <ListItemIcon>
-        <BarChartIcon />
+        <DasboardIcon />
       </ListItemIcon>
       <ListItemText primary="Menu" />
     </ListItem>
@@ -55,7 +57,7 @@ export const secondaryListItems = (
     <ListSubheader inset>Cuenta</ListSubheader>
     <ListItem button>
       <ListItemIcon>
-        <PowerSettingsNew />
+        <ExitToAppIcon />
       </ListItemIcon>
       <ListItemText primary="Cerrar Sesión" />
     </ListItem>

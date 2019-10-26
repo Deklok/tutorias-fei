@@ -51,8 +51,8 @@ const CurrentTutorado = memo(props => {
         <CardContent>
           <div className={classes.details}>
             <Typography variant="subtitle1" color="text" component="p" noWrap>
-              Nombre de Tutorado
-          </Typography>
+            Paul McCartney
+            </Typography>
             <div className={classes.options}>
               <Tooltip title="Finalizar Tutoría">
                 <IconButton aria-label="stop" size="small">

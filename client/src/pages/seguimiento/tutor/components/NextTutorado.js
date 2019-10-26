@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 });
 
 
-const CurrentTutorado = memo(props => {
+const NextTutorado = memo(props => {
   const classes = useStyles();
   return (
     <React.Fragment>
@@ -52,8 +52,8 @@ const CurrentTutorado = memo(props => {
         <CardContent>
           <div className={classes.details}>
             <Typography variant="subtitle1" color="text" component="p" noWrap>
-              Nombre de Tutorado
-          </Typography>
+              Elvis Presley
+            </Typography>
             <div className={classes.options}>
               <Tooltip title="Atender">
                 <IconButton aria-label="play" size="small">
@@ -73,4 +73,4 @@ const CurrentTutorado = memo(props => {
   );
 });
 
-export default CurrentTutorado;
+export default NextTutorado;

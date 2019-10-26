@@ -1,14 +1,14 @@
 import React, { memo } from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import CurrentTutorado from '../elements/CurrentTutorado';
-import NextTutorado from '../elements/NextTutorado';
+import CurrentTutorado from './CurrentTutorado';
+import NextTutorado from './NextTutorado';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import Agenda from '../elements/Agenda';
+import Agenda from '../../components/Agenda';
 import Paper from '@material-ui/core/Paper';
-import Tutorados from '../elements/Tutorados';
-import TemasTutorado from '../elements/TemasTutorado';
+import Tutorados from './Tutorados';
+import TemasTutorado from '../../components/TemasTutorado';
 
 const Main = memo(props => {
 	const classes = props.classes;

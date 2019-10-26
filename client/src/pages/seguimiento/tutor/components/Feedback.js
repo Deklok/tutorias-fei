@@ -3,7 +3,7 @@
 import React, {memo} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Title from './Title';
+import Title from '../../components/Title';
 import Rating from '@material-ui/lab/Rating';
 import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
@@ -21,14 +21,14 @@ const Feedback = memo(props =>{
   return (
     <main className={classes_aux.content}>
       <div className={classes_aux.appBarSpacer} />
-      <Container maxWidth="lg" className={classes_aux.container}>
-        <Paper className={classes_aux.paper}>
+      <Container maxWidth="xs" className={classes_aux.container}>
+        <Paper className={classes.depositContext, classes_aux.paper}>
           <React.Fragment>
             <Title>Feedback</Title>
             <div>
             <Box component="fieldset" mb={3} borderColor="transparent">
               <Typography component="legend">Read only</Typography>
-              <Rating value={3} readOnly />
+              <Rating value={3} size="large" readOnly />
             </Box>
             </div>
           </React.Fragment>
