@@ -27,14 +27,18 @@ const Banner = memo(props => {
               <Grid item md={6}>
                 <div className={classes.mainFeaturedPostContent}>
                   <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                    Title of a longer featured blog post
+                    Primera Tutoría
                   </Typography>
-                  <Typography variant="h5" color="inherit" paragraph>
-                    Multiple lines of text that form the lede, informing new readers quickly and
-                    efficiently about what&apos;s most interesting in this post&apos;s contents.
+                  <Typography variant="h5" color="inherit" style={{overflow: "hidden", textOverflow: "ellipsis", height: '11rem', display: 'inline-block'}}>
+                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
+                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
+                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
                   </Typography>
-                  <Link variant="subtitle1" href="#">
-                    Continue reading…
+                  <Link variant="subtitle1" href="#agenda">
+                    Continuar leyendo...
                   </Link>
                 </div>
               </Grid>
