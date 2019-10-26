@@ -6,6 +6,8 @@ import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 import Rating from '@material-ui/lab/Rating';
 import Box from '@material-ui/core/Box';
+import Container from '@material-ui/core/Container';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles({
   depositContext: {
@@ -15,16 +17,24 @@ const useStyles = makeStyles({
 
 const Feedback = memo(props =>{
   const classes = useStyles();
+  const classes_aux = props.classes;
   return (
-    <React.Fragment>
-      <Title>Feedback</Title>
-      <div>
-      <Box component="fieldset" mb={3} borderColor="transparent">
-        <Typography component="legend">Read only</Typography>
-        <Rating value={3} readOnly />
-      </Box>
-      </div>
-    </React.Fragment>
+    <main className={classes_aux.content}>
+      <div className={classes_aux.appBarSpacer} />
+      <Container maxWidth="lg" className={classes_aux.container}>
+        <Paper className={classes_aux.paper}>
+          <React.Fragment>
+            <Title>Feedback</Title>
+            <div>
+            <Box component="fieldset" mb={3} borderColor="transparent">
+              <Typography component="legend">Read only</Typography>
+              <Rating value={3} readOnly />
+            </Box>
+            </div>
+          </React.Fragment>
+        </Paper>
+      </Container>
+    </main>
   );
 });
 

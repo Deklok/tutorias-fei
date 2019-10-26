@@ -8,9 +8,21 @@ import UpdateIcon from '@material-ui/icons/Update';
 import CancelPresentation from '@material-ui/icons/CancelPresentation';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 export const mainListItems = (
   <div>
+    <ListItem button component="a" href="/">
+      <ListItemIcon>
+        <BarChartIcon />
+      </ListItemIcon>
+      <ListItemText primary="Menu" />
+    </ListItem>
     <ListItem button>
       <ListItemIcon>
         <LowPriority />
@@ -29,7 +41,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Cancelar Tutoría" />
     </ListItem>
-    <ListItem button>
+    <ListItem button component="a" href="/feedback">
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>

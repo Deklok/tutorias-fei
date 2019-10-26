@@ -10,6 +10,7 @@ const Home = memo(props=>{
             <header className="App-header">
                 <Dashboard
                 	classes={classes}
+                    path={props.path}
                 />
             </header>
         </div>

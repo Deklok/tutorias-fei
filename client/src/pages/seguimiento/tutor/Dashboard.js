@@ -21,10 +21,16 @@ import { mainListItems, secondaryListItems } from './DashboardOptions';
 import Agenda from './elements/Agenda';
 import Tutorados from './elements/Tutorados';
 import TemasTutorado from './elements/TemasTutorado';
-import Feedback from './elements/Feedback'
-import CurrentTutorado from './elements/CurrentTutorado'
-import NextTutorado from './elements/NextTutorado'
+import Feedback from './elements/Feedback';
+import CurrentTutorado from './elements/CurrentTutorado';
+import NextTutorado from './elements/NextTutorado';
 import axios from 'axios';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import Main from './elements/Main';
 
 const Dashboard = memo(props => {
   const classes = props.classes;
@@ -96,44 +102,19 @@ const Dashboard = memo(props => {
         <Divider />
         <List>{secondaryListItems}</List>
       </Drawer>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3} justify="flex-end">
-            {/* Tutoria Controles */}
-            <Grid item xs={12} md={8} lg={8}>
-              <CurrentTutorado />
-            </Grid>
-            <Grid item xs={12} md={4} lg={4}>
-              <NextTutorado />
-            </Grid>
-          </Grid>
-          <Grid container spacing={3}>
-            {/* Agenda */}
-            <Grid item xs={12} md={4} lg={5}>
-              <Typography variant="h6" gutterBottom>
-                Agenda
-                </Typography>
-              <Divider />
-              <Agenda className={classes.markdown}>
-                {test}
-              </Agenda>
-            </Grid>
-            {/* Temas Tutorado */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper elevation={0} className={classes.sidebarAboutBox}>
-                <TemasTutorado />
-              </Paper>
-            </Grid>
-            {/* Recent Tutorados */}
-            <Grid item xs={12} md={4} lg={4}>
-              <Paper className={classes.paper}>
-                <Tutorados />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-      </main>
+      <Switch>
+        <Route exact path="/">
+          <Main
+            classes={classes}
+            test={test}
+          />
+        </Route>
+        <Route path="/feedback">
+          <Feedback
+          classes={classes}
+          />
+        </Route>
+      </Switch>
     </div>
   );
 });
