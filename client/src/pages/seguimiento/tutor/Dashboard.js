@@ -103,13 +103,13 @@ const Dashboard = memo(props => {
         <List>{secondaryListItems}</List>
       </Drawer>
       <Switch>
-        <Route exact path="/">
+        <Route exact path="/tutor">
           <Main
             classes={classes}
             test={test}
           />
         </Route>
-        <Route path="/feedback">
+        <Route path="/tutor/feedback">
           <Feedback
           classes={classes}
           />

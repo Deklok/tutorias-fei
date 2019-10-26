@@ -19,7 +19,7 @@ import {
 export const mainListItems = (
   <div>
     <ListSubheader inset>Tutoría</ListSubheader>
-    <ListItem button component="a" href="/">
+    <ListItem button component="a" href="/tutor">
       <ListItemIcon>
         <DasboardIcon />
       </ListItemIcon>
@@ -43,7 +43,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Cancelar Tutoría" />
     </ListItem>
-    <ListItem button component="a" href="/feedback">
+    <ListItem button component="a" href="/tutor/feedback">
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
