@@ -1,7 +1,7 @@
 import React, {memo, Component } from 'react';
 import logo from './logo.svg';
 import Dashboard from './seguimiento/tutor/Dashboard';
-import {useStyles} from './cargar-estilos';
+import {useStyles} from './Styles';
 
 const Home = memo(props=>{
 	const classes = useStyles();

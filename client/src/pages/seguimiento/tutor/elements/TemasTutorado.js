@@ -18,22 +18,19 @@ function generateTemas(tema) {
 
 const temas = [
   generateTemas('Ver formas de titulación'),
-  generateTemas('Problemas con maestro fulano'),
-
 ];
 
 export default function TemasTutorado() {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <Title>Temas propuestos por el estudiante</Title>
-      <div>
-        {temas.map(row => (
-            <div className="row">
-              <p>{row.tema}</p>
-            </div>
-          ))}
-      </div>
+      <Typography variant="h6" gutterBottom>
+        Intereses del Tutorado
+      </Typography>
+      <Typography>
+        Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit
+        amet fermentum. Aenean lacinia bibendum nulla sed consectetur.
+      </Typography>
     </React.Fragment>
   );
 }

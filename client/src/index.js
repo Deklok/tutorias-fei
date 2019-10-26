@@ -14,7 +14,7 @@ const theme = createMuiTheme({
         secondary: {
             main: '#28AD56',
         },
-        danger: {
+        error: {
             main: '#F4534E',
         }
     },
