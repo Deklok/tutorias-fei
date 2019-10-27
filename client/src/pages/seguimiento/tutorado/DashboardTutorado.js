@@ -25,15 +25,16 @@ import axios from 'axios';
 const Dashboard = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(true);
-  const [correo, setCorreo] = React.useState('');
+  const [matricula, setMatricula] = React.useState('');
+  const [nombre, setNombre] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function cargarDatos() {
-    return axios.post('http://localhost:5000/api/miuv/datos', {
-      user: 'zS16011721',
-      pass: 'Barcelona_Benji2016'
+    return axios.post('http://localhost:5000/api/db/pupilData', {
+      studentId: 'S16011721',
     });
   }
 
@@ -41,8 +42,11 @@ const Dashboard = memo(props => {
 
   cargarDatos()
     .then(result => {
-      setCorreo(result.data['correo']);
-      setCarrera(result.data['carrera']);
+      console.log(result);
+      setNombre(result.data[0][0]['name']);
+      setCarrera(result.data[0][0]['careerName']);
+      setMatricula(result.data[0][0]['studentId']);
+      setEmail(result.data[0][0]['email']);
     }).catch(console.log);
 
   return (
@@ -51,7 +55,7 @@ const Dashboard = memo(props => {
       <AppBar>
         <Toolbar>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Tutorado
+            {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="error">

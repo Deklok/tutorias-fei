@@ -27,10 +27,17 @@ app.post('/api/miuv/datos', (req,res) => {
   });
 });
 
-app.post('/api/db/data', (req,res) => {
+app.post('/api/db/tutorData', (req,res) => {
   var personnelNum = req.body["personnelNum"];
   database.getDataTutor(personnelNum).then(function(response){
     res.send(response);
+  });
+});
+
+app.post('/api/db/pupilData', (req,res) => {
+  var studentId = req.body["studentId"];
+  database.getDataPupil(studentId).then(function(response){
+    res.json(response);
   });
 });
 
