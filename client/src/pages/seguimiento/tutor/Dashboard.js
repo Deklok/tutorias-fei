@@ -35,8 +35,8 @@ import Main from './components/Main';
 const Dashboard = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(true);
-  const [correo, setCorreo] = React.useState('');
-  const [carrera, setCarrera] = React.useState('');
+  const [nombre, setNombre] = React.useState('');
+  const [contacto, setContacto] = React.useState('');
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -47,9 +47,8 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function cargarDatos() {
-    return axios.post('http://localhost:5000/api/miuv/datos', {
-      user: 'zS16011721',
-      pass: 'Barcelona_Benji2016'
+    return axios.post('http://localhost:5000/api/db/data', {
+      personnelNum: 'Z13011798',
     });
   }
 
@@ -57,8 +56,8 @@ const Dashboard = memo(props => {
 
   cargarDatos()
     .then(result => {
-      setCorreo(result.data['correo']);
-      setCarrera(result.data['carrera']);
+      setNombre(result.data[0]['name']);
+      setContacto(result.data[0]['contact']);
     }).catch(console.log);
 
   return (
@@ -76,7 +75,7 @@ const Dashboard = memo(props => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Tutorado {`${correo}, ${carrera}`}
+            Tutor {`${nombre}, ${contacto}`}
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="error">

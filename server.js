@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
+const database = require('./server/db/database.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -26,8 +27,15 @@ app.post('/api/miuv/datos', (req,res) => {
   });
 });
 
+app.post('/api/db/data', (req,res) => {
+  var personnelNum = req.body["personnelNum"];
+  database.getDataTutor(personnelNum).then(function(response){
+    res.send(response);
+  });
+});
+
 // Use this code when is on production
-/* 
+/*
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
