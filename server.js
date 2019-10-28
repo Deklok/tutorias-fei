@@ -12,18 +12,18 @@ app.get('/api/miuv/test', (req,res) =>{
   res.send(miuvws.test());
 });
 
-app.post('/api/miuv/login', (req,res) => {
+app.post('/api/miuv/student', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
-  miuvws.login(user,pass).then(function(response){
+  miuvws.data(user,pass).then(function(response){
     res.send(response);
   });
 });
 
-app.post('/api/miuv/datos', (req,res) => {
+app.post('/api/miuv/tutor', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
-  miuvws.data(user,pass).then(function(response){
+  miuvws.tutor(user,pass).then(function(response){
     res.send(response);
   });
 });
