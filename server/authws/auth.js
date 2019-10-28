@@ -1,5 +1,4 @@
 var ActiveDirectory = require('activedirectory2');
-var request = require('request-promise');
 const urlLdap = 'ldap://148.226.12.12';
 const dnLdap = 'dc=xalapa';
 

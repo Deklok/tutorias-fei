@@ -35,10 +35,10 @@ app.post('/api/user/login', function (request, res){
   var password = request.body.pass;
   if (userId && password) {
    auth.authentication(userId, password).then(function (response) {
-     res.send(response);
+     res.sendStatus(response);
    }); 
   } else {
-    res.send("400");
+    res.sendStatus(400);
   }
 });
 
