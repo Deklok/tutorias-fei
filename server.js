@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const auth = require('./server/authws/auth.js');
+const webpush = require('./server/webpush/webpush.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -42,6 +43,34 @@ app.post('/api/user/login', function (request, response){
     response.send("Parameters needed");
   }
 
+});
+/*
+*Servicio para notificar al estudiante que su sesión de tutoría fue cancelada.
+*user = identificador externo del estudiante.
+*/
+app.post('/api/webpush/youwerecanceled', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.youWereCanceled(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Servicio para notificar al estudiante que es el siguiente en la tutoría.
+*user = identificador externo del estudiante.
+*/
+app.post('/api/webpush/youarenext', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.youAreNext(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 });
 
 app.get('/OneSignalSDKWorker.js', function (request, response){
