@@ -41,6 +41,15 @@ app.post('/api/db/pupilData', (req,res) => {
   });
 });
 
+
+app.post('/api/db/sessions', (req,res) => {
+  var idTutorship = req.body["idTutorship"];
+  database.getAllSessions(idTutorship).then(function(response){
+    res.json(response);
+  });
+});
+
+
 // Use this code when is on production
 /*
 app.use(express.static(path.join(__dirname, 'client/build')));
