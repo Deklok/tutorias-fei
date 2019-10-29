@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 const miuvws = require('./server/miuvws/miuv.js');
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
@@ -45,8 +46,8 @@ app.post('/api/user/login', function (request, response){
 
 });
 /*
-*Servicio para notificar al estudiante que su sesión de tutoría fue cancelada.
-*user = identificador externo del estudiante.
+*Service to notify the student that his tutoring has been canceled.
+*user = extenal student ID.
 */
 app.post('/api/webpush/youwerecanceled', function (req, res){
   var userId = req.body.user;
@@ -59,13 +60,55 @@ app.post('/api/webpush/youwerecanceled', function (req, res){
   }
 });
 /*
-*Servicio para notificar al estudiante que es el siguiente en la tutoría.
-*user = identificador externo del estudiante.
+*Service to notify the student that he is the next one.
+*user = external student ID.
 */
 app.post('/api/webpush/youarenext', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.youAreNext(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify the professor that his student canceled.
+*user = professor external ID.
+*/
+app.post('/api/webpush/studentcanceled', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.studentCanceled(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify all the students related to this professor that tutoring day is available.
+*user = professor external ID.
+*/
+app.post('/api/webpush/publishedday', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.publishedDay(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify all the students related to this professor that tutoring day was cancel.
+*user = professor external ID.
+*/
+app.post('/api/webpush/canceledday', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.canceledDay(userId).then(function(response){
       res.sendStatus(response);
     });
   } else {
