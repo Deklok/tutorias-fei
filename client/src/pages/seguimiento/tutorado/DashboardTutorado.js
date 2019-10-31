@@ -72,7 +72,7 @@ const Dashboard = memo(props => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Banner classes={classes} />
+          <Banner classes={classes} estado={false} />
           <Grid container spacing={3}>
             {/* Agenda */}
             <Grid item xs={12} sm={8} lg={8} id="agenda">

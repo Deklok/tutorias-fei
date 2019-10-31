@@ -10,6 +10,8 @@ import Link from '@material-ui/core/Link'
 
 const Banner = memo(props => {
     const classes = props.classes;
+    const estado = props.estado;
+    const [estado_tuto,setEstado] = React.useState(estado);
     return (
         <React.Fragment>
             {/* Main featured post */}
@@ -30,16 +32,24 @@ const Banner = memo(props => {
                     Primera Tutoría
                   </Typography>
                   <Typography variant="h5" color="inherit" style={{overflow: "hidden", textOverflow: "ellipsis", height: '11rem', display: 'inline-block'}}>
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
+                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
                   </Typography>
                   <Link variant="subtitle1" href="#agenda">
                     Continuar leyendo...
                   </Link>
+                  <div>
+                    {!estado_tuto ? <button onClick={() => setEstado(true)}>Confirmar asistencia</button> : null}
+                    <button onClick={() => setEstado(false)}>Cancelar asistencia</button>
+                  </div>
+                  {estado_tuto ?
+                    <Typography component="h3" variant="h3" color="inherit" gutterBottom>
+                      Asistencia confirmada!!!!
+                    </Typography> : null}
                 </div>
               </Grid>
             </Grid>
