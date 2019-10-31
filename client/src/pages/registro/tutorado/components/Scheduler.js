@@ -1,4 +1,6 @@
-import {Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, EventSettingsModel} from '@syncfusion/ej2-react-schedule';
+import {Inject, ScheduleComponent, Day, 
+        Week, WorkWeek, Month, Agenda, 
+        EventSettingsModel, ViewDirective, ViewsDirective} from '@syncfusion/ej2-react-schedule';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Title from '../../../seguimiento/components/Title';
@@ -17,7 +19,10 @@ const useStyles = makeStyles({
         <div>
             <ScheduleComponent currentView='Day' selectedDate={new Date(2019, 9, 27)}
                 >
-                  <Inject services={[Day]}/>
+              <ViewsDirective>
+                <ViewDirective option='Day' startHour='09:30' endHour='18:00' timeScale={{ enable: true, slotCount: 4 }}/>
+              </ViewsDirective>
+              <Inject services={[Day]}/>
             </ScheduleComponent>
         </div>
       </React.Fragment>

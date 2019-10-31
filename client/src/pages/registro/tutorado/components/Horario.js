@@ -3,11 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import Title from '../../seguimiento/components/Title';
 
 function generateTutorias(cubiculo, hora, fecha, contacto) {
-  return { imagen, cubiculo, hora, fecha, contacto };
+  return { cubiculo, hora, fecha, contacto };
 }
 
 const tutorias = [
-  generateTutorias('Cubículo 30', '10:35', '12/05/2019', 'elrevo@gmail.com')
+  generateTutorias('Cubículo 30', '10:30', '12/05/2019', 'elrevo@gmail.com')
 ];
   
   export default function Horario() {

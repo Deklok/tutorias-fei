@@ -18,8 +18,8 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Tutroías FEI
+      <Link color="inherit">
+        Tutorías FEI
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -101,6 +101,7 @@ export default function SignInSide() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              href = "/dashboard"
             >
               Iniciar Sesion
             </Button>

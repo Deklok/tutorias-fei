@@ -18,9 +18,9 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from '../../seguimiento/tutor/DashboardOptions';
 import axios from 'axios';
-import Scheduler from '../../registro/tutorado/components/Scheduler';
+import Scheduler from './components/Scheduler';
 
-const Dashboard = memo(props => {
+const DashboardInicio = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(true);
   const [correo, setCorreo] = React.useState('');
@@ -87,15 +87,13 @@ const Dashboard = memo(props => {
           <List>{secondaryListItems}</List>
         </Drawer>
         <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
-          <Container maxWidth="lg" className={classes.container}>
+        <div className={classes.appBarSpacer} />
+         <Container maxWidth="lg" className={classes.container}>
             <Grid container spacing={12}>
-              {/* Scheduler */}
+            {/* Scheduler */}
               <Grid item xs={12} md={12} lg={12}>
-                <div>
-                    <Paper className={fixedHeightPaper}>
-                    <Scheduler />
-                    </Paper>
+               <div>
+                  <Scheduler />
                 </div>
               </Grid>
             </Grid>
@@ -105,4 +103,4 @@ const Dashboard = memo(props => {
     );
 });
 
-export default Dashboard;
+export default DashboardInicio;
