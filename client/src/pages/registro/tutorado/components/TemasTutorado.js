@@ -4,8 +4,7 @@ import React, {memo} from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Title from '../../../seguimiento/components/Title';
-import TemasTutorado from '../../../seguimiento/components/TemasTutorado';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const useStyles = makeStyles({
   depositContext: {
@@ -13,15 +12,25 @@ const useStyles = makeStyles({
   },
 });
 
-return (
-    <React.Fragment>
-      <Title>Temas del Tutorado</Title>
-      <div>
-        <div className="row">
-            <textarea/>
-        </div>
-      </div>
-    </React.Fragment>
-);
+function generateTemas(tema) {
+  return { tema };
+}
 
-export default TemasTutorado;
+const temas = [
+  generateTemas('Ver formas de titulación'),
+];
+
+export default function TemasTutorado() {
+  const classes = useStyles();
+  return (
+    <React.Fragment>
+      <Typography variant="h6" gutterBottom>
+        Intereses del Tutorado
+      </Typography>
+      <TextareaAutosize
+        minRows = "4"
+        maxRows = "6"
+      />
+    </React.Fragment>
+  );
+}

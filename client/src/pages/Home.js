@@ -20,7 +20,7 @@ const Home = memo(props => {
                         />
                     </Route>
                     <Route path="/tutorado">
-                        <Dashboard2
+                        <DashboardTutorado
                             classes={classes}
                             path={props.path}
                         />

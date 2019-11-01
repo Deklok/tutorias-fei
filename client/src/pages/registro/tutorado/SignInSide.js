@@ -163,7 +163,6 @@ export default function SignInSide() {
               type="password"
               name="contrasenia"
               label="Contraseña"
-              type="contrasenia"
               id="standard-password-input"
               autoComplete="current-password"
             />
