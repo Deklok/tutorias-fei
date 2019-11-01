@@ -20,7 +20,7 @@ const useStyles = makeStyles({
             <ScheduleComponent currentView='Day' selectedDate={new Date(2019, 9, 27)}
                 >
               <ViewsDirective>
-                <ViewDirective option='Day' startHour='09:30' endHour='18:00' timeScale={{ enable: true, slotCount: 4 }}/>
+                <ViewDirective option='Day' startHour='09:00' endHour='18:00' timeScale={{ enable: true, slotCount: 4 }}/>
               </ViewsDirective>
               <Inject services={[Day]}/>
             </ScheduleComponent>
