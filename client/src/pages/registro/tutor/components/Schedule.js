@@ -5,7 +5,7 @@ import Select from '@material-ui/core/Select';
 import Dialog from '@material-ui/core/Dialog';
 import FormControl from '@material-ui/core/FormControl';
 
-import 'date-fns';
+import es from 'date-fns/locale/es';
 import {MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker} from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
@@ -28,7 +28,7 @@ export default function Schedule() {
       <div className="Schedule">
         <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open="true">
           <h1>Calendarizar tutoria</h1>
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
                 <KeyboardDatePicker
                   format="dd/MM/yyyy"
                   id="date-picker-inline"
@@ -37,6 +37,8 @@ export default function Schedule() {
                   disablePast = "false"
                   value={selectedDate}
                   onChange={handleDateChange}
+                  cancelLabel = "Cancelar"
+                  okLabel = "Aceptar"
                   KeyboardButtonProps={{
                     'aria-label': 'change date',
                   }}
