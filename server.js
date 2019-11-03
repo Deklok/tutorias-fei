@@ -47,7 +47,11 @@ app.post('/api/user/login', function (request, response){
 });
 /*
 *Service to notify the student that his tutoring has been canceled.
-*user = extenal student ID.
+*Param: user = extenal student ID (s16012345).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
 */
 app.post('/api/webpush/youwerecanceled', function (req, res){
   var userId = req.body.user;
@@ -61,7 +65,11 @@ app.post('/api/webpush/youwerecanceled', function (req, res){
 });
 /*
 *Service to notify the student that he is the next one.
-*user = external student ID.
+*Param: user = external student ID (s16012345).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
 */
 app.post('/api/webpush/youarenext', function (req, res){
   var userId = req.body.user;
@@ -75,7 +83,11 @@ app.post('/api/webpush/youarenext', function (req, res){
 });
 /*
 *Service to notify the professor that his student canceled.
-*user = professor external ID.
+*Param: user = professor external ID (joseperez).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
 */
 app.post('/api/webpush/studentcanceled', function (req, res){
   var userId = req.body.user;
@@ -89,7 +101,11 @@ app.post('/api/webpush/studentcanceled', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day is available.
-*user = professor external ID.
+*Param: user = professor external ID (joseperez).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
 */
 app.post('/api/webpush/publishedday', function (req, res){
   var userId = req.body.user;
@@ -103,7 +119,11 @@ app.post('/api/webpush/publishedday', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day was cancel.
-*user = professor external ID.
+*Param: user = professor external ID (joseperez).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
 */
 app.post('/api/webpush/canceledday', function (req, res){
   var userId = req.body.user;
