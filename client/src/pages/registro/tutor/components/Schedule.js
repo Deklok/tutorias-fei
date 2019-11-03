@@ -9,6 +9,7 @@ import 'date-fns';
 import {MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker} from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
+
 export default function Schedule() {
   const [typeTutorial, setAge] = React.useState('');
 
@@ -29,12 +30,9 @@ export default function Schedule() {
           <h1>Calendarizar tutoria</h1>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
-                  disableToolbar
-                  variant="inline"
-                  format="MM/dd/yyyy"
-                  margin="normal"
+                  format="dd/MM/yyyy"
                   id="date-picker-inline"
-                  label="Fecha de tutoría:"
+                  label="Fecha de tutoría (dd/mm/aaaa):"
                   autoOk = "true"
                   disablePast = "false"
                   value={selectedDate}
@@ -50,6 +48,7 @@ export default function Schedule() {
                     label="Hora de inicio:"
                     cancelLabel = "Cancelar"
                     okLabel = "Aceptar"
+                    ampm={false}
                     value={selectedDate}
                     onChange={handleDateChange}
                     KeyboardButtonProps={{
@@ -62,6 +61,7 @@ export default function Schedule() {
                     label="Hola de Fin:"
                     cancelLabel = "Cancelar"
                     okLabel = "Aceptar"
+                    ampm={false}
                     value={selectedDate}
                     onChange={handleDateChange}
                     KeyboardButtonProps={{
@@ -85,7 +85,6 @@ export default function Schedule() {
           <div>
               <Button id="cancelBtn" variant="contained">Cancelar</Button>
               <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
-              
           </div>
         </Dialog>
       </div>
