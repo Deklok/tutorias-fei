@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 const miuvws = require('./server/miuvws/miuv.js');
 const auth = require('./server/authws/auth.js');
-const path = require('path');
+const webpush = require('./server/webpush/webpush.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -47,8 +48,103 @@ app.post('/api/user/login', function (request, res){
     res.sendStatus(400);
   }
 });
+/*
+*Service to notify the student that his tutoring has been canceled.
+*Param: user = extenal student ID (s16012345).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
+*/
+app.post('/api/webpush/youwerecanceled', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.youWereCanceled(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify the student that he is the next one.
+*Param: user = external student ID (s16012345).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
+*/
+app.post('/api/webpush/youarenext', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.youAreNext(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify the professor that his student canceled.
+*Param: user = professor external ID (joseperez).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
+*/
+app.post('/api/webpush/studentcanceled', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.studentCanceled(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify all the students related to this professor that tutoring day is available.
+*Param: user = professor external ID (joseperez).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
+*/
+app.post('/api/webpush/publishedday', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.publishedDay(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to notify all the students related to this professor that tutoring day was cancel.
+*Param: user = professor external ID (joseperez).
+*Responses:
+*   400: Param expected
+*   500: Onesingnal service not available
+*   200: Request OK. However this does not guarantee the behavior you expect. 
+*/
+app.post('/api/webpush/canceledday', function (req, res){
+  var userId = req.body.user;
+  if (userId) {
+    webpush.canceledDay(userId).then(function(response){
+      res.sendStatus(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
 
-
+app.get('/OneSignalSDKWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKWorker.js'));
+});
+app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKUpdaterWorker.js'));
+});
 // Use this code when is on production
 /* 
 app.use(express.static(path.join(__dirname, 'client/build')));
