@@ -27,8 +27,14 @@ app.post('/api/miuv/tutor', (req,res) => {
     res.send(response);
   });
 });
-/* Code references
-* 400 = Parameters needed. 500 = Service not available. 200 = Authenticated. 404 = Not authenticated (not found/wrong password)
+/*
+*Service to authenticate the user (student/professor) against UV LDAP server, it does not provide user information or session. 
+*NOTE: this service works only in UV network.
+*Response:
+*   400 = Parameters needed
+*   500 = Service not available (Probably you are trying to connect outside UV network)
+*   200 = Authenticated 
+*   404 = Not authenticated (not found/wrong password)
 */
 app.post('/api/user/login', function (request, res){
   var userId = request.body.user;
