@@ -28,8 +28,7 @@ export default function TemasTutorado() {
         Intereses del Tutorado
       </Typography>
       <Typography>
-        Etiam porta sem malesuada magna mollis euismod. Cras mattis consectetur purus sit
-        amet fermentum. Aenean lacinia bibendum nulla sed consectetur.
+        Quería comentar una situación que me está pasando con mi maestro de Estructuras de Datos, porque ya van dos semanas y aún no entrega los resultados de los exámenes parciales
       </Typography>
     </React.Fragment>
   );

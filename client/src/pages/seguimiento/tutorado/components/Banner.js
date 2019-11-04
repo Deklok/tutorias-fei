@@ -31,16 +31,13 @@ const Banner = memo(props => {
                   <Typography component="h1" variant="h3" color="inherit" gutterBottom>
                     Primera Tutoría
                   </Typography>
-                  <Typography variant="h5" color="inherit" style={{overflow: "hidden", textOverflow: "ellipsis", height: '11rem', display: 'inline-block'}}>
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
+                  <Typography variant="h5" color="inherit">
+                  Estimados tutorados
+  
+                  El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios ...
                   </Typography>
                   <Link variant="subtitle1" href="#agenda">
-                    Continuar leyendo...
+                    Continuar leyendo
                   </Link>
                   <div>
                     {!estado_tuto ? <button onClick={() => setEstado(true)}>Confirmar asistencia</button> : null}
