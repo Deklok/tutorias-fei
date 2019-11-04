@@ -10,6 +10,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import AddBox from './components/AddBox'
 import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
+import Schedule from './components/Schedule';
 
 export default class BlocksRegistry extends Component {
 
