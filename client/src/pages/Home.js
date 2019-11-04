@@ -1,8 +1,9 @@
 import React, { memo, Component } from 'react';
 import Inicio from './registro/tutorado/SignInSide';
 import Dashboard from './seguimiento/tutor/Dashboard';
-import Dashboard2 from './seguimiento/tutorado/DashboardTutorado';
-import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado'
+import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado';
+import DashboardInicio from './registro/tutorado/DashboardInicio';
+import DashboardFin from './registro/tutorado/DashboardFin';
 import { useStyles } from './Styles';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import BlockRegistry from './registro/tutor/BlocksRegistry';
@@ -34,6 +35,12 @@ const Home = memo(props => {
                     <Switch>
                         <Route exact path="/registro-bloques">
                             <BlockRegistry classes={classes} />
+                        </Route>
+                        <Route exact path="/dashboard-inicio">
+                            <DashboardInicio classes={classes} />
+                        </Route>
+                        <Route exact path="/dashboard-fin">
+                            <DashboardFin classes={classes} />
                         </Route>
                     </Switch>
                 </Switch>
