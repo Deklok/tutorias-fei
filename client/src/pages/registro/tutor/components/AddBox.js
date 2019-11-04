@@ -20,8 +20,8 @@ class AddBox extends Component {
 
         return (
             <div>
-                <Paper>
-                    <Typography variant="h5" component="h3">
+                <Paper className={this.props.classes.registryBox}>
+                    <Typography variant="h5" component="h3" className={this.props.classes.title}>
                         Añadir bloque.
                 </Typography>
                     <TextField

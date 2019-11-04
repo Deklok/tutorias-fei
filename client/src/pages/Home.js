@@ -53,10 +53,7 @@ const registryBlockStyles = makeStyles(theme => ({
         height: 240,
     },
     registryBox: {
-        width: "50%",
-        height: "50%",
-        marginRight: 40,
-        marginLeft: 40,
+        margin: 20,
     },
     root: {
         padding: theme.spacing(3, 2),

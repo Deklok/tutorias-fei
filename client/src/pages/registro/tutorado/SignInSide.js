@@ -176,11 +176,6 @@ export default function SignInSide() {
             >
               Iniciar Sesion
             </Button>
-            <Switch>
-              <Route exact path="/registro-bloques">
-                <BlockRegistry classes={classes} />
-              </Route>
-            </Switch>
             <Box mt={5}>
               <Copyright />
             </Box>

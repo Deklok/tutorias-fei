@@ -48,13 +48,14 @@ export default class BlocksRegistry extends Component {
             <Button color="inherit" component="a" href="/tutor">Continuar</Button>
           </Toolbar>
         </AppBar>
-        <div className="panel2 left2">
+        <Schedule />
+        <div>
           <AddBox className={classes.registryBox}
             classes={classes}
             addBlock={this.addBlock}>
           </AddBox>
         </div>
-        <div className="panel2 right2">
+        <div>
           <BlockList blocks={this.state.blocks} />
         </div>
       </div>
