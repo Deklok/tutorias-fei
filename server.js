@@ -2,10 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const miuvws = require('./server/miuvws/miuv.js');
-const auth = require('./server/authws/auth.js');
-const webpush = require('./server/webpush/webpush.js');
-
+const database = require('./server/db/database.js');
+const cors = require('cors');
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -139,14 +139,31 @@ app.post('/api/webpush/canceledday', function (req, res){
   }
 });
 
-app.get('/OneSignalSDKWorker.js', function (request, response){
-  response.sendFile(path.join(__dirname+'/OneSignalSDKWorker.js'));
+app.post('/api/db/tutorData', (req,res) => {
+  var personnelNum = req.body["personnelNum"];
+  database.getDataTutor(personnelNum).then(function(response){
+    res.send(response);
+  });
 });
-app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
-  response.sendFile(path.join(__dirname+'/OneSignalSDKUpdaterWorker.js'));
+
+app.post('/api/db/pupilData', (req,res) => {
+  var studentId = req.body["studentId"];
+  database.getDataPupil(studentId).then(function(response){
+    res.json(response);
+  });
 });
+
+
+app.post('/api/db/sessions', (req,res) => {
+  var idTutorship = req.body["idTutorship"];
+  database.getAllSessions(idTutorship).then(function(response){
+    res.json(response);
+  });
+});
+
+
 // Use this code when is on production
-/* 
+/*
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
