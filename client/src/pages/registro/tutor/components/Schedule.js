@@ -7,7 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 
 import es from 'date-fns/locale/es';
 import { MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns/';
+import DateFnsUtils from '@date-io/date-fns';
 
 
 export default function Schedule() {
@@ -25,10 +25,10 @@ export default function Schedule() {
   };
 
   return (
-    <div className="Schedule">
-      <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open="true">
+    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open="true">
+      <div className="dialog">
         <h1>Calendarizar tutoria</h1>
-        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             margin="normal"
             format="dd/MM/yyyy"
@@ -46,14 +46,12 @@ export default function Schedule() {
               'aria-label': 'change date',
             }}
           />
-        </MuiPickersUtilsProvider>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <h2>Horario general de la tutoría</h2>
           <KeyboardTimePicker
             margin="normal"
             id="time-picker"
             label="Hora de inicio:"
-            cancelLabel="Cancelar"vve
+            cancelLabel="Cancelar" vve
             okLabel="Aceptar"
             ampm={false}
             value={selectedDate}
@@ -63,22 +61,22 @@ export default function Schedule() {
               'aria-label': 'change time',
             }}
           />
-        </MuiPickersUtilsProvider>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardTimePicker
-            margin="normal"
-            id="time-picker"
-            label="Hola de Fin:"
-            cancelLabel="Cancelar"
-            okLabel="Aceptar"
-            ampm={false}
-            value={selectedDate}
-            onChange={handleDateChange}
-            invalidDateMessage="Formato de hora invalida."
-            KeyboardButtonProps={{
-              'aria-label': 'change time',
-            }}
-          />
+          <div>
+            <KeyboardTimePicker
+              margin="normal"
+              id="time-picker"
+              label="Hola de Fin:"
+              cancelLabel="Cancelar"
+              okLabel="Aceptar"
+              ampm={false}
+              value={selectedDate}
+              onChange={handleDateChange}
+              invalidDateMessage="Formato de hora invalida."
+              KeyboardButtonProps={{
+                'aria-label': 'change time',
+              }}
+            />
+          </div>
         </MuiPickersUtilsProvider>
         <FormControl>
           <h3>Tipo de tutoría:</h3>
@@ -97,8 +95,8 @@ export default function Schedule() {
           <Button id="cancelBtn" variant="contained">Cancelar</Button>
           <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
         </div>
-      </Dialog>
-    </div>
+      </div>
+    </Dialog>
   );
 }
 
