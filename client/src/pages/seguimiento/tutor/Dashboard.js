@@ -38,6 +38,7 @@ const Dashboard = memo(props => {
   const [nombre, setNombre] = React.useState('');
   const [contacto, setContacto] = React.useState('');
   const [tutorados, setTutorados] = React.useState('');
+  const [connect, setConnect] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -48,28 +49,44 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function cargarDatos() {
-    return axios.post('http://localhost:5000/api/db/tutorData', {
-      personnelNum: 'Z13011798',
-    });
+    if(connect){
+      return axios.post('http://localhost:5000/api/db/tutorData', {
+        personnelNum: 'Z13011798',
+      });
+    }else{
+      return null;
+    }
   }
 
   async function cargarTutorados() {
-    return axios.post('http://localhost:5000/api/db/sessions', {
-      idTutorship: 1,
-    });
+    if (connect){
+      return axios.post('http://localhost:5000/api/db/sessions', {
+        idTutorship: 1,
+      });
+    }else{
+      return null;
+    }
   }
 
   const test = "## Primera Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)\n\nWhy do we use it? **esto está en negritas** It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English...\n\n![image](https://images.unsplash.com/photo-1502759683299-cdcd6974244f?auto=format&fit=crop&w=440&h=220&q=60)"
 
   cargarDatos()
     .then(result => {
-      setNombre(result.data[0]['name']);
-      setContacto(result.data[0]['contact']);
+      if(result){
+        console.log('Pasando 1');
+        setNombre(result.data[0]['name']);
+        setContacto(result.data[0]['contact']);
+        setConnect(false);
+      }
     }).catch(console.log);
 
     cargarTutorados()
     .then(result=>{
-      setTutorados(result.data[0]);
+      if(result){
+        console.log('Pasando 2');
+        setTutorados(result.data[0]);
+        setConnect(false);
+      }
     }).catch(console.log);
 
   return (
