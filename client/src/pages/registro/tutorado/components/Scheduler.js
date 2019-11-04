@@ -42,24 +42,19 @@ location: "Cubículo 30"
 }
 ];
 
-const Scheduler = memo(props =>{
 const classes = useStyles();
 return (
 <React.Fragment>
   <Title>Bloques de horario para la tutoría</Title>
   <div>
-    {bloques.map(row => (
       <ScheduleComponent currentView='Day' selectedDate={new Date(2019, 9, 27)}
-          data = {row}>
+          >
         <ViewsDirective>
           <ViewDirective option='Day' startHour='09:00' endHour='18:00' timeScale={{ enable: true, slotCount: 4 }}/>
         </ViewsDirective>
         <Inject services={[Day]}/>
       </ScheduleComponent>
-      ))}
   </div>
 </React.Fragment>
 );
-});
-
-export default Scheduler;
+}
