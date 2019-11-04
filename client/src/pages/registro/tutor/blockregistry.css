@@ -1,0 +1,35 @@
+.panel2 {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    margin-top: 8%;
+}
+
+.left2 {
+    left: 0;
+    width: 50%;
+    height: 100%;
+}
+
+.right2 {
+    right: 0;
+    width: 50%;
+    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .panel2{
+        position: static;
+    }
+
+    .left2 {
+        display: block;
+        width: 100%;
+    }
+
+    .right2 {
+        display: block;
+        width: 100%;
+    }
+}
