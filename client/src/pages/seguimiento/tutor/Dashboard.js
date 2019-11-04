@@ -73,7 +73,6 @@ const Dashboard = memo(props => {
   cargarDatos()
     .then(result => {
       if(result){
-        console.log('Pasando 1');
         setNombre(result.data[0]['name']);
         setContacto(result.data[0]['contact']);
         setConnect(false);
@@ -83,7 +82,6 @@ const Dashboard = memo(props => {
     cargarTutorados()
     .then(result=>{
       if(result){
-        console.log('Pasando 2');
         setTutorados(result.data[0]);
         setConnect(false);
       }
