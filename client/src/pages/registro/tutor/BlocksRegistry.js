@@ -25,21 +25,6 @@ export default class BlocksRegistry extends Component {
     blockCount: 2
   };
 
-  addBlock = (career, startTime, endTime) => {
-    const actualBlocks = this.state.blocks;
-    var count = this.state.blockCount;
-
-    const block = {
-      blockId: count,
-      careerId: career,
-      start: startTime,
-      end: endTime
-    }
-
-    actualBlocks.push(block)
-    this.setState({blocks: actualBlocks, blockCount: count});
-  }
-
   render() {
 
     const classes = this.props.classes;
@@ -64,6 +49,7 @@ export default class BlocksRegistry extends Component {
         </AppBar>
         <div className="panel2 left2">
           <AddBox className={classes.registryBox}
+            classes={classes}
             addBlock={this.addBlock}>
           </AddBox>
         </div>
@@ -72,5 +58,20 @@ export default class BlocksRegistry extends Component {
         </div>
       </div>
     );
+  }
+
+  addBlock = (career, startTime, endTime) => {
+    const actualBlocks = this.state.blocks;
+    var count = this.state.blockCount;
+
+    const block = {
+      blockId: count,
+      careerId: career,
+      start: startTime,
+      end: endTime
+    }
+
+    actualBlocks.push(block)
+    this.setState({blocks: actualBlocks, blockCount: count});
   }
 }
