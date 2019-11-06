@@ -11,6 +11,21 @@ function publishedDay (professorId) {
 	});
 	return promise;
 }
+function publishedDayEmail (professorId) {
+	var promise = new Promise(function (resolve,reject) {
+		var message = { 
+			app_id: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
+			template_id: "33436a68-4afc-4143-9a8b-416e53fa5a62",
+			isEmail: true,
+			email_subject: "Horarios disponibles",
+			filters: [
+		  		{"field": "tag", "key": "idtutor", "relation": "=", "value": professorId} //In case it's possible to set tag idtutor for each student in frontend
+			]
+		};
+		resolve(sendNotification(message));
+	});
+	return promise;
+}
 function canceledDay (professorId) {
 	var promise = new Promise(function (resolve,reject) {
 		var message = { 
@@ -31,6 +46,20 @@ function studentCanceled (professorId) {
 		var message = { 
 			app_id: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
 			template_id: "081b2dcd-e51a-4ceb-a1b4-3d18382b6381",
+			include_external_user_ids: externalId, //It will try send an email if external ID is related only to email 
+		};
+		resolve(sendNotification(message));
+	});
+	return promise;
+}
+function studentCanceledEmail (professorId) {
+	var promise = new Promise(function (resolve,reject) {
+		var externalId = [];
+		externalId.push(professorId); //I hope they send me professor external id
+		var message = { 
+			app_id: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
+			template_id: "f02fe446-cc69-4c7d-8696-c5e3d13efdb8",
+			email_subject: "Sesión cancelada",
 			include_external_user_ids: externalId,
 		};
 		resolve(sendNotification(message));
@@ -86,8 +115,8 @@ function sendNotification(message) {
 				console.log(JSON.parse(message));
 				if (message.includes("id")) {
 					code = 200;
-					resolve(code);
 				}
+				resolve(code);
 			});
 		});
 
@@ -105,7 +134,9 @@ function sendNotification(message) {
 module.exports = {
 	canceledDay: canceledDay,
 	publishedDay: publishedDay,
+	publishedDayEmail: publishedDayEmail,
 	youAreNext: youAreNext,
 	youWereCanceled: youWereCanceled,
 	studentCanceled: studentCanceled,
+	studentCanceledEmail: studentCanceledEmail,
 }

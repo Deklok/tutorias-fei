@@ -4,6 +4,7 @@ const path = require('path');
 const miuvws = require('./server/miuvws/miuv.js');
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
+const emailpush = require('./server/webpush/emailIntegration.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,6 +28,19 @@ app.post('/api/miuv/datos', (req,res) => {
   miuvws.data(user,pass).then(function(response){
     res.send(response);
   });
+});
+/*****************************************
+*This service will be deleted. Only test purposes
+******************************************/
+app.post('/api/test/email', (req,res) => {
+  var user = [{emailAddress:'ppjavr@yahoo.com', userTags: {'idtutor':'juaperez'}, userLanguage:'es', externalId:'s15011637'},
+  {emailAddress:'ali@cecytev.edu.mx', userTags: {'idtutor':'juaperez'}, userLanguage:'es', externalId:'s15011633'}];
+  console.log(user);
+  console.log(user[0].externalId);
+  emailpush.registerEmails(user).then(function(response){
+    res.send(response);
+  });
+  
 });
 
 app.post('/api/user/login', function (request, response){
@@ -84,6 +98,8 @@ app.post('/api/webpush/youarenext', function (req, res){
 /*
 *Service to notify the professor that his student canceled.
 *Param: user = professor external ID (joseperez).
+*NOTE: It's possible to get a 500 if the professor is only associated to an email account (it try to send a webpush but is a email).
+*However, this doesn't mean email notification didn't work.
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
@@ -92,9 +108,15 @@ app.post('/api/webpush/youarenext', function (req, res){
 app.post('/api/webpush/studentcanceled', function (req, res){
   var userId = req.body.user;
   if (userId) {
-    webpush.studentCanceled(userId).then(function(response){
-      res.sendStatus(response);
-    });
+    webpush.studentCanceledEmail(userId).then(function(responseEmail){
+      if (responseEmail == 200) {
+        webpush.studentCanceled(userId).then(function(response){
+          res.sendStatus(response);
+        });
+      } else {
+        res.sendStatus(responseEmail);
+      }
+    });  
   } else {
     res.sendStatus(400);
   }
@@ -111,8 +133,14 @@ app.post('/api/webpush/publishedday', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.publishedDay(userId).then(function(response){
-      res.sendStatus(response);
-    });
+      if (response == 200) {
+        webpush.publishedDayEmail(userId).then(function(responseEmail){
+          res.sendStatus(responseEmail);
+        });
+      } else {
+        res.sendStatus(response);
+      }
+    });  
   } else {
     res.sendStatus(400);
   }
