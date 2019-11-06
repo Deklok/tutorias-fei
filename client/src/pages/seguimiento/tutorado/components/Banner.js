@@ -1,7 +1,7 @@
 /* eslint-disable no-script-url */
 
 import React, { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid';
@@ -53,9 +53,9 @@ const Banner = memo(props => {
                   <Link variant="subtitle1" href="#agenda">
                     Continuar leyendo
                   </Link>
-                  <div>
-                    <button onClick={confirmar}>Confirmar asistencia</button>
-                    <button onClick={denegar}>Cancelar asistencia</button>
+                  <div className={classes.details}>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
+                    <Button variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
                   </div>
                 </div>
               </Grid>
