@@ -22,8 +22,18 @@ app.use(session({
 }));
 
 
-app.get('/api/miuv/test', (req,res) =>{
+app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
+});
+
+app.get('/api/auth', (req,res) => {
+  if (req.session.role != undefined) {
+    res.send(req.session.role);
+  } else {
+    res.status(404).send({
+      error: "Role not found in the given session"
+    });
+  }
 });
 
 /**
@@ -64,7 +74,12 @@ app.post('/api/user/login', function (request, res){
   var password = request.body.pass;
   if (userId && password) {
    auth.authentication(userId, password).then(function (response) {
-     res.sendStatus(response);
+    if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {
+      request.session.role = true;
+    } else {
+      request.session.role = false;
+    }
+    res.sendStatus(response);
    }); 
   } else {
     res.sendStatus(400);
