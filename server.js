@@ -1,18 +1,35 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
+const session = require('express-session');
+//const redis = require('redis');
+//const redisStore = require('connect-redis')(session);
+//const redisClient = redis.createClient();
 const cors = require('cors');
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'someSecretUnknown',
+  name: '_sessionid',
+  //store: new redisStore({ redisClient }), // host: '', port: 6666, client: redisClient, ttl: 86400
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
+}));
+
 
 app.get('/api/miuv/test', (req,res) =>{
-  res.send(miuvws.test());
+  res.send("Hello world, this is a test");
 });
 
+/**
+ * Service to return email and career of the student provided
+ * Webscraping from MiUV
+ */
 app.post('/api/miuv/student', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
@@ -21,6 +38,11 @@ app.post('/api/miuv/student', (req,res) => {
   });
 });
 
+/**
+ * Service to return personel number and name from teacher, as well as students assiociated with the teacher
+ * including its studentID and name from each student
+ * Webscraping from MiUV
+ */
 app.post('/api/miuv/tutor', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
