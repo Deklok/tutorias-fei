@@ -11,6 +11,7 @@ const app = express();
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
+const sessionStore = new session.MemoryStore();
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -19,8 +20,9 @@ app.use(session({
   secret: 'someSecretUnknown',
   name: '_sessionid',
   //store: new redisStore({ redisClient }), // host: '', port: 6666, client: redisClient, ttl: 86400
+  store: sessionStore,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: { secure: false }
 }));
 
@@ -30,14 +32,15 @@ app.get('/api/miuv/test', (req,res) => {
 });
 
 app.post('/api/auth', (req,res) => {
-  console.log('llegó');
-  if (req.session.role != undefined) {
-    res.send(req.session.role);
-  } else {
-    res.status(404).send({
-      error: "Role not found in the given session"
-    });
-  }
+  sessionStore.get(req.body.session, function(error,session) {
+    if (session != null && session != undefined) {
+      res.send(session.role);
+    } else {
+      res.status(404).send({
+        error: "Role not found in the given session"
+      });
+    }
+  });
 });
 
 /**
@@ -100,7 +103,8 @@ app.post('/api/user/login', function (request, res){
     } else {
       request.session.role = true;
     }
-    res.sendStatus(response);
+    console.log(request.session.id);
+    res.status(response).send(request.session.id);
    });
   } else {
     res.sendStatus(400);

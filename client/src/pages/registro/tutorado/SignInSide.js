@@ -142,18 +142,18 @@ const Inicio = memo(props =>  {
         axios.post('http://localhost:5000/api/user/login',{
           user: username,
           pass: password,
-          session: {
-            role: false,
-          },
           withCredentials: true,
         })
         .then((result)=>{
           if(result){
-            axios.post('http://localhost:5000/api/auth',{
-              session:{
-                role: true,
-              },
-              withCredentials: true,
+            console.log(result);
+            var sessiontoken = result.data;
+            axios({
+              method: 'post',
+              url: 'http://localhost:5000/api/auth',
+              data: {
+                session: result.data
+              }
             })
             .then((result)=>{
               console.log(result);
