@@ -12,10 +12,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 
 export default function Schedule() {
-  const [typeTutorial, setTypeTutorial] = React.useState('');
+  const [typeTutorial, setTypeTutorial] = React.useState('tutorial1');
   const [date, setDate] = React.useState(new Date());
-  const [startTime, setStartTime] = React.useState(new Date());
-  const [endTime, setEndTime] = React.useState(new Date());
+  const [startTime, setStartTime] = React.useState("2019-01-01T07:00:00");
+  const [endTime, setEndTime] = React.useState("2019-01-01T08:00:00");
 
   const typeTutorialChange = event =>{
     setTypeTutorial(event.target.value);
@@ -35,10 +35,10 @@ export default function Schedule() {
 
   const validate = () => {
     var dateActual = new Date();
-    if(date.getFullYear() > dateActual.getFullYear()){
-      if(endTime < startTime){
+    if(date.getFullYear() == dateActual.getFullYear()){
+      if(endTime > startTime){
         if(typeTutorial != ""){
-          
+          alert("Datos correctos");
         }else{
           //Aqui va un mensaje diciendo que se debe seleccionar un tipo de tutoria
         }
@@ -111,7 +111,6 @@ export default function Schedule() {
             id="demo-customized-select-native"
             label="Tipo de tutoría:"
             value={typeTutorial}
-            defaultValue={'tutorial1'}
             onChange={typeTutorialChange}>
             <MenuItem value={'tutorial1'}>Tutoría 1</MenuItem>
             <MenuItem value={'tutorial2'}>Tutoría 2</MenuItem>
@@ -120,7 +119,6 @@ export default function Schedule() {
           </Select>
         </FormControl>
         <div>
-          <Button id="cancelBtn" variant="contained">Cancelar</Button>
           <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
         </div>
       </div>
