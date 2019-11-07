@@ -13,6 +13,17 @@ function getDataTutor(tutorId){
 		});
 	});
 }
+function getTutorIdFromPupil(pupilId){
+	return new Promise((resolve, reject) => {
+		pool.query('SELECT personnelNum FROM Pupil WHERE studentId = ?',[pupilId],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
 
 function getDataPupil(pupilId){
 	return new Promise((resolve, reject) => {
@@ -41,5 +52,6 @@ function getAllSessions(idTutorship){
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
-	getAllSessions: getAllSessions
+	getAllSessions: getAllSessions,
+	getTutorIdFromPupil: getTutorIdFromPupil,
 }

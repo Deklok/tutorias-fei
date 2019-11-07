@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const dataBase = require("./server/db/database.js");
 
 const VARS = {
   ONESIGNAL_APP_ID: '464e45cf-4e76-47c5-bcf8-4811dbbb1204',
@@ -8,22 +9,27 @@ const VARS = {
 /*
 * Function to register email, idTutor, and externaliId in Onesignal service. This will provide email notification.
 * Note: This should be one time execution.
-* var emailToPushRecords = [{emailAddress:'student@email.com', userTags: {'idtutor':'id'}, userLanguage:'es', externalId:'s16012345'},];
+* var dataToPushRecord = [{emailAddress:'student@email.com', externalId:'s16012345'},];
 */
-async function registerEmails(emailToPushRecords) {
+async function registerEmailToNotificationStudent (emailToPushRecord) {
+    dataBase.getTutorIdFromPupil(emailToPushRecord.externalId).then(function(response){
+      emailToPushRecord.userTags.idTutor = response;
+      emailToPushRecord.userLanguage = 'es';
+      console.table(emailToPushRecord);
+      //Final structure {emailAddress:'student@email.com', externalId:'s16012345', userTags: {'idtutor':'id'}, userLanguage:'es'}
+      const { success, emailRecordId } = await createEmailRecord(emailToPushRecord);
+      if (success) {
+        console.log(`Email record for ${emailToPushRecord.emailAddress} now has record ID ${emailRecordId}.`)
+      }
+    });
+    
   
-  for (const emailToPushRecord of emailToPushRecords) {
-    const { success, emailRecordId } = await createEmailRecord(emailToPushRecord);
-    if (success) {
-      console.log(`Email record for ${emailToPushRecord.emailAddress} now has record ID ${emailRecordId}.`)
-    }
-  }
 }
 /*
 * Worker function to connect to Onesignal system and register users
 */
 async function createEmailRecord(emailToPushRecord) {
-  const { emailAddress, userTags, userLanguage, externalId } = emailToPushRecord;
+  const { emailAddress, externalId, userTags, userLanguage } = emailToPushRecord;
   let emailRecordId;
 
   try {
@@ -64,6 +70,6 @@ async function createEmailRecord(emailToPushRecord) {
   }
 }
 module.exports = {
-  registerEmails: registerEmails,
+  registerEmailToNotificationStudent: registerEmailToNotificationStudent,
 }
 
