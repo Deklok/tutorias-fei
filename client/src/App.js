@@ -13,8 +13,7 @@ class App extends Component {
     )
     return (
       <Switch>
-        <App
-          <RouterGuard config={auth} />
+        <App />
         />
       </Switch>
     );

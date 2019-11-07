@@ -90,6 +90,7 @@ app.post('/api/test/email', (req,res) => {
 app.post('/api/user/login', function (request, response){
   var userId = request.body.user;
   var password = request.body.pass;
+  console.log(userId, password);
   if (userId && password) {
    auth.authentication(userId, password).then(function (response) {
     if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {

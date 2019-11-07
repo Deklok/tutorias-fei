@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const dataBase = require("./server/db/database.js");
+const dataBase = require("../db/database.js");
 
 const VARS = {
   ONESIGNAL_APP_ID: '464e45cf-4e76-47c5-bcf8-4811dbbb1204',
@@ -12,7 +12,8 @@ const VARS = {
 * var dataToPushRecord = [{emailAddress:'student@email.com', externalId:'s16012345'},];
 */
 async function registerEmailToNotificationStudent (emailToPushRecord) {
-    dataBase.getTutorIdFromPupil(emailToPushRecord.externalId).then(function(response){
+    dataBase.getTutorIdFromPupil(emailToPushRecord.externalId)
+    .then(async function(response){
       emailToPushRecord.userTags.idTutor = response;
       emailToPushRecord.userLanguage = 'es';
       console.table(emailToPushRecord);
@@ -22,9 +23,8 @@ async function registerEmailToNotificationStudent (emailToPushRecord) {
         console.log(`Email record for ${emailToPushRecord.emailAddress} now has record ID ${emailRecordId}.`)
       }
     });
-    
-  
 }
+
 /*
 * Worker function to connect to Onesignal system and register users
 */

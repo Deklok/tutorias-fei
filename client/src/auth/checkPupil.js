@@ -3,7 +3,7 @@ import axios from 'axios';
 const checkPupil = () => {
 	return new Promise((resolve, reject)=>{
 		axios.post('http://localhost:5000/api/auth',{
-			withCredentials: true;
+			withCredentials: true,
 		})
 		.then((result)=>{
 			if(!result){

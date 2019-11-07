@@ -1,7 +1,7 @@
 import {dynamicWrapper} from 'react-router-guard';
 import{checkTutor, checkPupil} from './auth';
 
-const auth = [
+const config = [
 	{
 		path: '/',
 		redirect: '/login'
@@ -9,13 +9,13 @@ const auth = [
 	{
 		path: '/tutor',
 		component: dynamicWrapper(()=>import('./seguimiento/tutor/Dashboard')),
-		canActivate[checkTutor]
+		canActivate: [checkTutor]
 	},
 	{
 		path: '/pupil',
 		component: dynamicWrapper(()=>import('./seguimiento/tutorado/DashboardTutorado')),
-		canActivate[checkPupil]
+		canActivate: [checkPupil]
 	}
 ]
 
-export default auth;
+export default config;

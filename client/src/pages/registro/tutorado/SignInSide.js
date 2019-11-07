@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{memo} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +16,7 @@ import loginImg from '../../login.jpg';
 import logoUv from '../../../Logo-UV2.jpg';
 import { Route, Switch } from 'react-router-dom';
 import BlockRegistry from '../tutor/BlocksRegistry';
+import axios from 'axios';
 
 function Copyright() {
   return (
@@ -129,8 +130,27 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignInSide() {
+const Inicio = memo(props =>  {
   const classes = useStyles();
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [loginState, setLogin] = React.useState(false);
+
+  function login(){
+    axios.post('http://localhost:5000/api/login',{
+      user: username,
+      pass: password,
+      withCredentials: true,
+    })
+    .then((result)=>{
+      if(result){
+        console.log(result);
+      }
+    })
+    .catch((err)=>{
+      console.log(err);
+    });
+  }
 
   return (
     <Grid container component="main" className={classes.root}>
@@ -152,6 +172,8 @@ export default function SignInSide() {
               label="Matrícula"
               name="matricula"
               autoComplete="matricula"
+              value = {username}
+              onchange={e=>setUsername(e.target.value)}
               autoFocus
             />
             <TextField
@@ -165,6 +187,8 @@ export default function SignInSide() {
               label="Contraseña"
               id="standard-password-input"
               autoComplete="current-password"
+              value = {password}
+              onchange={e=>setPassword(e.target.value)}
             />
             <Button
               type="submit"
@@ -173,6 +197,7 @@ export default function SignInSide() {
               color="primary"
               className={classes.submit}
               href="/registro-bloques"
+              onClick={() => login()}
             >
               Iniciar Sesion
             </Button>
@@ -184,4 +209,6 @@ export default function SignInSide() {
       </Grid>
     </Grid>
   );
-}
+});
+
+export default Inicio;
