@@ -19,17 +19,17 @@ const Main = memo(props => {
 		    <Container maxWidth="lg" className={classes.container}>
 		      <Grid container spacing={3} justify="flex-end">
 		        {/* Tutoria Controles */}
-		        <Grid item xs={12} md={8} lg={8}>
+		        <Grid item xs={12} md={7} lg={7}>
 		          <CurrentTutorado />
 		        </Grid>
-		        <Grid item xs={12} md={4} lg={4}>
+		        <Grid item xs={12} md={5} lg={5}>
 		          <NextTutorado />
 		        </Grid>
 		      </Grid>
 		      <Grid container spacing={3}>
 		        {/* Agenda */}
-		        <Grid item xs={12} md={4} lg={5}>
-		          <Typography variant="h6" gutterBottom>
+		        <Grid item xs={12} md={4} lg={4}>
+		          <Typography component="h2" variant="h6" gutterBottom>
 		            Agenda
 		            </Typography>
 		          <Divider />
@@ -38,13 +38,13 @@ const Main = memo(props => {
 		          </Agenda>
 		        </Grid>
 		        {/* Temas Tutorado */}
-		        <Grid item xs={12} md={4} lg={3}>
+		        <Grid item xs={12} md={3} lg={3}>
 		          <Paper elevation={0} className={classes.sidebarAboutBox}>
 		            <TemasTutorado />
 		          </Paper>
 		        </Grid>
 		        {/* Recent Tutorados */}
-		        <Grid item xs={12} md={4} lg={4}>
+		        <Grid item xs={12} md={5} lg={5}>
 		          <Paper className={classes.paper}>
 		            <Tutorados
 		            	tutorados={props.tutorados}

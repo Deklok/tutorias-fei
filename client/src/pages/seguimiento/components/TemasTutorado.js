@@ -24,7 +24,7 @@ export default function TemasTutorado() {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+      <Typography component="h2" variant="h6" gutterBottom>
         Intereses del Tutorado
       </Typography>
       <Typography>
