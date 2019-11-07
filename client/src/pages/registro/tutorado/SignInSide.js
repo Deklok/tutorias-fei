@@ -137,19 +137,39 @@ const Inicio = memo(props =>  {
   const [loginState, setLogin] = React.useState(false);
 
   function login(){
-    axios.post('http://localhost:5000/api/login',{
-      user: username,
-      pass: password,
-      withCredentials: true,
-    })
-    .then((result)=>{
-      if(result){
-        console.log(result);
-      }
-    })
-    .catch((err)=>{
-      console.log(err);
-    });
+    console.log('enviando...');
+    if(!loginState){
+        axios.post('http://localhost:5000/api/user/login',{
+          user: username,
+          pass: password,
+          session: {
+            role: false,
+          },
+          withCredentials: true,
+        })
+        .then((result)=>{
+          if(result){
+            axios.post('http://localhost:5000/api/auth',{
+              session:{
+                role: true,
+              },
+              withCredentials: true,
+            })
+            .then((result)=>{
+              console.log(result);
+            })
+            .catch((err)=>{
+              console.log(err);
+            });
+
+          }
+        })
+        .catch((err)=>{
+          console.log(err);
+        });
+        setLogin(true);
+    }
+    console.log('enviado');
   }
 
   return (
@@ -173,7 +193,7 @@ const Inicio = memo(props =>  {
               name="matricula"
               autoComplete="matricula"
               value = {username}
-              onchange={e=>setUsername(e.target.value)}
+              onChange={e=>setUsername(e.target.value)}
               autoFocus
             />
             <TextField
@@ -188,15 +208,15 @@ const Inicio = memo(props =>  {
               id="standard-password-input"
               autoComplete="current-password"
               value = {password}
-              onchange={e=>setPassword(e.target.value)}
+              onChange={e=>setPassword(e.target.value)}
             />
             <Button
-              type="submit"
+
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              href="/registro-bloques"
+
               onClick={() => login()}
             >
               Iniciar Sesion

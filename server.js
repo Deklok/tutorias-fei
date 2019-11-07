@@ -29,7 +29,8 @@ app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
 });
 
-app.get('/api/auth', (req,res) => {
+app.post('/api/auth', (req,res) => {
+  console.log('llegó');
   if (req.session.role != undefined) {
     res.send(req.session.role);
   } else {
@@ -59,7 +60,8 @@ app.post('/api/miuv/student', (req,res) => {
 app.post('/api/miuv/tutor', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
-  miuvws.tutor(user,pass).then(function(response){
+  miuvws.tutor(user,pass)
+  .then(function(response){
     res.send(response);
   });
 });
@@ -87,12 +89,12 @@ app.post('/api/test/email', (req,res) => {
 
 });
 
-app.post('/api/user/login', function (request, response){
+app.post('/api/user/login', function (request, res){
   var userId = request.body.user;
   var password = request.body.pass;
-  console.log(userId, password);
   if (userId && password) {
-   auth.authentication(userId, password).then(function (response) {
+   auth.authentication(userId, password)
+    .then(function (response) {
     if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {
       request.session.role = false;
     } else {
