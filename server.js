@@ -64,15 +64,15 @@ app.post('/api/miuv/tutor', (req,res) => {
   });
 });
 /*
-*Service to authenticate the user (student/professor) against UV LDAP server, it does not provide user information or session. 
+*Service to authenticate the user (student/professor) against UV LDAP server, it does not provide user information or session.
 *NOTE: this service works only in UV network.
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available (Probably you are trying to connect outside UV network)
-*   200 = Authenticated 
+*   200 = Authenticated
 *   404 = Not authenticated (not found/wrong password)
 */
-app.post('/api/user/login', function (request, res){
+
 /*****************************************
 *This service will be deleted. Only test purposes
 ******************************************/
@@ -84,7 +84,7 @@ app.post('/api/test/email', (req,res) => {
   emailpush.registerEmails(user).then(function(response){
     res.send(response);
   });
-  
+
 });
 
 app.post('/api/user/login', function (request, response){
@@ -93,12 +93,12 @@ app.post('/api/user/login', function (request, response){
   if (userId && password) {
    auth.authentication(userId, password).then(function (response) {
     if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {
-      request.session.role = true;
-    } else {
       request.session.role = false;
+    } else {
+      request.session.role = true;
     }
     res.sendStatus(response);
-   }); 
+   });
   } else {
     res.sendStatus(400);
   }
@@ -109,7 +109,7 @@ app.post('/api/user/login', function (request, response){
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
-*   200: Request OK. However this does not guarantee the behavior you expect. 
+*   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/webpush/youwerecanceled', function (req, res){
   var userId = req.body.user;
@@ -127,7 +127,7 @@ app.post('/api/webpush/youwerecanceled', function (req, res){
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
-*   200: Request OK. However this does not guarantee the behavior you expect. 
+*   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/webpush/youarenext', function (req, res){
   var userId = req.body.user;
@@ -147,7 +147,7 @@ app.post('/api/webpush/youarenext', function (req, res){
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
-*   200: Request OK. However this does not guarantee the behavior you expect. 
+*   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/webpush/studentcanceled', function (req, res){
   var userId = req.body.user;
@@ -160,7 +160,7 @@ app.post('/api/webpush/studentcanceled', function (req, res){
       } else {
         res.sendStatus(responseEmail);
       }
-    });  
+    });
   } else {
     res.sendStatus(400);
   }
@@ -171,7 +171,7 @@ app.post('/api/webpush/studentcanceled', function (req, res){
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
-*   200: Request OK. However this does not guarantee the behavior you expect. 
+*   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/webpush/publishedday', function (req, res){
   var userId = req.body.user;
@@ -184,7 +184,7 @@ app.post('/api/webpush/publishedday', function (req, res){
       } else {
         res.sendStatus(response);
       }
-    });  
+    });
   } else {
     res.sendStatus(400);
   }
@@ -195,7 +195,7 @@ app.post('/api/webpush/publishedday', function (req, res){
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
-*   200: Request OK. However this does not guarantee the behavior you expect. 
+*   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/webpush/canceledday', function (req, res){
   var userId = req.body.user;

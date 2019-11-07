@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { RouterGuard } from "react-router-guard";
 import Home from './pages/Home';
+import auth from './auth';
 
 class App extends Component {
   render() {
@@ -11,7 +13,9 @@ class App extends Component {
     )
     return (
       <Switch>
-        <App />
+        <App
+          <RouterGuard config={auth} />
+        />
       </Switch>
     );
   }

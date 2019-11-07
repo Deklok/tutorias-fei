@@ -81,7 +81,7 @@ const Home = memo(props => {
                             path={props.path}
                         />
                     </Route>
-                    <Route path="/tutorado">
+                    <Route path="/pupil">
                         <DashboardTutorado
                             classes={classes}
                             path={props.path}
@@ -93,17 +93,15 @@ const Home = memo(props => {
                             path={props.path}
                         />
                     </Route>
-                    <Switch>
-                        <Route exact path="/registro-bloques">
-                            <BlockRegistry classes={registryBlockClasses} />
-                        </Route>
-                        <Route exact path="/dashboard-inicio">
-                            <DashboardInicio classes={classes} />
-                        </Route>
-                        <Route exact path="/dashboard-fin">
-                            <DashboardFin classes={classes} />
-                        </Route>
-                    </Switch>
+                    <Route exact path="/registro-bloques">
+                        <BlockRegistry classes={registryBlockClasses} />
+                    </Route>
+                    <Route exact path="/dashboard-inicio">
+                        <DashboardInicio classes={classes} />
+                    </Route>
+                    <Route exact path="/dashboard-fin">
+                        <DashboardFin classes={classes} />
+                    </Route>
                 </Switch>
             </header>
         </div>
