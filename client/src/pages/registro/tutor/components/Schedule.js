@@ -77,7 +77,7 @@ export default function Schedule() {
           <KeyboardTimePicker
             margin="normal"
             id="time-picker"
-            label="Hora de inicio:"
+            label="Hora de inicio (24hrs):"
             cancelLabel="Cancelar"
             okLabel="Aceptar"
             ampm={false}
@@ -92,7 +92,7 @@ export default function Schedule() {
             <KeyboardTimePicker
               margin="normal"
               id="time-picker"
-              label="Hola de Fin:"
+              label="Hora de Fin (24hrs):"
               cancelLabel="Cancelar"
               okLabel="Aceptar"
               ampm={false}
