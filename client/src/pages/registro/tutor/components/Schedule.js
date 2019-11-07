@@ -34,7 +34,20 @@ export default function Schedule() {
   };
 
   const validate = () => {
-    alert(typeTutorial);
+    var dateActual = new Date();
+    if(date.getFullYear() > dateActual.getFullYear()){
+      if(endTime < startTime){
+        if(typeTutorial != ""){
+          
+        }else{
+          //Aqui va un mensaje diciendo que se debe seleccionar un tipo de tutoria
+        }
+      }else{
+        //Aqui va un mensaje diciendo que la hora de fin no puede ser menor a la hora de inicio 
+      }
+    }else{
+      //Aqui va un mensaje diciendo que el año no puede ser mayor al actual.
+    }
   }
 
   return (
@@ -55,6 +68,7 @@ export default function Schedule() {
             okLabel="Aceptar"
             invalidDateMessage="Formato de la fecha invalida."
             minDateMessage="No puedes ingresar una fecha menor a la fecha actual."
+            maxDateMessage="No puedes ingresar una fecha muy lejana."
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
@@ -97,6 +111,7 @@ export default function Schedule() {
             id="demo-customized-select-native"
             label="Tipo de tutoría:"
             value={typeTutorial}
+            defaultValue={'tutorial1'}
             onChange={typeTutorialChange}>
             <MenuItem value={'tutorial1'}>Tutoría 1</MenuItem>
             <MenuItem value={'tutorial2'}>Tutoría 2</MenuItem>
