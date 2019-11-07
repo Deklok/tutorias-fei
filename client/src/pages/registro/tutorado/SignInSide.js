@@ -1,4 +1,4 @@
-import React,{memo} from 'react';
+import React,{memo, useEffect} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -156,7 +156,7 @@ const Inicio = memo(props =>  {
               }
             })
             .then((result)=>{
-              console.log(result);
+              sessionStorage.setItem("token", result);
             })
             .catch((err)=>{
               console.log(err);
@@ -211,12 +211,11 @@ const Inicio = memo(props =>  {
               onChange={e=>setPassword(e.target.value)}
             />
             <Button
-
+              type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-
               onClick={() => login()}
             >
               Iniciar Sesion

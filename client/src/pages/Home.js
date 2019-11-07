@@ -69,29 +69,38 @@ const registryBlockStyles = makeStyles(theme => ({
 }));
 
 const Home = memo(props => {
+    const [guard, setGuard] = React.useState(null);
     const classes = useStyles();
-    const registryBlockClasses = registryBlockStyles()
+    const registryBlockClasses = registryBlockStyles();
+
+    React.useEffect(()=>{
+        var guard_aux = sessionStorage.getItem('token');
+        if(guard_aux != null){
+            setGuard(guard_aux);
+        }
+    });
+
     return (
         <div className="App">
             <header className="App-header">
                 <Switch>
                     <Route exact path="/">
-                        <Inicio
+                        {guard == null ? <Inicio
                             classes={classes}
                             path={props.path}
-                        />
+                        /> : <Redirect to={'/tutor'}/>}
                     </Route>
                     <Route path="/pupil">
-                        <DashboardTutorado
+                        {guard != undefined && guard == false ? <DashboardTutorado
                             classes={classes}
                             path={props.path}
-                        />
+                        /> : <Redirect to={'/'}/>}
                     </Route>
                     <Route path="/tutor">
-                        <Dashboard
+                        {guard ? <Dashboard
                             classes={classes}
                             path={props.path}
-                        />
+                        />: <Redirect to={'/pupil'}/>}
                     </Route>
                     <Route exact path="/registro-bloques">
                         <BlockRegistry classes={registryBlockClasses} />
