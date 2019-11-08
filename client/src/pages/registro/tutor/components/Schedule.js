@@ -41,12 +41,15 @@ export default function Schedule() {
           alert("Datos correctos");
         }else{
           //Aqui va un mensaje diciendo que se debe seleccionar un tipo de tutoria
+          alert("Debe seleccionar un tipo de tutoria.");
         }
       }else{
         //Aqui va un mensaje diciendo que la hora de fin no puede ser menor a la hora de inicio 
+        alert("La hora de fin no puede ser menor a la hora de inicio.");
       }
     }else{
       //Aqui va un mensaje diciendo que el año no puede ser mayor al actual.
+      alert("El año no puede ser mayor al año actual"); 
     }
   }
 
