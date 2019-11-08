@@ -12,7 +12,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import axios from 'axios';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
-import Scheduler from './components/Scheduler';
+import Schedule from './components/Scheduler';
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
@@ -66,7 +66,7 @@ const DashboardInicio = memo(props => {
             {/* Scheduler */}
               <Grid item xs={12} md={12} lg={12}>
                <div>
-                  <Scheduler />
+                  <Schedule />
                 </div>
               </Grid>
             </Grid>

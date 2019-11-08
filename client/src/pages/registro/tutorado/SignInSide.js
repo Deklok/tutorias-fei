@@ -12,8 +12,9 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import uv from '../../../Logo-UV2.jpg';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import loginImg from '../../../login.jpg';
+import logoUv from '../../../Logo-UV2.jpg';
+import { Route, Switch } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -28,7 +29,7 @@ function Copyright() {
   );
 }
 
-const imagen = [{'image' : uv}];
+const imagen = [{ 'image': loginImg }];
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,6 +58,74 @@ const useStyles = makeStyles(theme => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  logoUv: {
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '3%',
+    marginBottom: '5%',
+    textAlign: 'center',
+    width: '180px',
+    height: '180px',
+  },
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: '100%',
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeight: {
+    height: 240,
+  },
+  registryBox: {
+    width: "50%",
+    height: "50%",
+    marginRight: 40,
+    marginLeft: 40,
+  },
 }));
 
 export default function SignInSide() {
@@ -68,6 +137,7 @@ export default function SignInSide() {
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
+          <img className={classes.logoUv} src={logoUv} />
           <Typography component="h1" variant="h5">
             Iniciar Sesion
           </Typography>
@@ -101,7 +171,7 @@ export default function SignInSide() {
               variant="contained"
               color="primary"
               className={classes.submit}
-              href = "/dashboardinicio"
+              href="/dashboardinicio"
             >
               Iniciar Sesion
             </Button>
