@@ -5,7 +5,6 @@ const database = require('./server/db/database.js');
 const session = require('express-session');
 const redis = require('redis');
 const RedisStore = require('connect-redis')(session);
-const redisClient = redis.createClient();
 const cors = require('cors');
 const app = express();
 const auth = require('./server/authws/auth.js');
@@ -13,19 +12,29 @@ const webpush = require('./server/webpush/webpush.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
 const sessionStore = new session.MemoryStore();
 
+const dotenv = require('dotenv');
+dotenv.config();
+
+const redisClient = redis.createClient({
+  host: process.env.HOST,
+  port: process.env.REDIS_PORT
+});
+
+const store = new RedisStore({ host: process.env.HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 86400 });
+
+redisClient.on("error", function(err) {
+  console.log("Redis error: " + err);
+});
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: 'someSecretUnknown',
+    secret: process.env.SESSION_SECRET,
     name: '_sessionid',
-    store: new RedisStore({ client: redisClient }),
-    host: 'some-redis',
-    port: 6379,
-    client: redisClient,
-    ttl: 86400,
-    store: sessionStore,
+    store: store,
+    //store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
@@ -38,7 +47,7 @@ app.get('/api/miuv/test', (req,res) => {
 });
 
 app.post('/api/auth', (req,res) => {
-  sessionStore.get(req.body.session, function(error,session) {
+  store.get(req.body.session, function(error,session) {
     if (session != null && session != undefined) {
       res.send(session.role);
     } else {

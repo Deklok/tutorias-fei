@@ -156,6 +156,7 @@ const Inicio = memo(props =>  {
               }
             })
             .then((result)=>{
+              console.log(result);
               sessionStorage.setItem("token", result);
             })
             .catch((err)=>{
@@ -211,7 +212,6 @@ const Inicio = memo(props =>  {
               onChange={e=>setPassword(e.target.value)}
             />
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="primary"
