@@ -61,12 +61,19 @@ app.post('/api/auth', (req,res) => {
 /**
  * Service to return email and career of the student provided
  * Webscraping from MiUV
+ * Response: {"mail":"someEmail", "career":"ingenieria de software"}
  */
 app.post('/api/miuv/student', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
   miuvws.data(user,pass).then(function(response){
     res.send(response);
+    //Look up the database if the student already signup (Probably we should place a button in frontend)
+    if (response.mail) {
+      var studentData = {emailAddress: response.mail, externalId: user};
+      registerEmailToNotificationStudent(studentData);
+      //Here should be another function to save this data(from webscraping) in the DB
+    } 
   });
 });
 
@@ -81,8 +88,10 @@ app.post('/api/miuv/tutor', (req,res) => {
   miuvws.tutor(user,pass)
   .then(function(response){
     res.send(response);
+    //We have to define how to get professor alternative email
   });
 });
+
 /*
 *Service to authenticate the user (student/professor) against UV LDAP server, it does not provide user information or session.
 *NOTE: this service works only in UV network.
@@ -92,21 +101,6 @@ app.post('/api/miuv/tutor', (req,res) => {
 *   200 = Authenticated
 *   404 = Not authenticated (not found/wrong password)
 */
-
-/*****************************************
-*This service will be deleted. Only test purposes
-******************************************/
-app.post('/api/test/email', (req,res) => {
-  var user = [{emailAddress:'ppjavr@yahoo.com', userTags: {'idtutor':'juaperez'}, userLanguage:'es', externalId:'s15011637'},
-  {emailAddress:'ali@cecytev.edu.mx', userTags: {'idtutor':'juaperez'}, userLanguage:'es', externalId:'s15011633'}];
-  console.log(user);
-  console.log(user[0].externalId);
-  emailpush.registerEmails(user).then(function(response){
-    res.send(response);
-  });
-
-});
-
 app.post('/api/user/login', function (request, res){
   var userId = request.body.user;
   var password = request.body.pass;
@@ -163,7 +157,7 @@ app.post('/api/webpush/youarenext', function (req, res){
 });
 /*
 *Service to notify the professor that his student canceled.
-*Param: user = professor external ID (joseperez).
+*Param: user = professor external ID (12345/Personal number).
 *NOTE: It's possible to get a 500 if the professor is only associated to an email account (it try to send a webpush but is a email).
 *However, this doesn't mean email notification didn't work.
 *Responses:
@@ -189,7 +183,7 @@ app.post('/api/webpush/studentcanceled', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day is available.
-*Param: user = professor external ID (joseperez).
+*Param: user = professor external ID (12345/Personal number).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
@@ -213,7 +207,7 @@ app.post('/api/webpush/publishedday', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day was cancel.
-*Param: user = professor external ID (joseperez).
+*Param: user = professor external ID (12345/Personal number).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
