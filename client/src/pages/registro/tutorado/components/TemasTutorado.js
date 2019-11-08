@@ -1,6 +1,8 @@
 /* eslint-disable no-script-url */
 
 import React, {memo} from 'react';
+import './style.css';
+import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -10,6 +12,9 @@ const useStyles = makeStyles({
   depositContext: {
     flex: 1,
   },
+  textArea: {
+    width: '100%',
+  }
 });
 
 function generateTemas(tema) {
@@ -28,9 +33,18 @@ export default function TemasTutorado() {
         Intereses del Tutorado
       </Typography>
       <TextareaAutosize
-        minRows = "4"
-        maxRows = "6"
+        minRows = "3"
+        maxRows = "5"
+        className={classes.textArea}
       />
+      <div>
+        <Button id="cancelBtn" variant="contained" href="/dashboardinicio">Cancelar</Button>
+        <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
+      </div>
     </React.Fragment>
   );
+}
+
+function validate(){
+  alert("Pasa a otra pantalla");
 }

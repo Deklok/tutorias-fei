@@ -53,7 +53,7 @@ const DashboardInicio = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar">
+            <IconButton color="inherit" label="Cerrar" href="/">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>

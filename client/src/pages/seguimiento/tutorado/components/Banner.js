@@ -29,7 +29,7 @@ const Banner = memo(props => {
                   <Typography component="h1" variant="h3" color="inherit" gutterBottom>
                     Primera Tutoría
                   </Typography>
-                  <Typography variant="h5" color="inherit" style={{overflow: "hidden", textOverflow: "ellipsis", height: '11rem', display: 'inline-block'}}>
+                  <Typography variant="h7" color="inherit" style={{overflow: "hidden", textOverflow: "ellipsis", height: '12rem', display: 'inline-block'}}>
                   Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
                   Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
@@ -37,9 +37,6 @@ const Banner = memo(props => {
                   Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
                   </Typography>
-                  <Link variant="subtitle1" href="#agenda">
-                    Continuar leyendo...
-                  </Link>
                 </div>
               </Grid>
             </Grid>
