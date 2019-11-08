@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
 const session = require('express-session');
-//const redis = require('redis');
-//const redisStore = require('connect-redis')(session);
-//const redisClient = redis.createClient();
+const redis = require('redis');
+const RedisStore = require('connect-redis')(session);
+const redisClient = redis.createClient();
 const cors = require('cors');
 const app = express();
 const auth = require('./server/authws/auth.js');
@@ -16,15 +16,21 @@ const sessionStore = new session.MemoryStore();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  secret: 'someSecretUnknown',
-  name: '_sessionid',
-  //store: new redisStore({ redisClient }), // host: '', port: 6666, client: redisClient, ttl: 86400
-  store: sessionStore,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false }
-}));
+app.use(
+  session({
+    secret: 'someSecretUnknown',
+    name: '_sessionid',
+    store: new RedisStore({ client: redisClient }),
+    host: 'some-redis',
+    port: 6379,
+    client: redisClient,
+    ttl: 86400,
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+  })
+);
 
 
 app.get('/api/miuv/test', (req,res) => {
