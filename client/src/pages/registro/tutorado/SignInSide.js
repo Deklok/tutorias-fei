@@ -1,4 +1,5 @@
 import React,{memo, useEffect} from 'react';
+import { withRouter } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -131,6 +132,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Inicio = memo(props =>  {
+
   const classes = useStyles();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -138,8 +140,8 @@ const Inicio = memo(props =>  {
 
   function login(){
     console.log('enviando...');
-    if(!loginState){
-        axios.post('http://localhost:5000/api/user/login',{
+    if(!loginState){ 
+      axios.post('http://localhost:5000/api/user/login',{
           user: username,
           pass: password,
           withCredentials: true,
@@ -168,9 +170,10 @@ const Inicio = memo(props =>  {
         .catch((err)=>{
           console.log(err);
         });
-        setLogin(true);
+       setLogin(true);
     }
     console.log('enviado');
+    
   }
 
   return (
@@ -230,4 +233,4 @@ const Inicio = memo(props =>  {
   );
 });
 
-export default Inicio;
+export default withRouter(Inicio);

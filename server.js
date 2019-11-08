@@ -46,6 +46,16 @@ app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
 });
 
+app.post('/api/test/session', (request,res) => {
+  var userId = request.body.user;
+  if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {
+    request.session.role = false;
+  } else {
+    request.session.role = true;
+  }
+  res.send(request.session.id);
+});
+
 app.post('/api/auth', (req,res) => {
   store.get(req.body.session, function(error,session) {
     if (session != null && session != undefined) {

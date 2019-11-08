@@ -68,6 +68,14 @@ const registryBlockStyles = makeStyles(theme => ({
     },
 }));
 
+const CustomRoute = ({ ...rest}) => (
+    <Route {...rest} render={(props) => (
+        sessionStorage.getItem('token') == true
+        ? <Redirect to='/tutor' />
+        : <Redirect to='/pupil'/>
+    )} />
+)
+
 const Home = memo(props => {
     const [guard, setGuard] = React.useState(null);
     const classes = useStyles();
@@ -88,20 +96,22 @@ const Home = memo(props => {
                         {guard == null ? <Inicio
                             classes={classes}
                             path={props.path}
-                        /> : <Redirect to={'/tutor'}/>}
+                            history={props.history}
+                        /> : <Redirect to={'/protected'}/>}
                     </Route>
-                    <Route path="/pupil">
-                        {guard != undefined && guard == false ? <DashboardTutorado
-                            classes={classes}
-                            path={props.path}
+                    <Route exact path="/tutor">
+                        {guard != null ? <Dashboard
+                        classes={classes}
+                        path={props.path}
                         /> : <Redirect to={'/'}/>}
                     </Route>
-                    <Route path="/tutor">
-                        {guard ? <Dashboard
-                            classes={classes}
-                            path={props.path}
-                        />: <Redirect to={'/pupil'}/>}
+                    <Route exact path="/pupil">
+                        {guard != null ? <DashboardTutorado
+                        classes={classes}
+                        path={props.path}
+                        /> : <Redirect to={'/'}/>}
                     </Route>
+                    <CustomRoute path="/protected"/>
                     <Route exact path="/registro-bloques">
                         <BlockRegistry classes={registryBlockClasses} />
                     </Route>
