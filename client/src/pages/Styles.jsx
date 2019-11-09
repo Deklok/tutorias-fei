@@ -103,7 +103,6 @@ export const useStyles = makeStyles(theme => ({
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
-    maxHeight: 400,
   },
   overlay: {
     position: 'absolute',
@@ -111,7 +110,7 @@ export const useStyles = makeStyles(theme => ({
     bottom: 0,
     right: 0,
     left: 0,
-    backgroundColor: 'rgba(0,0,0,.4)',
+    backgroundColor: 'rgba(0,0,0,.6)',
   },
   mainFeaturedPostContent: {
     position: 'relative',
@@ -120,5 +119,12 @@ export const useStyles = makeStyles(theme => ({
       padding: theme.spacing(6),
       paddingRight: 0,
     },
+  },
+  button: {
+    margin: theme.spacing(1),
+  },
+  details: {
+    display: 'flex',
+    alignItems: 'center',
   },
 }));
