@@ -21,10 +21,14 @@ const redisClient = redis.createClient({
   port: process.env.REDIS_PORT
 });
 
-const store = new RedisStore({ host: process.env.HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 86400 });
+//const store = new RedisStore({ host: process.env.HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 86400 });
 
 redisClient.on("error", function(err) {
-  console.log("Redis error: " + err);
+  console.log("Redis client error: " + err);
+});
+
+store.on("error", function(err) {
+  console.log("Redis storage error: " + err);
 });
 
 app.use(cors());
@@ -34,8 +38,8 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     name: '_sessionid',
+    //store: store,
     store: store,
-    //store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false }
@@ -54,7 +58,9 @@ app.post('/api/test/session', (request,res) => {
   } else {
     request.session.role = true;
   }
-  res.send(request.session.id);
+  var token = request.session.id;
+  console.log(token);
+  res.json(token);
 });
 
 app.post('/api/auth', (req,res) => {
