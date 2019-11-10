@@ -10,6 +10,7 @@ const app = express();
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
+const director = require('./requestDirector.js');
 const sessionStore = new session.MemoryStore();
 
 const dotenv = require('dotenv');
@@ -73,17 +74,15 @@ app.post('/api/auth', (req,res) => {
  * Webscraping from MiUV
  * Response: {"mail":"someEmail", "career":"ingenieria de software"}
  */
-app.post('/api/miuv/student', (req,res) => {
-  var user = req.body["user"];
-  var pass = req.body["pass"];
-  miuvws.data(user,pass).then(function(response){
+ app.post('/api/miuv/student', (request,res) => {
+  var userId = request.body.user;
+  var password = request.body.pass;
+  miuvws.data(userId, password).then(function(response){
     res.send(response);
-    //Look up the database if the student already signup (Probably we should place a button in frontend)
     if (response.mail) {
-      var studentData = {emailAddress: response.mail, externalId: user};
-      registerEmailToNotificationStudent(studentData);
-      //Here should be another function to save this data(from webscraping) in the DB
-    } 
+      response.studentId = userId;
+      director.setupStudentData(response);
+    }
   });
 });
 
@@ -92,7 +91,7 @@ app.post('/api/miuv/student', (req,res) => {
  * including its studentID and name from each student
  * Webscraping from MiUV
  */
-app.post('/api/miuv/tutor', (req,res) => {
+ app.post('/api/miuv/tutor', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
   miuvws.tutor(user,pass)
@@ -116,7 +115,7 @@ app.post('/api/user/login', function (request, res){
   var password = request.body.pass;
   if (userId && password) {
    auth.authentication(userId, password)
-    .then(function (response) {
+   .then(function (response) {
     if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {
       request.session.role = false;
     } else {
@@ -124,10 +123,10 @@ app.post('/api/user/login', function (request, res){
     }
     console.log(request.session.id);
     res.status(response).send(request.session.id);
-   });
-  } else {
-    res.sendStatus(400);
-  }
+  });
+ } else {
+  res.sendStatus(400);
+}
 });
 /*
 *Service to notify the student that his tutoring has been canceled.

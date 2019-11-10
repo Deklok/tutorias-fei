@@ -1,3 +1,6 @@
+
+
+
 function publishedDay (professorId) {
 	var promise = new Promise(function (resolve,reject) {
 		var message = { 
@@ -7,7 +10,7 @@ function publishedDay (professorId) {
 		  		{"field": "tag", "key": "idtutor", "relation": "=", "value": professorId} //In case it's possible to set tag idtutor for each student in frontend
 			]
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "push"));
 	});
 	return promise;
 }
@@ -22,7 +25,7 @@ function publishedDayEmail (professorId) {
 		  		{"field": "tag", "key": "idtutor", "relation": "=", "value": professorId} //In case it's possible to set tag idtutor for each student in frontend
 			]
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "email"));
 	});
 	return promise;
 }
@@ -35,7 +38,7 @@ function canceledDay (professorId) {
 		  		{"field": "tag", "key": "idtutor", "relation": "=", "value": professorId} //In case it's possible to set tag idtutor for each student in frontend
 			]
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "push"));
 	});
 	return promise;
 }
@@ -48,7 +51,7 @@ function studentCanceled (professorId) {
 			template_id: "081b2dcd-e51a-4ceb-a1b4-3d18382b6381",
 			include_external_user_ids: externalId, //It will try send an email if external ID is related only to email 
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "push"));
 	});
 	return promise;
 }
@@ -62,7 +65,7 @@ function studentCanceledEmail (professorId) {
 			email_subject: "Sesión cancelada",
 			include_external_user_ids: externalId,
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "email"));
 	});
 	return promise;
 }
@@ -75,7 +78,7 @@ function youAreNext (studentId) {
 			template_id: "ee3f3751-9265-4f2a-9ab7-d1d0a51262a3",
 			include_external_user_ids: externalId,
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "push"));
 	});
 	return promise;
 }
@@ -88,20 +91,21 @@ function youWereCanceled (studentId) {
 			template_id: "2b880d79-d439-494b-85af-4a93c250a223",
 			include_external_user_ids: externalId,
 		};
-		resolve(sendNotification(message));
+		resolve(sendNotification(message, "push"));
 	});
 	return promise;	
 }
 
-function sendNotification(message) {
+function sendNotification(message, notificationType) {
 	const https = require('https');
+
+	message.channel_for_external_user_ids = notificationType;
 	var promise = new Promise(function (resolve,reject) {
 		var code = 500;
 		var headers = {
 			"Content-Type": "application/json; charset=utf-8",
-			"Authorization": "Basic YWJiNzVjMWEtYjQ0Yy00NWUxLTkxOTItM2QwOGM0OTcyMzIx"
+			"Authorization": "Basic " + process.env.NOTIFICATION_KEY
 		};
-
 		var options = {
 			host: "onesignal.com",
 			port: 443,
@@ -109,22 +113,25 @@ function sendNotification(message) {
 			method: "POST",
 			headers: headers
 		};
-		var req = https.request(options, function(res) {  
-			res.on('data', function(message) {
-				console.log("Response:");
-				console.log(JSON.parse(message));
-				if (message.includes("id")) {
-					code = 200;
-				}
-				resolve(code);
+		try{
+			var req = https.request(options, function(res) {  
+				res.on('data', function(message) {
+					console.log("Response:");
+					console.log(JSON.parse(message));
+					if (!message.includes("errors")) {
+						code = 200;
+					}
+					resolve(code);
+				});
 			});
-		});
-
-		req.on('error', function(e) {
+			req.on('error', function(e) {
 			console.log("ERROR:");
 			console.log(e);
 		});
-
+		} catch (err) {
+			console.log(err);
+			return code;
+		}
 		req.write(JSON.stringify(message));
 		req.end();
 	});

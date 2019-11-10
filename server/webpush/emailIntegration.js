@@ -3,7 +3,7 @@ const dataBase = require("../db/database.js");
 
 const VARS = {
   ONESIGNAL_APP_ID: '464e45cf-4e76-47c5-bcf8-4811dbbb1204',
-  ONESIGNAL_APP_REST_API_KEY: 'Basic YWJiNzVjMWEtYjQ0Yy00NWUxLTkxOTItM2QwOGM0OTcyMzIx'
+  ONESIGNAL_APP_REST_API_KEY: process.env.NOTIFICATION_KEY
 };
 
 /*
@@ -12,17 +12,14 @@ const VARS = {
 * var dataToPushRecord = [{emailAddress:'student@email.com', externalId:'s16012345'},];
 */
 async function registerEmailToNotificationStudent (emailToPushRecord) {
-    dataBase.getTutorIdFromPupil(emailToPushRecord.externalId)
-    .then(async function(response){
-      emailToPushRecord.userTags.idTutor = response;
-      emailToPushRecord.userLanguage = 'es';
-      console.table(emailToPushRecord);
-      //Final structure {emailAddress:'student@email.com', externalId:'s16012345', userTags: {'idtutor':'id'}, userLanguage:'es'}
-      const { success, emailRecordId } = await createEmailRecord(emailToPushRecord);
-      if (success) {
-        console.log(`Email record for ${emailToPushRecord.emailAddress} now has record ID ${emailRecordId}.`)
-      }
-    });
+
+  emailToPushRecord.userLanguage = 'es';
+  console.table(emailToPushRecord);
+  //Final structure {emailAddress:'student@email.com', externalId:'s16012345', userTags: {'idtutor':'id'}, userLanguage:'es'}
+  const { success, emailRecordId } = await createEmailRecord(emailToPushRecord);
+  if (success) {
+    console.log(`Email record for ${emailToPushRecord.emailAddress} now has record ID ${emailRecordId}.`)
+  }
 }
 
 /*
@@ -51,7 +48,7 @@ async function createEmailRecord(emailToPushRecord) {
             external_user_id: externalId,
           })
         }
-      );
+        );
       emailRecordId = (await response.json())["id"];
     }
 
