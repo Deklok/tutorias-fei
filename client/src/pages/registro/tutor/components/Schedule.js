@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import Dialog from '@material-ui/core/Dialog';
 import FormControl from '@material-ui/core/FormControl';
+import AccessTime from "@material-ui/icons/AccessTime";
 
 import es from 'date-fns/locale/es';
 import { MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
@@ -14,10 +15,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 export default function Schedule() {
   const [typeTutorial, setTypeTutorial] = React.useState('tutorial1');
   const [date, setDate] = React.useState(new Date());
-  const [startTime, setStartTime] = React.useState("2019-01-01T07:00:00");
-  const [endTime, setEndTime] = React.useState("2019-01-01T08:00:00");
+  const [startTime, setStartTime] = React.useState(new Date("2019-01-01T07:00:00"));
+  const [endTime, setEndTime] = React.useState(new Date("2019-01-01T08:00:00"));
 
-  const typeTutorialChange = event =>{
+  const typeTutorialChange = event => {
     setTypeTutorial(event.target.value);
   };
 
@@ -25,31 +26,46 @@ export default function Schedule() {
     setDate(date);
   };
 
-  const startTimeChange = time =>{
+  const startTimeChange = time => {
     setStartTime(time);
   };
 
-  const endTimeChange = time =>{
+  const endTimeChange = time => {
     setEndTime(time);
   };
 
   const validate = () => {
     var dateActual = new Date();
-    if(date.getFullYear() == dateActual.getFullYear()){
-      if(endTime > startTime){
-        if(typeTutorial != ""){
-          alert("Datos correctos");
-        }else{
-          //Aqui va un mensaje diciendo que se debe seleccionar un tipo de tutoria
-          alert("Debe seleccionar un tipo de tutoria.");
+    if (date == "" || startTime == "" || endTime == "") {
+      if (date.getFullYear() == dateActual.getFullYear()) {
+        if (endTime > startTime) {
+          if (typeTutorial != "") {
+            if (startTime.getHours() >= 7) {
+              if (endTime.getHours() < 22) {
+
+              } else {
+                //Aqui va un mensaje diciendo que la hora de fin debe ser menor a las 22:00 hrs.
+                alert("La hora de fin debe ser menor a las 22:00 hrs.");
+              }
+            } else {
+              //Aqui va un mensaje diciendo que la hora de inicio debe ser mayor a las 7:00 hrs.
+              alert("La hora de inicio debe ser mayor a las 7:00 hrs.");
+            }
+          } else {
+            //Aqui va un mensaje diciendo que se debe seleccionar un tipo de tutoria.
+            alert("Se debe seleccionar un tipo de tutoria.");
+          }
+        } else {
+          //Aqui va un mensaje diciendo que la hora de fin no puede ser menor a la hora de inicio.
+          alert("La hora de fin no puede ser menor a la hora de inicio.");
         }
-      }else{
-        //Aqui va un mensaje diciendo que la hora de fin no puede ser menor a la hora de inicio 
-        alert("La hora de fin no puede ser menor a la hora de inicio.");
+      } else {
+        //Aqui va un mensaje diciendo que el año no puede ser mayor al actual.
+        alert("El año no puede ser mayor al año actual");
       }
-    }else{
-      //Aqui va un mensaje diciendo que el año no puede ser mayor al actual.
-      alert("El año no puede ser mayor al año actual"); 
+    } else {
+      //Aqui va un mensaje diciendo que no puede haber valores nulos.
+      alert("No puede haber valores nulos");
     }
   }
 
@@ -65,7 +81,6 @@ export default function Schedule() {
             label="Fecha de tutoría (dd/mm/aaaa):"
             autoOk="true"
             disablePast="false"
-            value={date}
             onChange={event => dateChange(event)}
             cancelLabel="Cancelar"
             okLabel="Aceptar"
@@ -83,6 +98,7 @@ export default function Schedule() {
             label="Hora de inicio (24hrs):"
             cancelLabel="Cancelar"
             okLabel="Aceptar"
+            keyboardIcon={<AccessTime />}
             ampm={false}
             value={startTime}
             onChange={event => startTimeChange(event)}
@@ -98,6 +114,7 @@ export default function Schedule() {
               label="Hora de Fin (24hrs):"
               cancelLabel="Cancelar"
               okLabel="Aceptar"
+              keyboardIcon={<AccessTime />}
               ampm={false}
               value={endTime}
               onChange={event => endTimeChange(event)}
@@ -128,4 +145,3 @@ export default function Schedule() {
     </Dialog>
   );
 }
-
