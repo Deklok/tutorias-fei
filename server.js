@@ -87,7 +87,7 @@ app.post('/api/auth', (req,res) => {
     res.send(response);
     if (response.mail) {
       response.studentId = userId;
-      director.setupStudentData(response);
+      director.setupStudentData(response); //WORKING
     }
   });
 });
@@ -103,6 +103,7 @@ app.post('/api/auth', (req,res) => {
   miuvws.tutor(user,pass)
   .then(function(response){
     res.send(response);
+    director.setupTutorData(response);
     //We have to define how to get professor alternative email
   });
 });
@@ -135,6 +136,20 @@ app.post('/api/user/login', function (request, res){
 }
 });
 /*
+*Service to signup professor to email notifications.
+*NOTE: ONLY FOR PROFESSOR
+*Response:
+*   400 = Parameters needed
+*   500 = Service not available
+*   200 = Suscribed
+*/
+app.post('/api/notify/email/signup', function (request, res){
+  var tutorId = request.body.user;
+  var email = request.body.email;
+ 
+  //TODO
+});
+/*
 *Service to notify the student that his tutoring has been canceled.
 *Param: user = extenal student ID (s16012345).
 *Responses:
@@ -142,7 +157,7 @@ app.post('/api/user/login', function (request, res){
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
-app.post('/api/webpush/youwerecanceled', function (req, res){
+app.post('/api/notify/student/youwerecanceled', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.youWereCanceled(userId).then(function(response){
@@ -160,7 +175,7 @@ app.post('/api/webpush/youwerecanceled', function (req, res){
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
-app.post('/api/webpush/youarenext', function (req, res){
+app.post('/api/notify/student/youarenext', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.youAreNext(userId).then(function(response){
@@ -180,7 +195,7 @@ app.post('/api/webpush/youarenext', function (req, res){
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
-app.post('/api/webpush/studentcanceled', function (req, res){
+app.post('/api/notify/tutor/studentcanceled', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.studentCanceledEmail(userId).then(function(responseEmail){
@@ -204,7 +219,7 @@ app.post('/api/webpush/studentcanceled', function (req, res){
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
-app.post('/api/webpush/publishedday', function (req, res){
+app.post('/api/notify/student/publishedday', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.publishedDay(userId).then(function(response){
@@ -228,7 +243,7 @@ app.post('/api/webpush/publishedday', function (req, res){
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
-app.post('/api/webpush/canceledday', function (req, res){
+app.post('/api/notify/student/canceledday', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.canceledDay(userId).then(function(response){
