@@ -1,0 +1,24 @@
+version: '3'
+services:
+  frontend:
+    build: client/.
+    ports:
+      - '3000:3000'
+    command: npm start
+    links:
+      - backend
+
+  backend:
+    build: server/.
+    env_file:
+      - tutorias.env
+    ports:
+    - '5000:5000'
+    command: npm run server
+    links:
+      - redis
+
+  redis:
+    image: redis
+    ports:
+    - '6379:6379'

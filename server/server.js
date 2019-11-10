@@ -1,15 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const miuvws = require('./server/miuvws/miuv.js');
-const database = require('./server/db/database.js');
+const miuvws = require('./miuvws/miuv.js');
+const database = require('./db/database.js');
 const session = require('express-session');
 const redis = require('redis');
 const RedisStore = require('connect-redis')(session);
 const cors = require('cors');
 const app = express();
-const auth = require('./server/authws/auth.js');
-const webpush = require('./server/webpush/webpush.js');
-const emailpush = require('./server/webpush/emailIntegration.js');
+const auth = require('./authws/auth.js');
+const webpush = require('./webpush/webpush.js');
+const emailpush = require('./webpush/emailIntegration.js');
 const sessionStore = new session.MemoryStore();
 
 const dotenv = require('dotenv');
