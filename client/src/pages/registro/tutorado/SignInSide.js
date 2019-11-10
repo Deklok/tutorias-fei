@@ -1,5 +1,5 @@
 import React,{memo, useEffect} from 'react';
-import { withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -136,12 +136,15 @@ const Inicio = memo(props =>  {
   const classes = useStyles();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [loginState, setLogin] = React.useState(false);
+  //const [loginState, setLogin] = React.useState(false);
+  var token = sessionStorage.getItem("token");
+  var content;
 
   function login(){
     console.log('enviando...');
-    if(!loginState){ 
-      axios.post('http://localhost:5000/api/user/login',{
+    if(token == undefined){ 
+      // http://localhost:5000/api/user/login
+      axios.post('http://localhost:5000/api/test/session',{
           user: username,
           pass: password,
           withCredentials: true,
@@ -149,7 +152,6 @@ const Inicio = memo(props =>  {
         .then((result)=>{
           if(result){
             console.log(result);
-            var sessiontoken = result.data;
             axios({
               method: 'post',
               url: 'http://localhost:5000/api/auth',
@@ -160,6 +162,7 @@ const Inicio = memo(props =>  {
             .then((result)=>{
               console.log(result);
               sessionStorage.setItem("token", result);
+              window.location.reload();
             })
             .catch((err)=>{
               console.log(err);
@@ -170,13 +173,14 @@ const Inicio = memo(props =>  {
         .catch((err)=>{
           console.log(err);
         });
-       setLogin(true);
     }
     console.log('enviado');
-    
   }
 
-  return (
+  if (token != undefined) {
+    content = <Redirect to="/" />;
+  } else {
+    content = 
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -214,23 +218,29 @@ const Inicio = memo(props =>  {
               value = {password}
               onChange={e=>setPassword(e.target.value)}
             />
-            <Button
+             <Button
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
               onClick={() => login()}
-            >
+              >
               Iniciar Sesion
-            </Button>
+             </Button>
             <Box mt={5}>
               <Copyright />
             </Box>
           </form>
         </div>
       </Grid>
-    </Grid>
+    </Grid>;
+  }
+
+  return (
+    <div>
+      { content }
+    </div>
   );
 });
 
-export default withRouter(Inicio);
+export default Inicio;

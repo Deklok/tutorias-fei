@@ -4,7 +4,7 @@ const pool = require('./config.js');
 
 function getDataTutor(tutorId){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT * FROM Tutor WHERE personnelNum = ?',[tutorId],(err, results) => {
+		pool.query('SELECT * FROM Tutor WHERE idTutor = ?',[tutorId],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -15,7 +15,7 @@ function getDataTutor(tutorId){
 }
 function getTutorIdFromPupil(pupilId){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT personnelNum FROM Pupil WHERE studentId = ?',[pupilId],(err, results) => {
+		pool.query('SELECT idTutor FROM Pupil WHERE idPupil = ?',[pupilId],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
