@@ -9,26 +9,30 @@ const VARS = {
 /*
 * Function to register email, idTutor, and externaliId in Onesignal service. This will provide email notification.
 * Note: This should be one time execution.
-* var dataToPushRecord = [{emailAddress:'student@email.com', externalId:'s16012345'},];
+* var emailToPushRecord = [{emailAddress:'student@email.com', externalId:'s16012345', userTags: {'idtutor':'id'}]
 */
-async function registerEmailToNotificationStudent (emailToPushRecord) {
-
+async function registerEmailToNotification (emailToPushRecord) {
+  var code = 500;
   emailToPushRecord.userLanguage = 'es';
-  console.table(emailToPushRecord);
   //Final structure {emailAddress:'student@email.com', externalId:'s16012345', userTags: {'idtutor':'id'}, userLanguage:'es'}
-  const { success, emailRecordId } = await createEmailRecord(emailToPushRecord);
+  if (emailToPushRecord.idtutor) {
+    var { success, emailRecordId } = await createEmailRecordStudent(emailToPushRecord, true);
+  } else {
+    var { success, emailRecordId } = await createEmailRecordProfessor(emailToPushRecord, false);
+  }
   if (success) {
     console.log(`Email record for ${emailToPushRecord.emailAddress} now has record ID ${emailRecordId}.`)
+    code = 200;
   }
+  return code;
 }
 
 /*
 * Worker function to connect to Onesignal system and register users
 */
-async function createEmailRecord(emailToPushRecord) {
+async function createEmailRecordStudent(emailToPushRecord) {
   const { emailAddress, externalId, userTags, userLanguage } = emailToPushRecord;
   let emailRecordId;
-
   try {
     /* Create an email record */
     {
@@ -51,7 +55,44 @@ async function createEmailRecord(emailToPushRecord) {
         );
       emailRecordId = (await response.json())["id"];
     }
-
+    if (emailRecordId) {
+      return {
+        success: true,
+        emailRecordId: emailRecordId,
+      };
+    }
+  } catch (e) {
+    console.error(`Error while creating email record for ${emailToPushRecord.emailAddress}:`, e);
+    return {
+      success: false,
+      emailRecordId: emailRecordId,
+    };
+  }
+}
+async function createEmailRecordProfessor(emailToPushRecord) {
+  const { emailAddress, externalId, userLanguage } = emailToPushRecord;
+  let emailRecordId;
+  try {
+    /* Create an email record */
+    {
+      const response = await fetch(
+        "https://onesignal.com/api/v1/players",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            app_id: VARS.ONESIGNAL_APP_ID,
+            device_type: 11,
+            identifier: emailAddress,
+            language: userLanguage,
+            external_user_id: externalId,
+          })
+        }
+        );
+      emailRecordId = (await response.json())["id"];
+    }
     if (emailRecordId) {
       return {
         success: true,
@@ -67,6 +108,6 @@ async function createEmailRecord(emailToPushRecord) {
   }
 }
 module.exports = {
-  registerEmailToNotificationStudent: registerEmailToNotificationStudent,
+  registerEmailToNotification: registerEmailToNotification,
 }
 

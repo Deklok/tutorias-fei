@@ -48,9 +48,20 @@ function getAllSessions(idTutorship){
 		});
 	});
 }
-function saveSuscribedOn(studentId){
+function saveStudentSuscribedOn(studentId){
 	return new Promise((resolve, reject) => {
 		pool.query('UPDATE Pupil SET isEmailSuscribed = 1 WHERE studentId = ?',[studentId],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+function saveTutorSuscribedOn(personnelNum){
+	return new Promise((resolve, reject) => {
+		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE personnelNum = ?',[personnelNum],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -81,24 +92,13 @@ function getIdCareer(careerName){
 		});
 	});
 }
-function isEmailSuscribed(studentId){
-	return new Promise((resolve, reject) => {
-		pool.query('SELECT isEmailSuscribed FROM Pupil WHERE studentId = ?',[studentId],(err, results) => {
-			if(err){
-				return reject(err);
-			}else{
-				return resolve(results[0].isEmailSuscribed);
-			}
-		});
-	});
-}
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
 	getAllSessions: getAllSessions,
 	getTutorIdFromPupil: getTutorIdFromPupil,
-	saveSuscribedOn: saveSuscribedOn,
+	saveStudentSuscribedOn: saveStudentSuscribedOn,
 	updateStudentData: updateStudentData,
 	getIdCareer: getIdCareer,
-	isEmailSuscribed: isEmailSuscribed,
+	saveTutorSuscribedOn: saveTutorSuscribedOn,
 }

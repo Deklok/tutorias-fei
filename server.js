@@ -87,7 +87,7 @@ app.post('/api/auth', (req,res) => {
     res.send(response);
     if (response.mail) {
       response.studentId = userId;
-      director.setupStudentData(response); //WORKING
+      director.setupStudentData(response);
     }
   });
 });
@@ -103,8 +103,7 @@ app.post('/api/auth', (req,res) => {
   miuvws.tutor(user,pass)
   .then(function(response){
     res.send(response);
-    director.setupTutorData(response);
-    //We have to define how to get professor alternative email
+    //director.setupTutorData(response); //Working
   });
 });
 
@@ -138,16 +137,26 @@ app.post('/api/user/login', function (request, res){
 /*
 *Service to signup professor to email notifications.
 *NOTE: ONLY FOR PROFESSOR
+*Param: user = extenal professor ID (12345), email = email@host.com
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available
 *   200 = Suscribed
 */
-app.post('/api/notify/email/signup', function (request, res){
+app.post('/api/notify/email/signup',async function (request, res){
   var tutorId = request.body.user;
   var email = request.body.email;
- 
-  //TODO
+  if (tutorId && email) {
+    var emailToPushRecord = {emailAddress: email, 
+              externalId: tutorId};
+    var code = await emailpush.registerEmailToNotification(emailToPushRecord);
+    res.sendStatus(code);
+    if (code == 200) {
+      database.saveTutorSuscribedOn(tutorId);
+    }
+  } else {
+    res.sendStatus(400);
+  }
 });
 /*
 *Service to notify the student that his tutoring has been canceled.
