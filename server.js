@@ -195,7 +195,7 @@ app.post('/api/notify/student/youarenext', function (req, res){
   }
 });
 /*
-*Service to notify the professor that his student canceled.
+*Service to notify the professor by email and push that his student canceled.
 *Param: user = professor external ID (12345/Personal number).
 *NOTE: It's possible to get a 500 if the professor is only associated to an email account (it try to send a webpush but is a email).
 *However, this doesn't mean email notification didn't work.
@@ -221,7 +221,7 @@ app.post('/api/notify/tutor/studentcanceled', function (req, res){
   }
 });
 /*
-*Service to notify all the students related to this professor that tutoring day is available.
+*Service to notify all the students by email and push related to this professor that tutoring day is available.
 *Param: user = professor external ID (12345/Personal number).
 *Responses:
 *   400: Param expected
@@ -262,14 +262,20 @@ app.post('/api/notify/student/canceledday', function (req, res){
     res.sendStatus(400);
   }
 });
-
+/*
+*Service to retrieve tutor data by personnelNum.
+*Response: [{personnelNum, name, contact, isEmailSuscribed}]
+*/
 app.post('/api/db/tutorData', (req,res) => {
   var personnelNum = req.body["personnelNum"];
   database.getDataTutor(personnelNum).then(function(response){
     res.send(response);
   });
 });
-
+/*
+*Service to retrieve pupil/student data by studentId.
+*Response: [[{studentID, name, email, careerName, idTutor}],{BD info}]
+*/
 app.post('/api/db/pupilData', (req,res) => {
   var studentId = req.body["studentId"];
   database.getDataPupil(studentId).then(function(response){
@@ -277,7 +283,10 @@ app.post('/api/db/pupilData', (req,res) => {
   });
 });
 
-
+/*
+*Service to retrieve all session data by idTutorship.
+*Response: [[{studentID, name, email, start, end}...N],{BD info}]
+*/
 app.post('/api/db/sessions', (req,res) => {
   var idTutorship = req.body["idTutorship"];
   database.getAllSessions(idTutorship).then(function(response){
