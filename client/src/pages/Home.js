@@ -31,7 +31,8 @@ const registryBlockStyles = makeStyles(theme => ({
         display: 'none',
     },
     title: {
-        flexGrow: 1,
+        margin: theme.spacing(2),
+        marginTop: 10,
     },
     appBarSpacer: theme.mixins.toolbar,
     content: {
@@ -53,19 +54,49 @@ const registryBlockStyles = makeStyles(theme => ({
         height: 240,
     },
     registryBox: {
-        margin: 20,
+        marginTop: 30,
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        width: '60%',
+    },
+    blockList: {
+        marginTop: 30,
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        width: '60%',
+        ['@media (max-width:767px)']:{
+            marginLeft: 15,
+            width: '40%',
+        }
+    },
+    blockCell: {
+        ['@media (max-width: 767px)']:{
+            width: '20%',
+            margin: 0,
+            padding: 5,
+        }
     },
     root: {
         padding: theme.spacing(3, 2),
     },
     button: {
         margin: theme.spacing(1),
-        width: "80%",
+        width: "95%",
     },
-    textField: {
+    careerField: {
         marginLeft: theme.spacing(1),
         marginRight: theme.spacing(1),
+        width: '95%',
     },
+    timeField: {
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
+        width: '46.5%',
+        ['@media (max-width:780px)']: {
+            width: '95%',
+        },
+    },
+    
 }));
 
 const Home = memo(props => {
