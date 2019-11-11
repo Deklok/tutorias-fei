@@ -10,17 +10,19 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker } from 
 import DateFnsUtils from '@date-io/date-fns';
 import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
-
+import axios from 'axios';
+import Input from '@material-ui/core/Input';
 
 export default function Schedule() {
-  const [typeTutorial, setTypeTutorial] = React.useState('tutorial1');
+  const [tutorshipNum, setTutorshipNum] = React.useState('tutorial1');
   const [date, setDate] = React.useState(new Date());
   const [startTime, setStartTime] = React.useState(new Date("2019-01-01T07:00:00"));
   const [endTime, setEndTime] = React.useState(new Date("2019-01-01T08:00:00"));
   const [indications, setIndications] = React.useState('');
+  const [place, setPlace] = React.useState('');
 
-  const typeTutorialChange = event => {
-    setTypeTutorial(event.target.value);
+  const tutorshipNumChange = event => {
+    setTutorshipNum(event.target.value);
   };
 
   const dateChange = date => {
@@ -39,16 +41,27 @@ export default function Schedule() {
     setIndications(event.target.value);
   };
 
+  const placeChange = event => {
+    setPlace(event.target.value);
+  };
+
+  async function saveTutorialship() {
+    return axios.post('http://localhost:5000/setTutorship', {
+      //place
+      //tutorshipNum
+    });
+  }
+
   const validate = () => {
     var dateActual = new Date();
     var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
 
-    if (date != "" && startTime != "" && endTime != "" && indications != "") {
+    if (date != "" && startTime != "" && endTime != "" && indications != "" && place != "") {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (endTime > startTime) {
           if (startTime.getHours() >= 7) {
             if (endTime.getHours() < 22) {
-              if (!regExp.test(indications)) {
+              if (!regExp.test(indications) && !regExp.test(place)) {
                 alert("Exito");
               } else {
                 alert("Hubo un error al redactar las indicaciones.");
@@ -131,14 +144,22 @@ export default function Schedule() {
           <Select
             id="demo-customized-select-native"
             label="Tipo de tutoría:"
-            value={typeTutorial}
-            onChange={typeTutorialChange}>
+            value={tutorshipNum}
+            onChange={tutorshipNumChange}>
             <MenuItem value={'tutorial1'}>Tutoría 1</MenuItem>
             <MenuItem value={'tutorial2'}>Tutoría 2</MenuItem>
             <MenuItem value={'tutorial3'}>Tutoría 3</MenuItem>
             <MenuItem value={'tutorialExtraordinary'}>Tutoría extraordinaria</MenuItem>
           </Select>
         </FormControl>
+        <div>
+          <h3>Lugar:</h3>
+          <Input
+            placeholder="Aula 103"
+            maxLength={30}
+            onChange={event => placeChange(event)}
+          />
+        </div>
         <div>
           <h3>Indicaciones:</h3>
           <TextareaAutosize
