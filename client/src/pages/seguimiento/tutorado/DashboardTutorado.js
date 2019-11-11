@@ -33,8 +33,9 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function cargarDatos() {
+    var user = sessionStorage.getItem("id");
     return axios.post('http://localhost:5000/api/db/pupilData', {
-      studentId: 'S16011721',
+      studentId: user
     });
   }
 

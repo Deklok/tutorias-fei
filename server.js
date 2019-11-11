@@ -11,7 +11,6 @@ const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
 const director = require('./requestDirector.js');
-const sessionStore = new session.MemoryStore();
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -21,6 +20,7 @@ const redisClient = redis.createClient({
   port: process.env.REDIS_PORT
 });
 
+const store = new session.MemoryStore();
 //const store = new RedisStore({ host: process.env.HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 86400 });
 
 redisClient.on("error", function(err) {

@@ -2,29 +2,29 @@ import React,{memo, useEffect} from 'react';
 import { Redirect } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-<<<<<<< HEAD
-import loginImg from '../../../login.jpg';
+import loginImg from '../../login.jpg';
 import logoUv from '../../../Logo-UV2.jpg';
 import { Route, Switch } from 'react-router-dom';
 import BlockRegistry from '../tutor/BlocksRegistry';
 import axios from 'axios';
 
 function Copyright() {
-
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit">
+        Tutorías FEI
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -32,54 +32,102 @@ function Copyright() {
   );
 }
 
+const imagen = [{ 'image': loginImg }];
+
 const useStyles = makeStyles(theme => ({
-  '@global': {
-    body: {
-      backgroundImage: `url(${loginImg})`,
-    },
-  },
   root: {
-    width: '100%',
-    height: '100%',
-    margin: 0,
-    padding: 0,
+    height: '100vh',
   },
-  container: {
-    width: '100%',
-    height: '100%',
+  image: {
+    backgroundImage: `url(${imagen[0].image})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   },
-  paperDiv: {
-    marginTop: theme.spacing(8),
+  paper: {
+    margin: theme.spacing(8, 4),
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
-  paper: {
-    width: '30%',
-    marginTop: 20,
-    marginBottom: 20,
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    ['@media(max-width: 780px)']: {
-      width: '60%',
-    },
-  },
   avatar: {
-    margin: theme.spacing(3),
-    backgroundColor: theme.palette.primary.main,
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(4),
-  },
-  textField: {
-    width: '95%',
-    marginLeft: 10,
-    marginRight: 10,
+    marginTop: theme.spacing(1),
   },
   submit: {
-    margin: theme.spacing(4, 1, 2),
-    width: '95%',
+    margin: theme.spacing(3, 0, 2),
+  },
+  logoUv: {
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '3%',
+    marginBottom: '5%',
+    textAlign: 'center',
+    width: '180px',
+    height: '180px',
+  },
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    width: '100%',
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
+  },
+  title: {
+    flexGrow: 1,
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeight: {
+    height: 240,
+  },
+  registryBox: {
+    width: "50%",
+    height: "50%",
+    marginRight: 40,
+    marginLeft: 40,
   },
 }));
 
@@ -114,6 +162,7 @@ const Inicio = memo(props =>  {
             .then((result)=>{
               console.log(result);
               sessionStorage.setItem("token", result);
+              sessionStorage.setItem("id",username);
               window.location.reload();
             })
             .catch((err)=>{
@@ -140,8 +189,8 @@ const Inicio = memo(props =>  {
         <div className={classes.paper}>
           <img className={classes.logoUv} src={logoUv} />
           <Typography component="h1" variant="h5">
-            Iniciar sesión
-        </Typography>
+            Iniciar Sesion
+          </Typography>
           <form className={classes.form}>
             <TextField
               variant="outlined"
@@ -161,8 +210,7 @@ const Inicio = memo(props =>  {
               margin="normal"
               required
               fullWidth
-              name="password"
-              placeholder="Contraseña"
+              className={classes.textField}
               type="password"
               name="contrasenia"
               label="Contraseña"
@@ -183,13 +231,6 @@ const Inicio = memo(props =>  {
             <Box mt={5}>
               <Copyright />
             </Box>
-=======
-              component="a"
-              href="/registro-bloques"
-            >
-              Iniciar sesión
-          </Button>
->>>>>>> registro-tutor
           </form>
         </div>
       </Grid>
