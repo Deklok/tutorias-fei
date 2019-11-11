@@ -15,6 +15,12 @@ class AddBox extends Component {
 
         const selectedInfo = this.props.editingBlock;
 
+        this.state = {
+            career: selectedInfo.careerId,
+            startTime: selectedInfo.start,
+            endTime: selectedInfo.end
+        }
+
         return (
             <div>
                 <Paper className={this.props.classes.registryBox}>
@@ -25,7 +31,7 @@ class AddBox extends Component {
                         id="outlined-textarea"
                         label="Carrera del bloque"
                         placeholder="Carrera"
-                        value={selectedInfo.career}
+                        value={this.state.career}
                         multiline
                         margin="normal"
                         variant="outlined"
