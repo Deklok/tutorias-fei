@@ -43,7 +43,7 @@ export default function Schedule() {
     var dateActual = new Date();
     var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
 
-    if (date != "" || startTime != "" || endTime != "" || indications != "") {
+    if (date != "" && startTime != "" && endTime != "" && indications != "") {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (endTime > startTime) {
           if (startTime.getHours() >= 7) {
@@ -54,23 +54,18 @@ export default function Schedule() {
                 alert("Hubo un error al redactar las indicaciones.");
               }
             } else {
-              //Aqui va un mensaje diciendo que la hora de fin debe ser menor a las 22:00 hrs.
               alert("La hora de fin debe ser menor a las 22:00 hrs.");
             }
           } else {
-            //Aqui va un mensaje diciendo que la hora de inicio debe ser mayor a las 7:00 hrs.
             alert("La hora de inicio debe ser mayor a las 7:00 hrs.");
           }
         } else {
-          //Aqui va un mensaje diciendo que la hora de fin no puede ser menor a la hora de inicio.
           alert("La hora de fin no puede ser menor a la hora de inicio.");
         }
       } else {
-        //Aqui va un mensaje diciendo que el año no puede ser mayor al actual.
         alert("El año no puede ser mayor al año actual");
       }
     } else {
-      //Aqui va un mensaje diciendo que no puede haber valores nulos.
       alert("No puede haber valores nulos");
     }
   }
