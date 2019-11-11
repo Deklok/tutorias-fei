@@ -4,6 +4,8 @@ const path = require('path');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
 const cors = require('cors');
+const dataimport = require('./server/dataimport/dataimport');
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -159,6 +161,18 @@ app.post('/api/db/sessions', (req,res) => {
   database.getAllSessions(idTutorship).then(function(response){
     res.json(response);
   });
+});
+
+/**
+ * Service to trigger tutor's data import
+ *
+ */
+app.post('/api/dataimport/tutor', (req,res) => {
+  let user = req.body["user"];
+  let pass = req.body["pass"];
+  dataimport.importTutor(user, pass).then(function (response) {
+    res.send(response);
+  })
 });
 
 

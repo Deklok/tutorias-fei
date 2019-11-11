@@ -38,8 +38,21 @@ function getAllSessions(idTutorship){
 	});
 }
 
+function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData) {
+	return new Promise((resolve, reject) => {
+		pool.query('call sp_tutor_data_import(?,?,?)',[tutorPersonnelNum, tutorName, pupilsData],(err,results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
-	getAllSessions: getAllSessions
-}
+	getAllSessions: getAllSessions,
+	tutorDataImport: tutorDataImport
+};
