@@ -8,10 +8,14 @@ import AccessTime from "@material-ui/icons/AccessTime";
 import es from 'date-fns/locale/es';
 import { MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+<<<<<<< HEAD
 import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
 import axios from 'axios';
 import Input from '@material-ui/core/Input';
+=======
+
+>>>>>>> registro-tutor
 
 export default function Schedule() {
   const [tutorshipNum, setTutorshipNum] = React.useState('tutorial1');
@@ -86,8 +90,13 @@ export default function Schedule() {
   return (
     <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open="true">
       <div className="dialog">
+<<<<<<< HEAD
         <h3>Calendarizar tutoria:</h3>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
+=======
+        <h1>Calendarizar tutoria</h1>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+>>>>>>> registro-tutor
           <KeyboardDatePicker
             margin="normal"
             format="dd/MM/yyyy"
@@ -105,12 +114,21 @@ export default function Schedule() {
               'aria-label': 'change date',
             }}
           />
+<<<<<<< HEAD
           <h3>Horario general de la tutoría:</h3>
           <KeyboardTimePicker
             margin="normal"
             id="time-picker"
             label="Hora de inicio (24hrs):"
             cancelLabel="Cancelar"
+=======
+          <h2>Horario general de la tutoría</h2>
+          <KeyboardTimePicker
+            margin="normal"
+            id="time-picker"
+            label="Hora de inicio:"
+            cancelLabel="Cancelar" vve
+>>>>>>> registro-tutor
             okLabel="Aceptar"
             keyboardIcon={<AccessTime />}
             ampm={false}
@@ -125,6 +143,7 @@ export default function Schedule() {
             <KeyboardTimePicker
               margin="normal"
               id="time-picker"
+<<<<<<< HEAD
               label="Hora de Fin (24hrs):"
               cancelLabel="Cancelar"
               okLabel="Aceptar"
@@ -132,6 +151,14 @@ export default function Schedule() {
               ampm={false}
               value={endTime}
               onChange={event => endTimeChange(event)}
+=======
+              label="Hola de Fin:"
+              cancelLabel="Cancelar"
+              okLabel="Aceptar"
+              ampm={false}
+              value={selectedDate}
+              onChange={handleDateChange}
+>>>>>>> registro-tutor
               invalidDateMessage="Formato de hora invalida."
               KeyboardButtonProps={{
                 'aria-label': 'change time',

@@ -12,7 +12,11 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import axios from 'axios';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
+<<<<<<< HEAD
 import Schedule from './components/Scheduler';
+=======
+import Scheduler from './components/Scheduler';
+>>>>>>> registro-tutor
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
@@ -53,7 +57,11 @@ const DashboardInicio = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
+<<<<<<< HEAD
             <IconButton color="inherit" label="Cerrar" href="/">
+=======
+            <IconButton color="inherit" label="Cerrar">
+>>>>>>> registro-tutor
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
