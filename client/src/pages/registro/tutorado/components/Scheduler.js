@@ -8,6 +8,7 @@ import {Inject, ScheduleComponent, Day,
     Week, WorkWeek, Month, Agenda, 
     EventSettingsModel, ViewDirective, ViewsDirective} from '@syncfusion/ej2-react-schedule';
 import {appointments} from './data';
+import axios from 'axios';
 import {
     Scheduler,
     DayView,
@@ -21,6 +22,32 @@ class Schedule extends React.Component {
     this.state = {
       data: appointments
     };
+
+    /*function createBlocks(title, startDay, endDay, id, location){
+      return { title, startDay, endDay, id, location };
+    }
+
+    var auxHoraInicio = 9;
+    var auxCount = 0;
+
+    const appointments = [];
+
+    for(var i = 0; i < ((19 - 9)*4); i++){
+      if (auxCount == 0){
+        appointments.push(createBlocks("tutoría "+i,new Date(2019, 5, 25, auxHoraInicio, 0),new Date(2019, 5, 25, auxHoraInicio, 15),i,"Cubículo 30"));
+        auxCount++;
+      }else if(auxCount == 1){
+        appointments.push(createBlocks("tutoría "+i,new Date(2019, 5, 25, auxHoraInicio, 15),new Date(2019, 5, 25, auxHoraInicio, 30),i,"Cubículo 30"));
+        auxCount++;
+      }else if(auxCount == 2){
+        appointments.push(createBlocks("tutoría "+i,new Date(2019, 5, 25, auxHoraInicio, 30),new Date(2019, 5, 25, auxHoraInicio, 45),i,"Cubículo 30"));
+        auxCount++;
+      }else{
+        auxHoraInicio++;
+        appointments.push(createBlocks("tutoría "+i,new Date(2019, 5, 25, (auxHoraInicio-1), 45),new Date(2019, 5, 25, auxHoraInicio, 0),i,"Cubículo 30"));
+        auxCount = 0;
+      }
+    }*/
   }
 
   /*componentDidMount(){

@@ -1,9 +1,7 @@
 /* eslint-disable no-script-url */
 
 import React, {memo} from 'react';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import Title from '../../../seguimiento/components/Title';
 
 const useStyles = makeStyles({
@@ -24,7 +22,6 @@ const temas = [
 ];
 
 const Agenda = memo(props =>{
-  const classes = useStyles();
   return (
     <React.Fragment>
       <Title>Agenda</Title>
