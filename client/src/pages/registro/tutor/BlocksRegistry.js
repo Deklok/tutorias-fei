@@ -18,12 +18,18 @@ export default class BlocksRegistry extends Component {
     blocks: [
       {
         blockId: 1,
-        careerId: "Ingeniería de software",
+        careerId: "Ingeniería de Software",
         start: "07:30",
-        end: "07:30"
+        end: "08:30"
       }
     ],
-    blockCount: 2
+    blockCount: 2,
+    editingBlock: {
+      blockId: 2,
+      careerId: "Ingeniería de Software",
+      start: "07:30",
+      end: "07:30"
+    }
   };
 
   render() {
@@ -48,15 +54,18 @@ export default class BlocksRegistry extends Component {
             <Button color="inherit" component="a" href="/tutor">Continuar</Button>
           </Toolbar>
         </AppBar>
-        <Schedule />
         <div>
-          <AddBox className={classes.registryBox}
-            classes={classes}
-            addBlock={this.addBlock}>
+          <AddBox blocks={this.state.blocks}
+                  editingBlock={this.state.editingBlock}
+                  classes={classes}
+                  addBlock={this.addBlock}>
           </AddBox>
         </div>
-        <div>
-          <BlockList blocks={this.state.blocks} />
+        <div className={classes.blockList}>
+          <BlockList classes={classes}
+                      blocks={this.state.blocks}
+                      editBlock={this.editBlock}
+                      deleteBlock={this.editBlock}/>
         </div>
       </div>
     );
@@ -75,5 +84,25 @@ export default class BlocksRegistry extends Component {
 
     actualBlocks.push(block)
     this.setState({blocks: actualBlocks, blockCount: count});
+  }
+
+  editBlock = (blockId) => {
+    const blocks = this.state.blocks;
+    blocks.forEach(block => {
+      if(blocks.blockId == blockId){
+        this.setState({editingBlock: block});
+      }
+    });
+  }
+
+  deleteBlock = (blockId) => {
+    const blocks = this.state.blocks;
+    var newBlocks = [];
+    blocks.forEach(block => {
+      if(blocks.blockId != blockId){
+        newBlocks.push(block);
+      }
+    });
+    this.setState({blocks: newBlocks});
   }
 }

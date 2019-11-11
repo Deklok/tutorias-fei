@@ -64,7 +64,7 @@ const DashboardFin = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar">
+            <IconButton color="inherit" label="Cerrar" href="/">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
@@ -76,7 +76,7 @@ const DashboardFin = memo(props => {
           <Banner classes={classes} />
           <Grid container spacing={3}>
             {/* Agenda */}
-            <Grid item xs={12} sm={8} lg={8} id="agenda">
+            <Grid item xs={12} sm={8} lg={7} id="horario">
               <Typography variant="h6" gutterBottom>
                 Agenda
 		            </Typography>
@@ -84,7 +84,7 @@ const DashboardFin = memo(props => {
               <Horario className={classes.markdown} />
             </Grid>
             {/* Temas Tutorado */}
-            <Grid item xs={12} sm={4} lg={4}>
+            <Grid item xs={12} sm={4} lg={5}>
               <Paper elevation={0} className={classes.sidebarAboutBox}>
                 <TemasTutorado />
               </Paper>

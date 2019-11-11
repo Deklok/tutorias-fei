@@ -6,43 +6,49 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import { Select } from '@material-ui/core';
 
 
 class AddBox extends Component {
 
-    state = {
-        career: "Ingeniería de software",
-        startTime: "07:30",
-        endTime: "07:30"
-    }
-
     render() {
+
+        const selectedInfo = this.props.editingBlock;
+
+        this.state = {
+            career: selectedInfo.careerId,
+            startTime: selectedInfo.start,
+            endTime: selectedInfo.end
+        }
 
         return (
             <div>
                 <Paper className={this.props.classes.registryBox}>
-                    <Typography variant="h5" component="h3" className={this.props.classes.title}>
+                    <Typography variant="h5" component="h3" gutterBottom className={this.props.classes.title}>
                         Añadir bloque.
                 </Typography>
-                    <TextField
+                    <Select
                         id="outlined-textarea"
                         label="Carrera del bloque"
                         placeholder="Carrera"
+                        value={this.state.career}
                         multiline
                         margin="normal"
                         variant="outlined"
-                        className={this.props.classes.textField}
-                        defaultValue={this.state.career}
-                        onChange={event => this.onCareerChange(event)}
-                    />
+                        className={this.props.classes.careerField}
+                        onChange={event => this.onCareerChange2(event)}>
+                        <option value="Ingeniería de Software">Ingeniería de Software</option>
+                        <option value="Redes">Redes</option>
+                        <option value="Tecnologías Computacionales">Tecnologías Computacionales</option>
+                    </Select>
                     <TextField
                         id="outlined-textarea"
                         label="Inicio"
                         type="time"
                         margin="normal"
                         variant="outlined"
-                        className={this.props.classes.textField}
-                        defaultValue={this.state.startTime}
+                        className={this.props.classes.timeField}
+                        value={this.state.startTime}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -57,8 +63,8 @@ class AddBox extends Component {
                         type="time"
                         margin="normal"
                         variant="outlined"
-                        className={this.props.classes.textField}
-                        defaultValue={this.state.endTime}
+                        className={this.props.classes.timeField}
+                        value={this.state.endTime}
                         InputLabelProps={{
                             shrink: true,
                         }}
@@ -78,33 +84,57 @@ class AddBox extends Component {
         );
     }
 
-    onCareerChange(e) {
-        this.setState({ career: e.target.value });
+    onCareerChange2(e) {
+        this.setState({ career: e.target.value })
     }
 
     onStartTimeChange(e) {
-        this.setState({ startTime: e.target.value });
+        const value = e.target.value;
+        const endTime = this.state.endTime;
+        if (value > endTime) {
+            this.setState({ endTime: value })
+            this.setState({ startTime: value });
+        } else if (value === "") {
+            e.target.value = this.state.startTime;
+        } else {
+            this.setState({ startTime: value });
+        }
     }
 
     onEndTimeChange(e) {
         const endTime = e.target.value;
         const startTime = this.state.startTime;
-        if(endTime < startTime){
-            e.target.helperText = <FormHelperText>La hora de fin no debe ser menor a la de inicio</FormHelperText>;
+        if (endTime < startTime) {
+            alert("La hora de fin no debe ser menor a la de inicio");
             e.target.value = startTime;
-        }else{
+        } else if (endTime === "") {
+            e.target.value = this.state.endTime;
+        } else {
             this.setState({ endTime: endTime });
         }
     }
 
     onSubmit(e) {
         e.preventDefault();
-        this.setState({
-            career: "Ingeniería de software",
-            startTime: "07:30",
-            endTime: "07:30"
+        var isRegistered = false;
+        const blocks = this.props.blocks;
+        blocks.forEach(block => {
+            if (block.careerId === this.state.career) {
+                isRegistered = true;
+            }
         });
-        this.props.addBlock(this.state.career, this.state.startTime, this.state.endTime);
+
+        if (isRegistered) {
+            alert("El bloque de la carrera seleccionada ya ha sido registrado, " +
+                "para editarlo, seleccione el ícono de edición para editarlo.")
+        } else {
+            this.setState({
+                career: "Ingeniería de Software",
+                startTime: "07:30",
+                endTime: "07:30"
+            });
+            this.props.addBlock(this.state.career, this.state.startTime, this.state.endTime);
+        }
     }
 }
 

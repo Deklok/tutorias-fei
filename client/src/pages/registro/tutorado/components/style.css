@@ -1,0 +1,23 @@
+
+
+#cancelBtn{
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    width: 100%;
+    align-content: center;
+    background-color: grey;
+    color: white;
+  }
+  
+  #acceptBtn{
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    width: 100%;
+    align-content: center;
+    background-color: green;
+    color: white;
+  }
