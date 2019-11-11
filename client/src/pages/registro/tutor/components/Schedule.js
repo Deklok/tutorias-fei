@@ -5,11 +5,11 @@ import Select from '@material-ui/core/Select';
 import Dialog from '@material-ui/core/Dialog';
 import FormControl from '@material-ui/core/FormControl';
 import AccessTime from "@material-ui/icons/AccessTime";
-
 import es from 'date-fns/locale/es';
 import { MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import MenuItem from '@material-ui/core/MenuItem';
+import { TextareaAutosize } from '@material-ui/core';
 
 
 export default function Schedule() {
@@ -17,6 +17,7 @@ export default function Schedule() {
   const [date, setDate] = React.useState(new Date());
   const [startTime, setStartTime] = React.useState(new Date("2019-01-01T07:00:00"));
   const [endTime, setEndTime] = React.useState(new Date("2019-01-01T08:00:00"));
+  const [indications, setIndications] = React.useState('');
 
   const typeTutorialChange = event => {
     setTypeTutorial(event.target.value);
@@ -34,26 +35,31 @@ export default function Schedule() {
     setEndTime(time);
   };
 
+  const indicationsChange = event => {
+    setIndications(event.target.value);
+  };
+
   const validate = () => {
     var dateActual = new Date();
-    if (date == "" || startTime == "" || endTime == "") {
+    var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
+
+    if (date != "" || startTime != "" || endTime != "" || indications != "") {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (endTime > startTime) {
-          if (typeTutorial != "") {
-            if (startTime.getHours() >= 7) {
-              if (endTime.getHours() < 22) {
-
+          if (startTime.getHours() >= 7) {
+            if (endTime.getHours() < 22) {
+              if (!regExp.test(indications)) {
+                alert("Exito");
               } else {
-                //Aqui va un mensaje diciendo que la hora de fin debe ser menor a las 22:00 hrs.
-                alert("La hora de fin debe ser menor a las 22:00 hrs.");
+                alert("Hubo un error al redactar las indicaciones.");
               }
             } else {
-              //Aqui va un mensaje diciendo que la hora de inicio debe ser mayor a las 7:00 hrs.
-              alert("La hora de inicio debe ser mayor a las 7:00 hrs.");
+              //Aqui va un mensaje diciendo que la hora de fin debe ser menor a las 22:00 hrs.
+              alert("La hora de fin debe ser menor a las 22:00 hrs.");
             }
           } else {
-            //Aqui va un mensaje diciendo que se debe seleccionar un tipo de tutoria.
-            alert("Se debe seleccionar un tipo de tutoria.");
+            //Aqui va un mensaje diciendo que la hora de inicio debe ser mayor a las 7:00 hrs.
+            alert("La hora de inicio debe ser mayor a las 7:00 hrs.");
           }
         } else {
           //Aqui va un mensaje diciendo que la hora de fin no puede ser menor a la hora de inicio.
@@ -72,7 +78,7 @@ export default function Schedule() {
   return (
     <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open="true">
       <div className="dialog">
-        <h1>Calendarizar tutoria</h1>
+        <h3>Calendarizar tutoria:</h3>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
           <KeyboardDatePicker
             margin="normal"
@@ -91,7 +97,7 @@ export default function Schedule() {
               'aria-label': 'change date',
             }}
           />
-          <h2>Horario general de la tutoría</h2>
+          <h3>Horario general de la tutoría:</h3>
           <KeyboardTimePicker
             margin="normal"
             id="time-picker"
@@ -138,6 +144,15 @@ export default function Schedule() {
             <MenuItem value={'tutorialExtraordinary'}>Tutoría extraordinaria</MenuItem>
           </Select>
         </FormControl>
+        <div>
+          <h3>Indicaciones:</h3>
+          <TextareaAutosize
+            rows={4}
+            rowsMax={10}
+            cols={25}
+            maxLength={600}
+            onChange={event => indicationsChange(event)} />
+        </div>
         <div>
           <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
         </div>
