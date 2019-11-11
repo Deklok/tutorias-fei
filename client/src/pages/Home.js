@@ -1,24 +1,23 @@
-import React, {memo, Component } from 'react';
+import React, { memo, Component } from 'react';
 import Inicio from './registro/tutorado/SignInSide';
 import Dashboard from './seguimiento/tutor/Dashboard';
-import DashboardInicio from './registro/tutorado/DashboardInicio';
-import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado';
-import DashboardFin from './registro/tutorado/DashboardFin';
-import {useStyles} from './Styles';
+import Dashboard2 from './seguimiento/tutorado/DashboardTutorado';
+import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado'
+import { useStyles } from './Styles';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import BlockRegistry from './registro/tutor/BlocksRegistry';
 
-const Home = memo(props=>{
-	const classes = useStyles();
+const Home = memo(props => {
+    const classes = useStyles();
     return (
         <div className="App">
             <header className="App-header">
                 <Switch>
                     <Route exact path="/">
-                        <Inicio 
+                        <Inicio
                             classes={classes}
                             path={props.path}
                         />
-                        <Redirect to="/" />
                     </Route>
                     <Route path="/tutorado">
                         <DashboardTutorado
@@ -32,18 +31,11 @@ const Home = memo(props=>{
                             path={props.path}
                         />
                     </Route>
-                    <Route exact path="/dashboardinicio">
-                        <DashboardInicio 
-                            classes={classes}
-                            path={props.path}
-                        />
-                    </Route>
-                    <Route exact path="/dashboardfin">
-                        <DashboardFin 
-                            classes={classes}
-                            path={props.path}
-                        />
-                    </Route>
+                    <Switch>
+                        <Route exact path="/registro-bloques">
+                            <BlockRegistry classes={classes} />
+                        </Route>
+                    </Switch>
                 </Switch>
             </header>
         </div>
