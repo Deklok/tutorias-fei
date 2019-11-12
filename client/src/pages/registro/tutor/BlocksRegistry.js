@@ -37,6 +37,7 @@ export default class BlocksRegistry extends Component {
 
     return (
       <div>
+        <Schedule />
         <AppBar position="static" className={clsx(classes.appBar, classes.appBarShift)}>
           <Toolbar className={classes.toolbar}>
             <IconButton
@@ -69,6 +70,10 @@ export default class BlocksRegistry extends Component {
         </div>
       </div>
     );
+  }
+
+  closeSchedule = (e) => {
+
   }
 
   addBlock = (career, startTime, endTime) => {
