@@ -14,6 +14,7 @@ import axios from 'axios';
 import Input from '@material-ui/core/Input';
 
 export default function Schedule() {
+  const [open, setOpen] = React.useState(true);
   const [tutorshipNum, setTutorshipNum] = React.useState('tutorial1');
   const [date, setDate] = React.useState(new Date());
   const [startTime, setStartTime] = React.useState(new Date("2019-01-01T07:00:00"));
@@ -63,6 +64,7 @@ export default function Schedule() {
             if (endTime.getHours() < 22) {
               if (!regExp.test(indications) && !regExp.test(place)) {
                 alert("Exito");
+                setOpen(false);
               } else {
                 alert("Hubo un error al redactar las indicaciones.");
               }
@@ -84,10 +86,10 @@ export default function Schedule() {
   }
 
   return (
-    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open="true">
+    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={open}>
       <div className="dialog">
-        <h1>Calendarizar tutoria</h1>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <h3>Calendarizar tutoria:</h3>
+        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
           <KeyboardDatePicker
             margin="normal"
             format="dd/MM/yyyy"
@@ -105,12 +107,12 @@ export default function Schedule() {
               'aria-label': 'change date',
             }}
           />
-          <h2>Horario general de la tutoría</h2>
+          <h3>Horario general de la tutoría:</h3>
           <KeyboardTimePicker
             margin="normal"
             id="time-picker"
-            label="Hora de inicio:"
-            cancelLabel="Cancelar" vve
+            label="Hora de inicio (24hrs):"
+            cancelLabel="Cancelar"
             okLabel="Aceptar"
             keyboardIcon={<AccessTime />}
             ampm={false}
@@ -125,7 +127,7 @@ export default function Schedule() {
             <KeyboardTimePicker
               margin="normal"
               id="time-picker"
-              label="Hola de Fin:"
+              label="Hora de Fin (24hrs):"
               cancelLabel="Cancelar"
               okLabel="Aceptar"
               ampm={false}

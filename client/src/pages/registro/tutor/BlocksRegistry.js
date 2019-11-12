@@ -1,7 +1,6 @@
 import React, { Component, useState } from 'react';
 import './blockregistry.css';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -38,6 +37,7 @@ export default class BlocksRegistry extends Component {
 
     return (
       <div>
+        <Schedule />
         <AppBar position="static" className={clsx(classes.appBar, classes.appBarShift)}>
           <Toolbar className={classes.toolbar}>
             <IconButton
@@ -58,17 +58,22 @@ export default class BlocksRegistry extends Component {
           <AddBox blocks={this.state.blocks}
                   editingBlock={this.state.editingBlock}
                   classes={classes}
-                  addBlock={this.addBlock}>
+                  addBlock={this.addBlock}
+                  onChange={this.changeEditingBlock}>
           </AddBox>
         </div>
         <div className={classes.blockList}>
           <BlockList classes={classes}
                       blocks={this.state.blocks}
                       editBlock={this.editBlock}
-                      deleteBlock={this.editBlock}/>
+                      deleteBlock={this.deleteBlock}/>
         </div>
       </div>
     );
+  }
+
+  closeSchedule = (e) => {
+
   }
 
   addBlock = (career, startTime, endTime) => {
@@ -89,7 +94,7 @@ export default class BlocksRegistry extends Component {
   editBlock = (blockId) => {
     const blocks = this.state.blocks;
     blocks.forEach(block => {
-      if(blocks.blockId == blockId){
+      if(block.blockId == blockId){
         this.setState({editingBlock: block});
       }
     });
@@ -99,10 +104,14 @@ export default class BlocksRegistry extends Component {
     const blocks = this.state.blocks;
     var newBlocks = [];
     blocks.forEach(block => {
-      if(blocks.blockId != blockId){
+      if(block.blockId != blockId){
         newBlocks.push(block);
       }
     });
     this.setState({blocks: newBlocks});
+  }
+
+  changeEditingBlock = (block) => {
+    this.setState({editingBlock: block})
   }
 }

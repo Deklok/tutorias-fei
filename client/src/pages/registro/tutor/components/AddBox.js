@@ -85,32 +85,71 @@ class AddBox extends Component {
     }
 
     onCareerChange2(e) {
-        this.setState({ career: e.target.value })
+        const id = this.props.editingBlock.blockId;
+        const career = e.target.value;
+        const start = this.props.editingBlock.start;
+        const end = this.props.editingBlock.end;
+
+        const block = {
+            blockId: id,
+            careerId: career,
+            start: start,
+            end: end
+        }
+
+        this.props.onChange(block);
     }
 
     onStartTimeChange(e) {
+        const id = this.props.editingBlock.blockId;
+        const career = this.props.editingBlock.career;
         const value = e.target.value;
-        const endTime = this.state.endTime;
+        const endTime = this.props.editingBlock.end;
+
+        
         if (value > endTime) {
-            this.setState({ endTime: value })
-            this.setState({ startTime: value });
+            const block = {
+                blockId: id,
+                careerId: career,
+                start: value,
+                end: value
+            }
+    
+            this.props.onChange(block);
         } else if (value === "") {
             e.target.value = this.state.startTime;
         } else {
-            this.setState({ startTime: value });
+            const block = {
+                blockId: id,
+                careerId: career,
+                start: value,
+                end: endTime
+            }
+    
+            this.props.onChange(block);
         }
     }
 
     onEndTimeChange(e) {
+        const id = this.props.editingBlock.blockId;
+        const career = this.props.editingBlock.careerId;
+        const startTime = this.props.editingBlock.start;
         const endTime = e.target.value;
-        const startTime = this.state.startTime;
+
         if (endTime < startTime) {
             alert("La hora de fin no debe ser menor a la de inicio");
             e.target.value = startTime;
         } else if (endTime === "") {
             e.target.value = this.state.endTime;
         } else {
-            this.setState({ endTime: endTime });
+            const block = {
+                blockId: id,
+                careerId: career,
+                start: startTime,
+                end: endTime
+            }
+    
+            this.props.onChange(block);
         }
     }
 
