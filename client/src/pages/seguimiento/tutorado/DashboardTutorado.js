@@ -39,24 +39,29 @@ const Dashboard = memo(props => {
     });
   }
 
+  const cerrarSesion = ()=>{
+    sessionStorage.removeItem("token");
+    window.location.reload();
+  }
+
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
   Estimados tutorados
-  
+
   El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios
-  
+
   9:00 am a 11:30 am  Atención a estudiantes de Ingeniería de Software
-  
+
   11:30 am a 14:30 pm Atención a estudiantes de Redes y Servicios de Cómputo
-  
+
   Les recuerdo a los tutorados de nuevo ingreso que traigan lo que es encargué en la primera tutoría. Los temas que vamos a platicar mañana son:
-  
+
   - Resultados de los primeros parciales
   - Comentarios previos a la acreditación de la LIS
   - Detectar problemas académicos que podamos atender a tiempo
   - Asuntos generales.
-  
+
   Cualquier cosa estoy a sus órdenes
-  
+
   Saludos
   `
 
@@ -83,7 +88,7 @@ const Dashboard = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar">
+            <IconButton onClick={cerrarSesion} color="inherit" label="Cerrar">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>

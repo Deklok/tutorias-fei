@@ -24,6 +24,7 @@ import TemasTutorado from '../components/TemasTutorado';
 import Feedback from './components/Feedback';
 import CurrentTutorado from './components/CurrentTutorado';
 import NextTutorado from './components/NextTutorado';
+import BlockRegistry from '../../registro/tutor/BlocksRegistry';
 import axios from 'axios';
 import {
   BrowserRouter as Router,
@@ -158,6 +159,9 @@ Saludos
           <Feedback
           classes={classes}
           />
+        </Route>
+        <Route path="/tutor/registro-bloques">
+            <BlockRegistry classes={props.registryBlockClasses} />
         </Route>
       </Switch>
     </div>

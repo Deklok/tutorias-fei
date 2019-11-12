@@ -31,7 +31,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Reasignar Tutorías" />
     </ListItem>
-    <ListItem button>
+    <ListItem button href="/tutor/registro-bloques">
       <ListItemIcon>
         <UpdateIcon />
       </ListItemIcon>
