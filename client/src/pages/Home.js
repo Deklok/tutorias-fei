@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/styles';
 
 const CustomRoute = ({ ...rest}) => (
     <Route {...rest} render={(props) => (
-        sessionStorage.getItem('token')
+        sessionStorage.getItem('token') == 'true'
         ? <Redirect to='/tutor' />
         : <Redirect to='/tutorado'/>
     )} />
@@ -45,19 +45,30 @@ const Home = memo(props => {
                             history={props.history}
                         /> : <Redirect to={'/protected'}/>}
                     </Route>
-
-                    <Route path = '/tutor'>
-                        { validate() ? <Dashboard
+                    <Route path='/tutor'>
+                        {validate() ? <Dashboard
                         classes={classes}
                         path={props.path}
                         registryBlockClasses={registryBlockClasses}
                         /> : <Redirect to={'/'}/>}
                     </Route>
-                    <Route path="/tutorado">
+                    <Route exact path="/tutorado">
+                        {guard != null ? <DashboardTutorado
+                        classes={classes}
+                        path={props.path}
+                        /> : <Redirect to={'/'}/>}
+                    </Route>
+                    <Route path="/tutorado/dashboard-inicio">
                         {!validate() ?
                              <DashboardInicio classes={classes} />
                              : <Redirect to ={'/'} />
                          }
+                    </Route>
+                    <Route path="/tutorado/dashboard-fin">
+                        {!validate() ?
+                        <DashboardFin classes={classes} />
+                        : <Redirect to={'/'} />
+                    }
                     </Route>
                 </Switch>
             </header>
