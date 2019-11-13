@@ -45,43 +45,19 @@ const Home = memo(props => {
                             history={props.history}
                         /> : <Redirect to={'/protected'}/>}
                     </Route>
-                    <Route exact path='/tutor'>
-                        {guard != null ? <Dashboard
-                        classes={classes}
-                        path={props.path}
-                        registryBlockClasses={registryBlockClasses}
-                        /> : <Redirect to={'/'}/>}
-                    </Route>
-                    <Route exact path="/tutorado">
-                        {guard != null ? <DashboardTutorado
-                        classes={classes}
-                        path={props.path}
-                        /> : <Redirect to={'/'}/>}
-                    </Route>
-                    <Route path = '/tutor/feedback'>
+
+                    <Route path = '/tutor'>
                         { validate() ? <Dashboard
                         classes={classes}
                         path={props.path}
                         registryBlockClasses={registryBlockClasses}
                         /> : <Redirect to={'/'}/>}
                     </Route>
-                    <Route path = '/tutor/registro-bloques'>
-                        {validate() ?
-                            <Dashboard
-                        classes={classes}
-                        path={props.path}
-                        registryBlockClasses={registryBlockClasses} />
-                            : <Redirect to={'/'} />
-                        }
-                    </Route>
-                    <Route path="/tutorado/dashboard-inicio">
+                    <Route path="/tutorado">
                         {!validate() ?
                              <DashboardInicio classes={classes} />
                              : <Redirect to ={'/'} />
                          }
-                    </Route>
-                    <Route path="/tutorado/dashboard-fin">
-                        <DashboardFin classes={classes} />
                     </Route>
                 </Switch>
             </header>
