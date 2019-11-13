@@ -1,4 +1,12 @@
+.dialog {
+  margin-left: 20px;
+  margin-right: 20px;
+}
 
+h3 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
 #cancelBtn{
   margin-right: 10px;

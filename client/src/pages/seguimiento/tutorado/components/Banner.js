@@ -1,17 +1,31 @@
 /* eslint-disable no-script-url */
 
 import React, { memo } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link'
+import notifier from 'simple-react-notifications';
+import 'simple-react-notifications/dist/index.css';
 
 
 const Banner = memo(props => {
     const classes = props.classes;
     const estado = props.estado;
     const [estado_tuto,setEstado] = React.useState(estado);
+    function confirmar() {
+      notifier.success("The number of meetings you have next week:  ", {
+        position: "top-right",
+        autoClose: 3000
+      });
+    };
+    function denegar() {
+      notifier.error("The number of meetings you have next week:  ", {
+        position: "top-right",
+        autoClose: 3000
+      });
+    };
     return (
         <React.Fragment>
             {/* Main featured post */}
@@ -31,25 +45,18 @@ const Banner = memo(props => {
                   <Typography component="h1" variant="h3" color="inherit" gutterBottom>
                     Primera Tutoría
                   </Typography>
-                  <Typography variant="h5" color="inherit" style={{overflow: "hidden", textOverflow: "ellipsis", height: '11rem', display: 'inline-block'}}>
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
-                  Detalles de Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500 ...
+                  <Typography variant="h5" color="inherit">
+                  Estimados tutorados
+  
+                  El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios ...
                   </Typography>
                   <Link variant="subtitle1" href="#agenda">
-                    Continuar leyendo...
+                    Continuar leyendo
                   </Link>
-                  <div>
-                    {!estado_tuto ? <button onClick={() => setEstado(true)}>Confirmar asistencia</button> : null}
-                    <button onClick={() => setEstado(false)}>Cancelar asistencia</button>
+                  <div className={classes.details}>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
+                    <Button variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
                   </div>
-                  {estado_tuto ?
-                    <Typography component="h3" variant="h3" color="inherit" gutterBottom>
-                      Asistencia confirmada!!!!
-                    </Typography> : null}
                 </div>
               </Grid>
             </Grid>

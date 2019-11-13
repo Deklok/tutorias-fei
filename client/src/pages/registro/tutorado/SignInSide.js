@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{memo, useEffect} from 'react';
+import { Redirect } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -16,6 +17,7 @@ import loginImg from '../../login.jpg';
 import logoUv from '../../../Logo-UV2.jpg';
 import { Route, Switch } from 'react-router-dom';
 import BlockRegistry from '../tutor/BlocksRegistry';
+import axios from 'axios';
 
 function Copyright() {
   return (
@@ -129,10 +131,55 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignInSide() {
-  const classes = useStyles();
+const Inicio = memo(props =>  {
 
-  return (
+  const classes = useStyles();
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  //const [loginState, setLogin] = React.useState(false);
+  var token = sessionStorage.getItem("token");
+  var content;
+
+  function login(){
+    console.log('enviando...');
+    if(token == undefined){ 
+      // http://localhost:5000/api/user/login
+      axios.post('http://localhost:5000/api/test/session',{
+          user: username,
+          pass: password,
+          withCredentials: true,
+        })
+        .then((result)=>{
+          if(result){
+            console.log(result);
+            axios({
+              method: 'post',
+              url: 'http://localhost:5000/api/auth',
+              data: {
+                session: result.data
+              }
+            })
+            .then((result)=>{
+              sessionStorage.setItem("token", result.data);
+              window.location.reload();
+            })
+            .catch((err)=>{
+              console.log(err);
+            });
+
+          }
+        })
+        .catch((err)=>{
+          console.log(err);
+        });
+    }
+    console.log('enviado');
+  }
+
+  if (token != undefined) {
+    content = <Redirect to="/" />;
+  } else {
+    content = 
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -152,6 +199,8 @@ export default function SignInSide() {
               label="Matrícula"
               name="matricula"
               autoComplete="matricula"
+              value = {username}
+              onChange={e=>setUsername(e.target.value)}
               autoFocus
             />
             <TextField
@@ -165,23 +214,32 @@ export default function SignInSide() {
               label="Contraseña"
               id="standard-password-input"
               autoComplete="current-password"
+              value = {password}
+              onChange={e=>setPassword(e.target.value)}
             />
-            <Button
-              type="submit"
+             <Button
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              href="/registro-bloques"
-            >
+              onClick={() => login()}
+              >
               Iniciar Sesion
-            </Button>
+             </Button>
             <Box mt={5}>
               <Copyright />
             </Box>
           </form>
         </div>
       </Grid>
-    </Grid>
+    </Grid>;
+  }
+
+  return (
+    <div>
+      { content }
+    </div>
   );
-}
+});
+
+export default Inicio;

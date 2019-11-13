@@ -33,12 +33,37 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function cargarDatos() {
+    var user = sessionStorage.getItem("id");
     return axios.post('http://localhost:5000/api/db/pupilData', {
-      studentId: 'S16011721',
+      studentId: user
     });
   }
 
-  const test = "## Primera Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)\n\nWhy do we use it? **esto está en negritas** It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English...\n\n![image](https://images.unsplash.com/photo-1502759683299-cdcd6974244f?auto=format&fit=crop&w=440&h=220&q=60)"
+  const cerrarSesion = ()=>{
+    sessionStorage.removeItem("token");
+    window.location.reload();
+  }
+
+  const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
+  Estimados tutorados
+
+  El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios
+
+  9:00 am a 11:30 am  Atención a estudiantes de Ingeniería de Software
+
+  11:30 am a 14:30 pm Atención a estudiantes de Redes y Servicios de Cómputo
+
+  Les recuerdo a los tutorados de nuevo ingreso que traigan lo que es encargué en la primera tutoría. Los temas que vamos a platicar mañana son:
+
+  - Resultados de los primeros parciales
+  - Comentarios previos a la acreditación de la LIS
+  - Detectar problemas académicos que podamos atender a tiempo
+  - Asuntos generales.
+
+  Cualquier cosa estoy a sus órdenes
+
+  Saludos
+  `
 
   cargarDatos()
     .then(result => {
@@ -63,7 +88,7 @@ const Dashboard = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar">
+            <IconButton onClick={cerrarSesion} color="inherit" label="Cerrar">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
