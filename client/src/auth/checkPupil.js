@@ -2,23 +2,16 @@ import axios from 'axios';
 
 const checkPupil = () => {
 	return new Promise((resolve, reject)=>{
-		axios.post('http://localhost:5000/api/auth',{
-			withCredentials: true,
-		})
-		.then((result)=>{
-			if(!result){
+		var token = sessionStorage.getItem('token');
+		if(token != undefined){
+			if(token == 'false'){
 				resolve(true);
 			}else{
 				reject(false);
 			}
-		})
-		.catch((err)=>{
-			if(err.status == 404){
-				reject(false);
-			}else{
-				reject(err);
-			}
-		});
+		}else{
+			reject('undefined');
+		}
 	});
 }
 

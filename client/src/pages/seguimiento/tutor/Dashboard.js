@@ -161,7 +161,10 @@ Saludos
           />
         </Route>
         <Route path="/tutor/registro-bloques">
-            <BlockRegistry classes={props.registryBlockClasses} />
+            <BlockRegistry
+                classes={classes}
+                registryBlockClasses={props.registryBlockClasses}
+            />
         </Route>
       </Switch>
     </div>

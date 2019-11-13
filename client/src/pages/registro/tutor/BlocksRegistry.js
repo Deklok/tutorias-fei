@@ -10,6 +10,7 @@ import AddBox from './components/AddBox'
 import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
 import Schedule from './components/Schedule';
+import Container from '@material-ui/core/Container';
 
 export default class BlocksRegistry extends Component {
 
@@ -34,41 +35,29 @@ export default class BlocksRegistry extends Component {
   render() {
 
     const classes = this.props.classes;
+    const registryBlockClasses = this.props.registryBlockClasses;
 
     return (
-      <div>
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <Container maxWidth="lg" className={classes.container}>
         <Schedule />
-        <AppBar position="static" className={clsx(classes.appBar, classes.appBarShift)}>
-          <Toolbar className={classes.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              className={classes.menuButton}
-            >
-              <ArrowBackIosIcon />
-            </IconButton>
-            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Registro de bloques
-                      </Typography>
-            <Button color="inherit" component="a" href="/tutor">Continuar</Button>
-          </Toolbar>
-        </AppBar>
         <div>
           <AddBox blocks={this.state.blocks}
                   editingBlock={this.state.editingBlock}
-                  classes={classes}
+                  classes={registryBlockClasses}
                   addBlock={this.addBlock}
                   onChange={this.changeEditingBlock}>
           </AddBox>
         </div>
-        <div className={classes.blockList}>
-          <BlockList classes={classes}
+        <div className={registryBlockClasses.blockList}>
+          <BlockList classes={registryBlockClasses}
                       blocks={this.state.blocks}
                       editBlock={this.editBlock}
                       deleteBlock={this.deleteBlock}/>
         </div>
-      </div>
+      </Container>
+      </main>
     );
   }
 

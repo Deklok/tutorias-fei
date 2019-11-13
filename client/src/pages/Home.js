@@ -17,6 +17,10 @@ const CustomRoute = ({ ...rest}) => (
     )} />
 )
 
+const validate = ()=>{
+    return sessionStorage.getItem('token') == 'true';
+}
+
 const Home = memo(props => {
     const [guard, setGuard] = React.useState(null);
     const classes = useStyles();
@@ -33,6 +37,7 @@ const Home = memo(props => {
         <div className="App">
             <header className="App-header">
                 <Switch>
+                    <CustomRoute path="/protected"/>
                     <Route exact path="/">
                         {guard == null ? <Inicio
                             classes={classes}
@@ -40,24 +45,42 @@ const Home = memo(props => {
                             history={props.history}
                         /> : <Redirect to={'/protected'}/>}
                     </Route>
-                    <Route path='/tutor'>
+                    <Route exact path='/tutor'>
                         {guard != null ? <Dashboard
                         classes={classes}
                         path={props.path}
                         registryBlockClasses={registryBlockClasses}
                         /> : <Redirect to={'/'}/>}
                     </Route>
-                    <Route path="/tutorado">
+                    <Route exact path="/tutorado">
                         {guard != null ? <DashboardTutorado
                         classes={classes}
                         path={props.path}
                         /> : <Redirect to={'/'}/>}
                     </Route>
-                    <CustomRoute path="/protected"/>
-                    <Route exact path="/dashboard-inicio">
-                        <DashboardInicio classes={classes} />
+                    <Route path = '/tutor/feedback'>
+                        { validate() ? <Dashboard
+                        classes={classes}
+                        path={props.path}
+                        registryBlockClasses={registryBlockClasses}
+                        /> : <Redirect to={'/'}/>}
                     </Route>
-                    <Route exact path="/dashboard-fin">
+                    <Route path = '/tutor/registro-bloques'>
+                        {validate() ?
+                            <Dashboard
+                        classes={classes}
+                        path={props.path}
+                        registryBlockClasses={registryBlockClasses} />
+                            : <Redirect to={'/'} />
+                        }
+                    </Route>
+                    <Route path="/tutorado/dashboard-inicio">
+                        {!validate() ?
+                             <DashboardInicio classes={classes} />
+                             : <Redirect to ={'/'} />
+                         }
+                    </Route>
+                    <Route path="/tutorado/dashboard-fin">
                         <DashboardFin classes={classes} />
                     </Route>
                 </Switch>
