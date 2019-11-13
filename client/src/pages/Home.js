@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/styles';
 
 const CustomRoute = ({ ...rest}) => (
     <Route {...rest} render={(props) => (
-        sessionStorage.getItem('token') === true
+        sessionStorage.getItem('token')
         ? <Redirect to='/tutor' />
         : <Redirect to='/tutorado'/>
     )} />

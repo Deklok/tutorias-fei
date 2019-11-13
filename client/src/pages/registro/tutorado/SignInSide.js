@@ -160,9 +160,7 @@ const Inicio = memo(props =>  {
               }
             })
             .then((result)=>{
-              console.log(result);
-              sessionStorage.setItem("token", result);
-              sessionStorage.setItem("id",username);
+              sessionStorage.setItem("token", result.data);
               window.location.reload();
             })
             .catch((err)=>{
