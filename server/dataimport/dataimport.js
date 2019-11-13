@@ -22,46 +22,13 @@ function importTutor(user, pass) {
         }
     };
 
-    let debug = false;
-    let debugData = {
-        "teacher": {
-            "name": "Schwartz Giles",
-            "personalNum": "Z18062003"
-        },
-        "students": [
-            {
-                "name": "Hughes Wooten",
-                "studentId": "S19076370"
-            },
-            {
-                "name": "Saundra Delaney",
-                "studentId": "S19074253"
-            },
-            {
-                "name": "Roy Conley",
-                "studentId": "S19025800"
-            },
-            {
-                "name": "Tara Moreno",
-                "studentId": "S19083743"
-            },
-            {
-                "name": "Allen Davidson",
-                "studentId": "S19041869"
-            }
-        ]
-    };
-
     return auth.authentication(user, pass) // authenticate tutor
         .then(authResponse => {
-            if (authResponse !== "200" && !debug) {
+            if (authResponse !== "200") {
                 throw new Error("auth");
             }
         })
         .then(() => { // get data from miuv web scraper
-            if (debug) {
-                return debugData;
-            }
             return miuv.tutor(user, pass);
         })
         .then(scraperResponse => {
@@ -76,7 +43,7 @@ function importTutor(user, pass) {
                 encodedPupils += value.studentId + ',' + value.name + '|';
             });
             return database.tutorDataImport(
-                scraperResponse.teacher.personalNum,
+                scraperResponse.teacher.personalNumber,
                 scraperResponse.teacher.name,
                 encodedPupils
             );
