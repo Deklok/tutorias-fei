@@ -21,6 +21,10 @@ import Grid from '@material-ui/core/Grid'
 import Agenda from '../components/Agenda'
 import TemasTutorado from '../components/TemasTutorado'
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../utilities'
+
+const cookies = new Cookies();
 
 const Dashboard = memo(props => {
   const classes = props.classes;
@@ -33,7 +37,7 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function cargarDatos() {
-    var user = sessionStorage.getItem("id");
+    var user = utilities.splitCookie(cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/db/pupilData', {
       studentId: user
     });

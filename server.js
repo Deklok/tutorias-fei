@@ -17,17 +17,20 @@ const director = require('./requestDirector.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
+/*
 const redisClient = redis.createClient({
   host: process.env.HOST,
   port: process.env.REDIS_PORT
 });
+*/
 
 const store = new session.MemoryStore();
 //const store = new RedisStore({ host: process.env.HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 86400 });
 
+/*
 redisClient.on("error", function(err) {
   console.log("Redis client error: " + err);
-});
+});*/
 
 store.on("error", function(err) {
   console.log("Redis storage error: " + err);
