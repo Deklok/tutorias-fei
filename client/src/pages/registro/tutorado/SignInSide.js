@@ -18,6 +18,9 @@ import logoUv from '../../../Logo-UV2.jpg';
 import { Route, Switch } from 'react-router-dom';
 import BlockRegistry from '../tutor/BlocksRegistry';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 function Copyright() {
   return (
@@ -160,7 +163,8 @@ const Inicio = memo(props =>  {
               }
             })
             .then((result)=>{
-              sessionStorage.setItem("token", result.data);
+              //sessionStorage.setItem("token", result.data);
+              cookies.set('token','session=' + result.data + ';id=' + username);
               window.location.reload();
             })
             .catch((err)=>{

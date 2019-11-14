@@ -8,17 +8,34 @@ import { useStyles, registryBlockStyles} from './Styles';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import BlockRegistry from './registro/tutor/BlocksRegistry';
 import { makeStyles } from '@material-ui/styles';
+import Cookies from 'universal-cookie';
+import utilities from '../utilities';
+
+const cookies = new Cookies();
 
 const CustomRoute = ({ ...rest}) => (
     <Route {...rest} render={(props) => (
-        sessionStorage.getItem('token') == 'true'
+        utilities.splitCookie(cookies.get('token')).session == 'true'
         ? <Redirect to='/tutor' />
         : <Redirect to='/tutorado'/>
     )} />
 )
 
-const validate = ()=>{
-    return sessionStorage.getItem('token') == 'true';
+const tutorAccess = (exist)=>{
+    return exist && utilities.splitCookie(cookies.get('token')).session == 'true';
+}
+
+const pupilAccess = (exist)=> {
+    return exist && utilities.splitCookie(cookies.get('token')).session == 'false';
+}
+
+const cookieExist = ()=> {
+    if (cookies.get('token') != undefined) {
+        var cookie = utilities.splitCookie(cookies.get('token'));
+        return true;
+    } else {
+        return false;
+    }
 }
 
 const Home = memo(props => {
@@ -27,7 +44,8 @@ const Home = memo(props => {
     const registryBlockClasses = registryBlockStyles();
 
     React.useEffect(()=>{
-        var guard_aux = sessionStorage.getItem('token');
+        var guard_aux = cookieExist();
+        console.log(guard_aux);
         if(guard_aux != null){
             setGuard(guard_aux);
         }
@@ -39,33 +57,33 @@ const Home = memo(props => {
                 <Switch>
                     <CustomRoute path="/protected"/>
                     <Route exact path="/">
-                        {guard == null ? <Inicio
+                        {!guard ? <Inicio
                             classes={classes}
                             path={props.path}
                             history={props.history}
                         /> : <Redirect to={'/protected'}/>}
                     </Route>
                     <Route path='/tutor'>
-                        {validate() ? <Dashboard
+                        {tutorAccess(guard) ? <Dashboard
                         classes={classes}
                         path={props.path}
                         registryBlockClasses={registryBlockClasses}
                         /> : <Redirect to={'/'}/>}
                     </Route>
                     <Route exact path="/tutorado">
-                        {guard != null ? <DashboardTutorado
+                        {pupilAccess(guard) ? <DashboardTutorado
                         classes={classes}
                         path={props.path}
                         /> : <Redirect to={'/'}/>}
                     </Route>
                     <Route path="/tutorado/dashboard-inicio">
-                        {!validate() ?
+                        {pupilAccess(guard) ?
                              <DashboardInicio classes={classes} />
                              : <Redirect to ={'/'} />
                          }
                     </Route>
                     <Route path="/tutorado/dashboard-fin">
-                        {!validate() ?
+                        {pupilAccess(guard) ?
                         <DashboardFin classes={classes} />
                         : <Redirect to={'/'} />
                     }
