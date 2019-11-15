@@ -22,11 +22,11 @@ const CustomRoute = ({ ...rest}) => (
 )
 
 const tutorAccess = (exist)=>{
-    return exist && utilities.splitCookie(cookies.get('token')).session == 'true';
+    return cookieExist() && utilities.splitCookie(cookies.get('token')).session == 'true';
 }
 
 const pupilAccess = (exist)=> {
-    return exist && utilities.splitCookie(cookies.get('token')).session == 'false';
+    return cookieExist() && utilities.splitCookie(cookies.get('token')).session == 'false';
 }
 
 const cookieExist = ()=> {
@@ -74,7 +74,7 @@ const Home = memo(props => {
                         classes={classes}
                         path={props.path}
                         registryBlockClasses={registryBlockClasses}
-                        /> : <Redirect to={'/'}/>}
+                        /> : <Redirect to={'/tutorado'}/>}
                     </Route>
                     <Route exact path="/tutorado">
                         {pupilAccess(guard) ? <DashboardTutorado
