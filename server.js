@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
+const databaseTest = require('./server/db/SchedulerRegistryDB.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -58,6 +59,46 @@ app.get('*',(req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 */
+
+app.post('/api/db/getBlock', (req, res) => {
+  var idCareer = req.body["idCareer"];
+  var idTutorship = req.body["idTutorship"];
+  database.getBlock(idCareer,idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/getTutorship', (req, res) => {
+  var idTutorship = req.body["idTutorship"];
+  database.getTutorship(idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/reserveSession', (req, res) => {
+  var startTime = req.body["startTime"];
+  var endTime = req.body["endTime"];
+  var idBlock = req.body["idBlock"];
+  var idPupil = req.body["idPupil"];
+  database.reserveSession(startTime,endTime,idBlock,idPupil).then(function (response) {
+    res.status(201).send(`${response.updateId}`);
+  });
+});
+
+app.post('/api/db/addSession', (req, res) => {
+  var idSession = req.body["idSession"];
+  var topics = req.body["topics"];
+  database.addSession(idSession,topics).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/deleteTutorship', (req, res) => {
+  var idTutorship = req.body["idTutorship"];
+  database.deleteTutorship(idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
 
 app.listen(5000);
 console.log('App listening on port 5000');
