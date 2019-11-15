@@ -114,6 +114,18 @@ function deleteTutorship(idTutorship){
     });
 }
 
+function deleteSession(idSession){
+    return new Promise((resolve,reject) => {
+        pool.query('DELETE FROM session WHERE idSession = ?',[idSession],(err,results) => {
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            }
+        });
+    });
+}
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -122,5 +134,6 @@ module.exports = {
     getTutorship: getTutorship,
     reserveSession: reserveSession,
     addSession: addSession,
-    deleteTutorship: deleteTutorship
+    deleteTutorship: deleteTutorship,
+    deleteSession: deleteSession
 }
