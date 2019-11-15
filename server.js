@@ -297,7 +297,90 @@ app.post('/api/db/sessions', (req,res) => {
   });
 });
 
-
+/*
+*Service to check user agreement state.
+*Param: S13011111/ 12345 (?)
+*Response: true/false
+*/
+app.post('/api/db/isagree', (req,res) => {
+  var userId = req.body.userId;
+  if (userId) {
+    var isAgree = false;
+    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
+      database.isPupilPrivacyAgreement(userId).then(function (response) {
+        if (response) {
+          isAgree = true;
+        }        
+        res.send(isAgree);
+      });
+    } else {
+      database.isTutorPrivacyAgreement(userId).then(function (response) {
+        if (response) {
+          isAgree = true;
+        }        
+        res.send(isAgree);
+      });
+    }
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to check user agreement state.
+*Param: S13011111/ 12345 (?)
+*Response: true/false
+*/
+app.post('/api/db/isagree', (req,res) => {
+  var userId = req.body.userId;
+  if (userId) {
+    var isAgree = false;
+    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
+      database.isPupilPrivacyAgreement(userId).then(function (response) {
+        if (response) {
+          isAgree = true;
+        }        
+        res.send(isAgree);
+      });
+    } else {
+      database.isTutorPrivacyAgreement(userId).then(function (response) {
+        if (response) {
+          isAgree = true;
+        }        
+        res.send(isAgree);
+      });
+    }
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to set user privacy agreement date time.
+*Param: S13011111/ 12345 (?)
+*/
+app.post('/api/db/agreement', (req,res) => {
+  var userId = req.body.userId;
+  if (userId) {
+    var code = 200;
+    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
+      database.setPupilPrivacyAgreement(userId).then(function (response) {
+       if (response.toString().includes("error")) {
+          code = 500;
+        }       
+        res.sendStatus(code);
+      });
+    } else {
+      database.setTutorPrivacyAgreement(userId).then(function (response) {
+        console.table(response);
+        if (response.toString().includes("error")) {
+          code = 500;
+        }       
+        res.sendStatus(code);
+      });
+    }
+  } else {
+    res.sendStatus(400);
+  }
+});
 // Use this code when is on production
 /*
 app.use(express.static(path.join(__dirname, 'client/build')));

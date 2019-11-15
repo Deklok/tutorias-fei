@@ -92,6 +92,52 @@ function getIdCareer(careerName){
 		});
 	});
 }
+function isTutorPrivacyAgreement(personnelNum){
+	return new Promise((resolve, reject) => {
+		pool.query('SELECT privacyAgreement FROM Tutor WHERE personnelNum = ?',[personnelNum],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results[0]);
+			}
+		});
+	});
+}
+function isPupilPrivacyAgreement(studentId){
+	return new Promise((resolve, reject) => {
+		pool.query('SELECT privacyAgreement FROM Pupil WHERE studentId = ?',[studentId],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results[0]);
+			}
+		});
+	});
+}
+function setPupilPrivacyAgreement(studentId){
+	var dateTime = new Date(); //This works for the current server timer
+	return new Promise((resolve, reject) => {
+		pool.query('UPDATE Pupil set privacyAgreement = ? WHERE studentId = ?',[dateTime, studentId],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+function setTutorPrivacyAgreement(personnelNum){
+	var dateTime = new Date(); //This works for the current server timer
+	return new Promise((resolve, reject) => {
+		pool.query('UPDATE Tutor set privacyAgreement = ? WHERE personnelNum = ?',[dateTime, personnelNum],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -101,4 +147,8 @@ module.exports = {
 	updateStudentData: updateStudentData,
 	getIdCareer: getIdCareer,
 	saveTutorSuscribedOn: saveTutorSuscribedOn,
+	isTutorPrivacyAgreement: isTutorPrivacyAgreement,
+	isPupilPrivacyAgreement: isTutorPrivacyAgreement,
+	setPupilPrivacyAgreement: setPupilPrivacyAgreement,
+	setTutorPrivacyAgreement: setTutorPrivacyAgreement,
 }
