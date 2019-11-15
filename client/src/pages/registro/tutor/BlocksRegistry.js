@@ -1,7 +1,6 @@
 import React, { Component, useState } from 'react';
 import './blockregistry.css';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +9,6 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import AddBox from './components/AddBox'
 import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
-import Schedule from './components/Schedule';
 
 export default class BlocksRegistry extends Component {
 

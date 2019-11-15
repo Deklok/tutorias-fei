@@ -1,5 +1,5 @@
 import React, { memo, Component } from 'react';
-import Inicio from './registro/tutorado/SignInSide';
+import Inicio from './registro/tutorado/LogIn';
 import Dashboard from './seguimiento/tutor/Dashboard';
 import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado';
 import DashboardInicio from './registro/tutorado/DashboardInicio';

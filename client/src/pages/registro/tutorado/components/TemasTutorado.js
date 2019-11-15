@@ -39,8 +39,8 @@ export default function TemasTutorado() {
         className={classes.textArea}
       />
       <div>
-        <Button id="cancelBtn" variant="contained" href="/dashboardinicio">Cancelar</Button>
-        <Button id="acceptBtn" variant="contained" onClick={validate}>Agendar</Button>
+        <Button id="returnBtn" variant="contained" href="/dashboard-inicio">Cancelar</Button>
+        <Button id="agendBtn" variant="contained" onClick={validate}>Agendar</Button>
       </div>
     </React.Fragment>
   );
@@ -50,9 +50,11 @@ function validate(){
   var tema = document.getElementById("tema").value;
   var validador = /^[A-Za-zÀ-ú0-9 \n _]*[A-Za-zÀ-ú0-9][A-Za-zÀ-ú0-9 \n _]*$/;
   
-  if(!tema.match(validador)){
-    alert("Estás usando caracteres inválidos, revisa tus datos");
-  }else{
-    alert("Todo bien, pasa a la siguiente pantalla");
+  if (tema.trim().length != 0){
+    if(!tema.match(validador)){
+      alert("Estás usando caracteres inválidos, revisa tus datos");
+    }else{
+      alert("Todo bien, pasa a la siguiente pantalla");
+    }
   }
 }
