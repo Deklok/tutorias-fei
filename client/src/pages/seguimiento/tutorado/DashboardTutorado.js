@@ -22,11 +22,12 @@ import Agenda from '../components/Agenda'
 import TemasTutorado from '../components/TemasTutorado'
 import axios from 'axios';
 import Cookies from 'universal-cookie';
-import utilities from '../../../utilities'
+import utilities from '../../../utilities';
+import {Redirect} from "react-router-dom";
 
 const cookies = new Cookies();
 
-const Dashboard = memo(props => {
+const DashboardTutorado = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(true);
   const [matricula, setMatricula] = React.useState('');
@@ -41,11 +42,6 @@ const Dashboard = memo(props => {
     return axios.post('http://localhost:5000/api/db/pupilData', {
       studentId: user
     });
-  }
-
-  const cerrarSesion = ()=>{
-    sessionStorage.removeItem("token");
-    window.location.reload();
   }
 
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
@@ -92,7 +88,7 @@ const Dashboard = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton onClick={cerrarSesion} color="inherit" label="Cerrar">
+            <IconButton href="/logout" color="inherit" label="Cerrar">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
@@ -126,4 +122,4 @@ const Dashboard = memo(props => {
   );
 });
 
-export default Dashboard;
+export default DashboardTutorado;

@@ -55,7 +55,7 @@ export const mainListItems = (
 export const secondaryListItems = (
   <div>
     <ListSubheader inset>Cuenta</ListSubheader>
-    <ListItem button>
+    <ListItem button component="a" href="/logout">
       <ListItemIcon>
         <ExitToAppIcon />
       </ListItemIcon>

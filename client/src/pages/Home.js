@@ -51,13 +51,18 @@ const Home = memo(props => {
         }
     });
 
+    const Logout = () =>{
+        setGuard(null);
+        window.location.reload();
+    }
+
     return (
         <div className="App">
             <header className="App-header">
                 <Switch>
                     <CustomRoute path="/protected"/>
                     <Route exact path="/">
-                        {!guard ? <Inicio
+                        {guard !=null ? <Inicio
                             classes={classes}
                             path={props.path}
                             history={props.history}
@@ -87,6 +92,9 @@ const Home = memo(props => {
                         <DashboardFin classes={classes} />
                         : <Redirect to={'/'} />
                     }
+                    </Route>
+                    <Route exact path = "/logout">
+                        {guard !=null ? <Logout /> : <Redirect to={'/'} />}
                     </Route>
                 </Switch>
             </header>
