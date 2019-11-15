@@ -81,7 +81,7 @@ app.post('/api/db/reserveSession', (req, res) => {
   var idBlock = req.body["idBlock"];
   var idPupil = req.body["idPupil"];
   database.reserveSession(startTime,endTime,idBlock,idPupil).then(function (response) {
-    res.status(201).send(`${response.updateId}`);
+    res.status(201).send(`${response.insertId}`);
   });
 });
 
@@ -96,6 +96,13 @@ app.post('/api/db/addSession', (req, res) => {
 app.post('/api/db/deleteTutorship', (req, res) => {
   var idTutorship = req.body["idTutorship"];
   database.deleteTutorship(idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/deleteSession', (req, res) => {
+  var idSession = req.body["idSession"];
+  database.deleteSession(idSession).then(function (response) {
     res.json(response);
   });
 });
