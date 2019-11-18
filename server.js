@@ -2,10 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
+const schedule = require('./server/db/ScheduleDB');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 
 app.get('/api/miuv/test', (req,res) =>{
   res.send(miuvws.test());
@@ -45,6 +52,49 @@ app.post('/api/db/pupilData', (req,res) => {
 app.post('/api/db/sessions', (req,res) => {
   var idTutorship = req.body["idTutorship"];
   database.getAllSessions(idTutorship).then(function(response){
+    res.json(response);
+  });
+});
+
+app.post('/api/db/addTutorship', (req, res) => {
+  const place = req.body["place"];
+  const tutorshipNum = req.body["tutorshipNum"];
+  const period = req.body["period"];
+  const indications = req.body["indications"];
+  const date = req.body["date"];
+  const idTutor = req.body["idTutor"];
+  schedule.addTutorship(place, tutorshipNum, period, indications, date, idTutor).then(function(response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/addBlock', (req, res) => {
+  const idCareer = req.body["idCareer"];
+  const start = req.body["start"];
+  const end = req.body["end"];
+  const idTutorship = req.body["idTutorship"];
+  schedule.addBlock(idCareer, start, end, idTutorship).then(function(response) {
+    res.json(response)
+  });
+});
+
+app.post('/api/db/lastTutorship', (req, res) => {
+  const idTutor = req.body["idTutor"];
+  schedule.getLastTutorshipID(idTutor).then(function(response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/blocks', (req, res) => {
+  const idTutorship = req.body["idTutorship"];
+  schedule.getBlocks(idTutorship).then(function(response){
+    res.json(response);
+  });
+});
+
+app.post('/api/db/getPupils', (req, res) => {
+  const idTutor = req.body["idTutor"];
+  schedule.getAllPupilByTutor(idTutor).then(function(response){
     res.json(response);
   });
 });

@@ -14,7 +14,7 @@ import Input from '@material-ui/core/Input';
 import { Stats } from 'fs';
 const cors = require('cors');
 
-export default function Schedule() {
+export default function Schedule(props) {
   const [tutorshipNum, setTutorshipNum] = React.useState(1);
   const [date, setDate] = React.useState(new Date());
   const [indications, setIndications] = React.useState('');
@@ -65,7 +65,7 @@ export default function Schedule() {
   function saveTutorialship() {
     var month = date.getMonth() + 1;
     //var id = utilities.splitCookie(cookies.get('token')).id;
-    return axios.post('http://localhost:5000/addTutorship', {
+    return axios.post('http://localhost:5000/api/db/addTutorship', {
       place: place,
       tutorshipNum: tutorshipNum,
       period: period,
@@ -78,7 +78,7 @@ export default function Schedule() {
   function saveBlock(){
     var start = startDate.getHours()+":"+startDate.getMinutes()+":"+startDate.getMilliseconds();
     var end = endDate.getHours()+":"+endDate.getMinutes()+":"+endDate.getMilliseconds();
-    return axios.post('http://localhost:5000/addBlock', {
+    return axios.post('http://localhost:5000/api/db/addBlock', {
         idCareer: 1,
         start: start,
         end: end,
@@ -96,7 +96,7 @@ export default function Schedule() {
   }
 
   async function getPupil() {
-    return axios.post('http://localhost:5000/getAllPupilByTutor', {
+    return axios.post('http://localhost:5000/api/db/getPupils', {
       idTutor: 'Z13011798'
     });
   }
@@ -122,6 +122,7 @@ export default function Schedule() {
               idTutorship = result.data['insertId'];
               saveBlock().then(result =>{
                 console.log(result);
+                props.closeAction();
                 alert("La tutoria se ha calendarizado exitosamente.");
               }).catch(console.log);
             }).catch(console.log);
@@ -140,7 +141,7 @@ export default function Schedule() {
   }
 
   return (
-    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={open}>
+    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={props.open}>
       <div className="dialog">
         <h3>Calendarizar tutoria:</h3>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>

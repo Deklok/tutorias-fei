@@ -16,7 +16,7 @@ class AddBox extends Component {
         const selectedInfo = this.props.editingBlock;
 
         this.state = {
-            career: selectedInfo.careerId,
+            career: selectedInfo.idCareer,
             startTime: selectedInfo.start,
             endTime: selectedInfo.end
         }
@@ -37,9 +37,9 @@ class AddBox extends Component {
                         variant="outlined"
                         className={this.props.classes.careerField}
                         onChange={event => this.onCareerChange2(event)}>
-                        <option value="Ingeniería de Software">Ingeniería de Software</option>
-                        <option value="Redes">Redes</option>
-                        <option value="Tecnologías Computacionales">Tecnologías Computacionales</option>
+                        <option value="1">Ingeniería de Software</option>
+                        <option value="2">Redes</option>
+                        <option value="3">Tecnologías Computacionales</option>
                     </Select>
                     <TextField
                         id="outlined-textarea"
@@ -91,8 +91,8 @@ class AddBox extends Component {
         const end = this.props.editingBlock.end;
 
         const block = {
-            blockId: id,
-            careerId: career,
+            idBlock: id,
+            idCareer: career,
             start: start,
             end: end
         }
@@ -109,8 +109,8 @@ class AddBox extends Component {
         
         if (value > endTime) {
             const block = {
-                blockId: id,
-                careerId: career,
+                idBblock: id,
+                idCareer: career,
                 start: value,
                 end: value
             }
@@ -120,8 +120,8 @@ class AddBox extends Component {
             e.target.value = this.state.startTime;
         } else {
             const block = {
-                blockId: id,
-                careerId: career,
+                idBlock: id,
+                idCareer: career,
                 start: value,
                 end: endTime
             }
@@ -143,8 +143,8 @@ class AddBox extends Component {
             e.target.value = this.state.endTime;
         } else {
             const block = {
-                blockId: id,
-                careerId: career,
+                idBlock: id,
+                idCareer: career,
                 start: startTime,
                 end: endTime
             }

@@ -29,7 +29,7 @@ class Blocks extends Component {
 
         for (var i = 0; i < block.length; i++) {
 
-            rows.push(this.createData(block[i]['blockId'], block[i]['careerId'], block[i]['start'], block[i]['end']));
+            rows.push(this.createData(block[i]['idBlock'], block[i]['idCareer'], block[i]['start'], block[i]['end']));
 
         }
 

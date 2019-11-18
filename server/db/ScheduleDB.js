@@ -2,8 +2,21 @@ const pool = require('./config');
 
 function addTutorship(place, tutorshipNum, period, indications, date, idTutor) {
     return new Promise((resolve, reject) => {
-        pool.query('INSERT INTO tutorship (place, tutorshipNum, period, indications, date, idTutor) VALUES (?, ?, ?, ?, ?, ?)'
+        pool.query('INSERT INTO Tutorship (place, tutorshipNum, period, indications, date, idTutor) VALUES (?, ?, ?, ?, ?, ?)'
             , [place, tutorshipNum, period, indications, date, idTutor], (err, results) => {
+                if (err) {
+                    return reject(err);
+                } else {
+                    return resolve(results);
+                }
+            });
+    });
+}
+
+function getLastTutorshipID(idTutor) {
+    return new Promise((resolve, reject) => {
+        pool.query('SELECT idTutorship FROM Tutorship WHERE idTutor = ? ORDER BY idTutorship DESC LIMIT 1'
+            , [idTutor], (err, results) => {
                 if (err) {
                     return reject(err);
                 } else {
@@ -15,7 +28,7 @@ function addTutorship(place, tutorshipNum, period, indications, date, idTutor) {
 
 function addBlock(idCareer, start, end, idTutorship){
     return new Promise((resolve, reject) =>{
-        pool.query('INSERT INTO block (idCareer, start, end, idTutorship) VALUES (?, ?, ?, ?)', [idCareer, start, end, idTutorship], (err, results) =>{
+        pool.query('INSERT INTO Block (idCareer, start, end, idTutorship) VALUES (?, ?, ?, ?)', [idCareer, start, end, idTutorship], (err, results) =>{
             if(err){
                 return reject(err);
             }else{
@@ -25,9 +38,21 @@ function addBlock(idCareer, start, end, idTutorship){
     });
 }
 
+function getBlocks(idTutorship) {
+    return new Promise((resolve, reject) => {
+        pool.query('SELECT * FROM Block WHERE idTutorship = ?', [idTutorship], (err, results) => {
+                if (err) {
+                    return reject(err);
+                } else {
+                    return resolve(results);
+                }
+            });
+    });
+}
+
 function getAllPupilByTutor(idTutor){
     return new Promise((resolve, reject) =>{
-        pool.query('SELECT COUNT(*) AS size FROM pupil WHERE idTutor = ?', [idTutor], (err, results) =>{
+        pool.query('SELECT COUNT(*) AS size FROM Pupil WHERE idTutor = ?', [idTutor], (err, results) =>{
             if(err){
                 return reject(err);
             }else{
@@ -40,6 +65,8 @@ function getAllPupilByTutor(idTutor){
 
 module.exports = {
     addTutorship: addTutorship,
+    getLastTutorshipID: getLastTutorshipID,
     addBlock: addBlock,
+    getBlocks: getBlocks,
     getAllPupilByTutor: getAllPupilByTutor
 }
