@@ -100,6 +100,36 @@ app.post('/api/db/getPupils', (req, res) => {
 });
 
 
+app.post('/addTutorship', (req, res) => {
+  var place = req.body.place;
+  var tutorshipNum = req.body.tutorshipNum;
+  var period = req.body.period;
+  var indications = req.body.indications;
+  var date = req.body.date;
+  var idTutor = req.body.idTutor;
+  database.addTutorship(place, tutorshipNum, period, indications, date, idTutor).then(function (response) {
+      res.send(response);
+  });
+});
+
+app.post('/addBlock', (req, res) =>{
+  var idCareer = req.body.idCareer;
+  var start = req.body.start;
+  var end = req.body.end;
+  var idTutorship = req.body.idTutorship;
+  database.addBlock(idCareer, start, end, idTutorship).then(function (response){
+      res.send(response);
+  });
+});
+
+app.post('/getAllPupilByTutor', (req, res) =>{
+  var idTutor = req.body.idTutor;
+  database.getAllPupilByTutor(idTutor).then(function (response){
+      res.json(response);
+  });
+});
+
+
 // Use this code when is on production
 /*
 app.use(express.static(path.join(__dirname, 'client/build')));

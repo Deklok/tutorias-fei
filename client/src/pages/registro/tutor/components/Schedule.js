@@ -11,7 +11,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
 import axios from 'axios';
 import Input from '@material-ui/core/Input';
-import { Stats } from 'fs';
 const cors = require('cors');
 
 export default function Schedule(props) {
@@ -64,22 +63,22 @@ export default function Schedule(props) {
 
   function saveTutorialship() {
     var month = date.getMonth() + 1;
-    //var id = utilities.splitCookie(cookies.get('token')).id;
+    var id = utilities.splitCookie(cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/db/addTutorship', {
       place: place,
       tutorshipNum: tutorshipNum,
       period: period,
       indications: indications,
       date: date.getFullYear() + "-" + month + "-" + date.getDate(),
-      //idTutor: id
-      idTutor: 'Z13011798'
+      idTutor: id
+      //idTutor: 'Z13011798'
     });
   }
   function saveBlock(){
     var start = startDate.getHours()+":"+startDate.getMinutes()+":"+startDate.getMilliseconds();
     var end = endDate.getHours()+":"+endDate.getMinutes()+":"+endDate.getMilliseconds();
     return axios.post('http://localhost:5000/api/db/addBlock', {
-        idCareer: 1,
+        idCareer: 5, // 5 = career general
         start: start,
         end: end,
         idTutorship: idTutorship
@@ -87,10 +86,9 @@ export default function Schedule(props) {
   }
 
   async function saveEmail(){
-    //var id = utilities.splitCookie(cookies.get('token')).id;
+    var id = utilities.splitCookie(cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/notify/email/signup',{
-      tutorId: 'Z13011798',
-      //idTutor: id
+      idTutor: id,
       email: email
     });
   }
@@ -105,7 +103,7 @@ export default function Schedule(props) {
     setSize(result.data[0]['size']);
   }).catch(console.log);
 
-  const validate = () => {
+  const save = () => {
     var dateActual = new Date();
     var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
     var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
@@ -205,7 +203,7 @@ export default function Schedule(props) {
             onChange={event => indicationsChange(event)} />
         </div>
         <div>
-          <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
+          <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
         </div>
       </div>
     </Dialog>
