@@ -66,6 +66,13 @@ const useStyles = makeStyles(theme => ({
 
 const CurrentTutorado = memo(props => {
   const classes = useStyles();
+  const currentPupil = props.currentPupil;
+  const setAtendiendo = props.setAtendiendo;
+
+  function finalizarTutoria(){
+    setAtendiendo(false);
+  }
+
   return (
     <React.Fragment>
       <Card className={classes.paper, classes.card}>
@@ -88,7 +95,7 @@ const CurrentTutorado = memo(props => {
             <Grid item md={4} xs={6}>
               <div className={classes.clock}>
                 <Typography paragraph variant="h6" className={classes.textOverlay}>
-                  Redes y Servicios de Cómputo
+                  {currentPupil['studentId']}
                 </Typography>
               </div>
             </Grid>
@@ -97,11 +104,11 @@ const CurrentTutorado = memo(props => {
         <CardContent>
           <div className={classes.details}>
             <Typography variant="subtitle1" color="text" component="p" noWrap>
-            Paul McCartney
+            {currentPupil['name']}
             </Typography>
             <div className={classes.options}>
               <Tooltip title="Finalizar Tutoría">
-                <IconButton aria-label="stop" size="small">
+                <IconButton onClick={finalizarTutoria} aria-label="stop" size="small">
                   <StopIcon className={classes.stopIcon} />
                 </IconButton>
               </Tooltip>

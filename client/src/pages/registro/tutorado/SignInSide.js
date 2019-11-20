@@ -147,7 +147,7 @@ const Inicio = memo(props =>  {
     console.log('enviando...');
     if(token == undefined){
       // http://localhost:5000/api/user/login
-      axios.post('http://localhost:5000/api/user/login',{
+      axios.post('http://localhost:5000/api/test/session',{
           user: username,
           pass: password,
           withCredentials: true,

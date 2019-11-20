@@ -68,11 +68,18 @@ const useStyles = makeStyles(theme => ({
 
 const NextTutorado = memo(props => {
   const classes = useStyles();
-  const nombre = props.nombre;
-  const hora = props.hora;
-  const carrera = props.carrera;
+  const tutorado = props.tutorado;
   const nextPupil = props.nextPupil;
   const comenzado = props.comenzado;
+  const setCurrentPupil = props.setCurrentPupil;
+  const setAtendiendo = props.setAtendiendo;
+  const tutorados = props.tutorados;
+
+  function comenzarTutoria(){
+    setCurrentPupil(tutorado);
+    setAtendiendo(true);
+    props.next();
+  }
 
   return (
     <React.Fragment>
@@ -96,10 +103,10 @@ const NextTutorado = memo(props => {
             <Grid item md={4} xs={6}>
               <div className={classes.clock}>
                 <Typography variant="h3" className={classes.textOverlay}>
-                  10:30
+                  {tutorado['start']}
                 </Typography>
                 <Typography paragraph variant="h6" className={classes.textOverlay}>
-                  Redes y Servicios de Cómputo
+                  {tutorado['studentId']}
                 </Typography>
               </div>
             </Grid>
@@ -108,13 +115,13 @@ const NextTutorado = memo(props => {
         <CardContent>
           <div className={classes.details}>
             <Typography variant="subtitle1" color="text" component="p" noWrap>
-              Elvis Presley
+              {tutorado['name']}
             </Typography>
             <div className={classes.options}>
               {comenzado ?
                 <div>
                   <Tooltip title="Atender">
-                    <IconButton aria-label="play" size="small">
+                    <IconButton onClick={comenzarTutoria} aria-label="play" size="small">
                       <PlayArrowIcon className={classes.playIcon} />
                     </IconButton>
                   </Tooltip>

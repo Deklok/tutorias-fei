@@ -117,6 +117,7 @@ Saludos
             classes={classes}
             test={test}
             tutorados={tutorados}
+            setTutorados={setTutorados}
             comenzado={comenzado}
             setComenzado = {setComenzado}
           />

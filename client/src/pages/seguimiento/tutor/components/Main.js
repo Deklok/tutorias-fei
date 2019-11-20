@@ -15,10 +15,20 @@ const Main = memo(props => {
 	const classes = props.classes;
 	const comenzado = props.comenzado;
 	const setComenzado = props.setComenzado;
+	const tutorados = props.tutorados;
+	const setTutorados = props.setTutorados;
 	const test = props.test;
-
+	const [currentPupil,setCurrentPupil] = React.useState([]);
+	const [atendiendo,setAtendiendo] = React.useState(false);
+	const [nextPupil, setPupil] = React.useState([]);
 	const comenzarTutoria = () =>{
+		setPupil(tutorados[0]);
 		setComenzado(true);
+	}
+
+	const siguienteTutorado=()=>{
+		tutorados.pop();
+		setTutorados(tutorados);
 	}
 
 	return (
@@ -28,16 +38,17 @@ const Main = memo(props => {
 		      <Grid container spacing={3} justify="flex-end">
 		        {/* Tutoria Controles */}
 		        <Grid item xs={12} md={7} lg={7}>
-		          {comenzado == true ? <CurrentTutorado /> :
-		          	<Button
+		          {!comenzado ? <Button
 		          	variant="contained"
 		          	color="primary"
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
-		          	>Comenzar Tutoría</Button>}
+		          	>Comenzar Tutoría</Button>
+		          	:[atendiendo ? <CurrentTutorado currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : null]
+		          	}
 		        </Grid>
 		        <Grid item xs={12} md={5} lg={5}>
-		          <NextTutorado comenzado = {comenzado} />
+		          <NextTutorado comenzado = {comenzado} tutorado = {nextPupil} setAtendiendo={setAtendiendo} next={siguienteTutorado} setCurrentPupil={setCurrentPupil}/>
 		        </Grid>
 		      </Grid>
 		      <Grid container spacing={3}>
@@ -61,7 +72,7 @@ const Main = memo(props => {
 		        <Grid item xs={12} md={5} lg={5}>
 		          <Paper className={classes.paper}>
 		            <Tutorados
-		            	tutorados={props.tutorados}
+		            	tutorados={tutorados}
 		            />
 		          </Paper>
 		        </Grid>
