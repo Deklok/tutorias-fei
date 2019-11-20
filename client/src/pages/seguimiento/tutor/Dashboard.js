@@ -30,7 +30,7 @@ const Dashboard = memo(props => {
   const [contacto, setContacto] = React.useState('');
   const [tutorados, setTutorados] = React.useState('');
   const [connect, setConnect] = React.useState(true);
-
+  const [comenzado, setComenzado] = React.useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -117,6 +117,8 @@ Saludos
             classes={classes}
             test={test}
             tutorados={tutorados}
+            comenzado={comenzado}
+            setComenzado = {setComenzado}
           />
         </Route>
         <Route path="/tutor/feedback">

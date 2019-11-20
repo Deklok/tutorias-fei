@@ -7,12 +7,20 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Agenda from '../../components/Agenda';
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Tutorados from './Tutorados';
 import TemasTutorado from '../../components/TemasTutorado';
 
 const Main = memo(props => {
 	const classes = props.classes;
+	const comenzado = props.comenzado;
+	const setComenzado = props.setComenzado;
 	const test = props.test;
+
+	const comenzarTutoria = () =>{
+		setComenzado(true);
+	}
+
 	return (
 		<main className={classes.content}>
 		    <div className={classes.appBarSpacer} />
@@ -20,10 +28,16 @@ const Main = memo(props => {
 		      <Grid container spacing={3} justify="flex-end">
 		        {/* Tutoria Controles */}
 		        <Grid item xs={12} md={7} lg={7}>
-		          <CurrentTutorado />
+		          {comenzado == true ? <CurrentTutorado /> :
+		          	<Button
+		          	variant="contained"
+		          	color="primary"
+		          	className={classes.button}
+		          	onClick={comenzarTutoria}
+		          	>Comenzar Tutoría</Button>}
 		        </Grid>
 		        <Grid item xs={12} md={5} lg={5}>
-		          <NextTutorado />
+		          <NextTutorado comenzado = {comenzado} />
 		        </Grid>
 		      </Grid>
 		      <Grid container spacing={3}>

@@ -68,6 +68,12 @@ const useStyles = makeStyles(theme => ({
 
 const NextTutorado = memo(props => {
   const classes = useStyles();
+  const nombre = props.nombre;
+  const hora = props.hora;
+  const carrera = props.carrera;
+  const nextPupil = props.nextPupil;
+  const comenzado = props.comenzado;
+
   return (
     <React.Fragment>
       <Card className={classes.paper, classes.card}>
@@ -105,16 +111,19 @@ const NextTutorado = memo(props => {
               Elvis Presley
             </Typography>
             <div className={classes.options}>
-              <Tooltip title="Atender">
-                <IconButton aria-label="play" size="small">
-                  <PlayArrowIcon className={classes.playIcon} />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Saltar">
-                <IconButton aria-label="skip" size="small">
-                  <SkipNextIcon />
-                </IconButton>
-              </Tooltip>
+              {comenzado ?
+                <div>
+                  <Tooltip title="Atender">
+                    <IconButton aria-label="play" size="small">
+                      <PlayArrowIcon className={classes.playIcon} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Saltar">
+                    <IconButton aria-label="skip" size="small">
+                      <SkipNextIcon />
+                    </IconButton>
+                  </Tooltip>
+                </div>: null}
             </div>
           </div>
         </CardContent>

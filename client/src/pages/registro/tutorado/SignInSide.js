@@ -145,9 +145,9 @@ const Inicio = memo(props =>  {
 
   function login(){
     console.log('enviando...');
-    if(token == undefined){ 
+    if(token == undefined){
       // http://localhost:5000/api/user/login
-      axios.post('http://localhost:5000/api/test/session',{
+      axios.post('http://localhost:5000/api/user/login',{
           user: username,
           pass: password,
           withCredentials: true,
@@ -183,7 +183,7 @@ const Inicio = memo(props =>  {
   if (token != undefined) {
     content = <Redirect to="/" />;
   } else {
-    content = 
+    content =
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
