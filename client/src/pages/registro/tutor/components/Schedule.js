@@ -5,20 +5,28 @@ import Select from '@material-ui/core/Select';
 import Dialog from '@material-ui/core/Dialog';
 import FormControl from '@material-ui/core/FormControl';
 import es from 'date-fns/locale/es';
-import { MuiPickersUtilsProvider, KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
 import axios from 'axios';
 import Input from '@material-ui/core/Input';
+const cors = require('cors');
 
-export default function Schedule() {
-  const [open, setOpen] = React.useState(true);
-  const [tutorshipNum, setTutorshipNum] = React.useState('tutorial1');
+export default function Schedule(props) {
+  const [tutorshipNum, setTutorshipNum] = React.useState(1);
   const [date, setDate] = React.useState(new Date());
   const [indications, setIndications] = React.useState('');
   const [place, setPlace] = React.useState('');
   const [email, setEmail] = React.useState('');
+  //const [idTutorship, setIdTutorship] = React.useState(0);
+  const [size, setSize] = React.useState(0);
+  
+  var idTutorship = 0;
+  var startDate = new Date('December 1, 2019 07:00:00');
+  var endDate = new Date('December 1, 2019 07:00:00');
+  var period = '';
+  //var idTutorship = 0;
 
   const tutorshipNumChange = event => {
     setTutorshipNum(event.target.value);
@@ -36,28 +44,87 @@ export default function Schedule() {
     setPlace(event.target.value);
   };
 
-  const emailChange = event =>{
+  const emailChange = event => {
     setEmail(event.target.value);
   }
 
-  async function saveTutorialship() {
-    return axios.post('http://localhost:5000/setTutorship', {
-      //place
-      //tutorshipNum
+  function calculatePeriod() {
+    var dateActual = new Date();
+    if (dateActual.getMonth() < 6) {
+      period = dateActual.getFullYear() + "01";
+    } else {
+      period = dateActual.getFullYear() + "02";
+    }
+  }
+
+  function calculateTime() {
+    endDate.setMinutes(size*15);
+  }
+
+  function saveTutorialship() {
+    var month = date.getMonth() + 1;
+    var id = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post('http://localhost:5000/api/db/addTutorship', {
+      place: place,
+      tutorshipNum: tutorshipNum,
+      period: period,
+      indications: indications,
+      date: date.getFullYear() + "-" + month + "-" + date.getDate(),
+      idTutor: id
+      //idTutor: 'Z13011798'
+    });
+  }
+  function saveBlock(){
+    var start = startDate.getHours()+":"+startDate.getMinutes()+":"+startDate.getMilliseconds();
+    var end = endDate.getHours()+":"+endDate.getMinutes()+":"+endDate.getMilliseconds();
+    return axios.post('http://localhost:5000/api/db/addBlock', {
+        idCareer: 5, // 5 = career general
+        start: start,
+        end: end,
+        idTutorship: idTutorship
     });
   }
 
-  const validate = () => {
+  async function saveEmail(){
+    var id = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post('http://localhost:5000/api/notify/email/signup',{
+      idTutor: id,
+      email: email
+    });
+  }
+
+  async function getPupil() {
+    return axios.post('http://localhost:5000/api/db/getPupils', {
+      idTutor: 'Z13011798'
+    });
+  }
+
+  getPupil().then(result => {
+    setSize(result.data[0]['size']);
+  }).catch(console.log);
+
+  const save = () => {
     var dateActual = new Date();
     var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
     var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
-
-    if (date != "" &&  indications != "" && place != "" && email != "") {
+    if (date != "" && indications != "" && place != "" && email != "") {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (!regExp.test(indications) && !regExp.test(place)) {
-          if(regExpEmail.test(email)){
-            alert("Exito");
-          }else{
+          if (regExpEmail.test(email)) {
+            calculatePeriod();
+            calculateTime();
+            
+            saveEmail().catch(console.log);
+            
+            saveTutorialship().then(result =>{
+              idTutorship = result.data['insertId'];
+              saveBlock().then(result =>{
+                console.log(result);
+                props.closeAction();
+                alert("La tutoria se ha calendarizado exitosamente.");
+              }).catch(console.log);
+            }).catch(console.log);
+          } else {
             alert("Correo electronico con formato invalido.");
           }
         } else {
@@ -72,7 +139,7 @@ export default function Schedule() {
   }
 
   return (
-    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={open}>
+    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={props.open}>
       <div className="dialog">
         <h3>Calendarizar tutoria:</h3>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
@@ -93,6 +160,7 @@ export default function Schedule() {
               'aria-label': 'change date',
             }}
           />
+
         </MuiPickersUtilsProvider>
         <div>
           <FormControl>
@@ -102,10 +170,10 @@ export default function Schedule() {
               label="Tipo de tutoría:"
               value={tutorshipNum}
               onChange={tutorshipNumChange}>
-              <MenuItem value={'tutorial1'}>Tutoría 1</MenuItem>
-              <MenuItem value={'tutorial2'}>Tutoría 2</MenuItem>
-              <MenuItem value={'tutorial3'}>Tutoría 3</MenuItem>
-              <MenuItem value={'tutorialExtraordinary'}>Tutoría extraordinaria</MenuItem>
+              <MenuItem value={1}>Tutoría 1</MenuItem>
+              <MenuItem value={2}>Tutoría 2</MenuItem>
+              <MenuItem value={3}>Tutoría 3</MenuItem>
+              <MenuItem value={4}>Tutoría extraordinaria</MenuItem>
             </Select>
           </FormControl>
         </div>
@@ -135,7 +203,7 @@ export default function Schedule() {
             onChange={event => indicationsChange(event)} />
         </div>
         <div>
-          <Button id="acceptBtn" variant="contained" onClick={validate}>Aceptar</Button>
+          <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
         </div>
       </div>
     </Dialog>

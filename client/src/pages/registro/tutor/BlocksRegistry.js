@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react';
 import './blockregistry.css';
 import clsx from 'clsx';
+import axios from 'axios';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -10,27 +11,74 @@ import AddBox from './components/AddBox'
 import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
 import Schedule from './components/Schedule';
-import Container from '@material-ui/core/Container';
+import { bool } from 'prop-types';
 
 export default class BlocksRegistry extends Component {
 
   state = {
-    blocks: [
-      {
-        blockId: 1,
-        careerId: "Ingeniería de Software",
-        start: "07:30",
-        end: "08:30"
-      }
-    ],
+    blocks: [],
     blockCount: 2,
     editingBlock: {
-      blockId: 2,
-      careerId: "Ingeniería de Software",
-      start: "07:30",
-      end: "07:30"
-    }
+      idBlock: 0,
+      idCareer: 1,
+      start: '09:00',
+      end: '10:00'
+    },
+    openDialog: true,
+    hasEditedBlocks: false,
+    tutorship: 0,
+    registeredBlocks: []
   };
+
+  getLastTutorship() {
+    return axios.post('http://localhost:5000/api/db/lastTutorship', {
+      idTutor: 'Z13011798'
+    });
+  }
+
+  getBlocks(idTutorship) {
+    return axios.post('http://localhost:5000/api/db/blocks', {
+      idTutorship: idTutorship
+    });
+  }
+
+  saveBlock = (block) => {
+    const idTutorship = this.state.tutorship;
+    return axios.post('http://localhost:5000/api/db/addBlock', {
+      idCareer: block.idCareer,
+      start: block.start,
+      end: block.end,
+      idTutorship: idTutorship
+    });
+  }
+
+  editBlock = (block) => {
+    return axios.post('http://localhost:5000/api/db/editBlock', {
+      idBlock: block.idBlock,
+      idCareer: block.idCareer,
+      start: block.start,
+      end: block.end
+    });
+  }
+
+  saveBlocks = () =>{
+    const blocks = this.state.blocks;
+    const registeredBlocks = this.state.registeredBlocks;
+    blocks.forEach(block => {
+      var isRegistered = false;
+      registeredBlocks.forEach(registeredBlock => {
+        if(block.idBlock === registeredBlock.idBlock){
+          isRegistered = true
+        }
+      })
+
+      if(isRegistered){
+
+      } else {
+        this.saveBlock(block)
+      }
+    });
+  }
 
   render() {
 
@@ -38,23 +86,37 @@ export default class BlocksRegistry extends Component {
     const registryBlockClasses = this.props.registryBlockClasses;
 
     return (
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-        <Schedule />
+      <div>
+        <Schedule open={this.state.openDialog} closeAction={this.closeSchedule} />
+        <AppBar position="static" className={clsx(classes.appBar, classes.appBarShift)}>
+          <Toolbar className={classes.toolbar}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              className={classes.menuButton}
+            >
+              <ArrowBackIosIcon />
+            </IconButton>
+            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+              Registro de bloques
+                      </Typography>
+            <Button color="inherit" component="a" onClick={this.saveBlocks}>Continuar</Button>
+          </Toolbar>
+        </AppBar>
         <div>
           <AddBox blocks={this.state.blocks}
-                  editingBlock={this.state.editingBlock}
-                  classes={registryBlockClasses}
-                  addBlock={this.addBlock}
-                  onChange={this.changeEditingBlock}>
+            editingBlock={this.state.editingBlock}
+            classes={classes}
+            addBlock={this.addBlock}
+            onChange={this.changeEditingBlock}>
           </AddBox>
         </div>
-        <div className={registryBlockClasses.blockList}>
-          <BlockList classes={registryBlockClasses}
-                      blocks={this.state.blocks}
-                      editBlock={this.editBlock}
-                      deleteBlock={this.deleteBlock}/>
+        <div className={classes.blockList}>
+          <BlockList classes={classes}
+            blocks={this.state.blocks}
+            editBlock={this.editBlock}
+            deleteBlock={this.deleteBlock} />
         </div>
       </Container>
       </main>
@@ -62,7 +124,17 @@ export default class BlocksRegistry extends Component {
   }
 
   closeSchedule = (e) => {
-
+    this.getLastTutorship().then(result => {
+      console.log(result)
+      var idTutorship = result.data[0].idTutorship;
+      this.getBlocks(idTutorship).then(result2 => {
+        console.log(result2)
+        const blocks = result2.data;
+        console.log(blocks);
+        this.setState({blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks});
+      });
+    });
+    this.setState({openDialog: false});
   }
 
   addBlock = (career, startTime, endTime) => {
@@ -70,37 +142,41 @@ export default class BlocksRegistry extends Component {
     var count = this.state.blockCount;
 
     const block = {
-      blockId: count,
-      careerId: career,
+      idBlock: count,
+      idCareer: career,
       start: startTime,
       end: endTime
     }
 
     actualBlocks.push(block)
-    this.setState({blocks: actualBlocks, blockCount: count});
+    this.setState({ blocks: actualBlocks, blockCount: count });
   }
 
   editBlock = (blockId) => {
     const blocks = this.state.blocks;
+    var actualBlocks = [];
     blocks.forEach(block => {
-      if(block.blockId == blockId){
-        this.setState({editingBlock: block});
+      if (block.idBlock== blockId) {
+        this.setState({ editingBlock: block });
+      } else {
+        actualBlocks.push(block);
       }
     });
+    this.setState({blocks: actualBlocks});
   }
 
   deleteBlock = (blockId) => {
     const blocks = this.state.blocks;
     var newBlocks = [];
     blocks.forEach(block => {
-      if(block.blockId != blockId){
+      if (block.idBlock != blockId) {
         newBlocks.push(block);
       }
     });
-    this.setState({blocks: newBlocks});
+    this.setState({ blocks: newBlocks });
   }
 
   changeEditingBlock = (block) => {
-    this.setState({editingBlock: block})
+    this.setState({ editingBlock: block })
   }
 }

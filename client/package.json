@@ -12,6 +12,7 @@
     "@material-ui/pickers": "^3.2.7",
     "@syncfusion/ej2-react-schedule": "^17.3.19",
     "axios": "^0.19.0",
+    "cors": "^2.8.5",
     "date-fns": "^2.6.0",
     "markdown-to-jsx": "^6.10.3",
     "nodemon": "^1.19.4",
