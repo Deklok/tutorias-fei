@@ -38,6 +38,18 @@ function addBlock(idCareer, start, end, idTutorship){
     });
 }
 
+function editBlock(idBlock, idCareer, start, end) {
+    return new Promise((resolve, reject) => {
+        pool.query('UPDATE Block SET idCareer = ?, start = ?, end = ? WHERE idBlock = ?', [idCareer, start, end, idBlock], (err, results) => {
+            if(err) {
+                return reject(err);
+            } else {
+                return resolve(results);
+            }
+        });
+    });
+}
+
 function getBlocks(idTutorship) {
     return new Promise((resolve, reject) => {
         pool.query('SELECT * FROM Block WHERE idTutorship = ?', [idTutorship], (err, results) => {
@@ -67,6 +79,7 @@ module.exports = {
     addTutorship: addTutorship,
     getLastTutorshipID: getLastTutorshipID,
     addBlock: addBlock,
+    editBlock: editBlock,
     getBlocks: getBlocks,
     getAllPupilByTutor: getAllPupilByTutor
 }

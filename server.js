@@ -92,6 +92,16 @@ app.post('/api/db/blocks', (req, res) => {
   });
 });
 
+app.post('/api/db/editBlock', (req, res) => {
+  const idBlock = req.body["idBlock"];
+  const idCareer = req.body["idCarrer"];
+  const start = req.body["start"];
+  const end = req.body["end"];
+  schedule.editBlock(idBlock, idCareer, start, end).then(function(response){
+    res.json(response);
+  });
+});
+
 app.post('/api/db/getPupils', (req, res) => {
   const idTutor = req.body["idTutor"];
   schedule.getAllPupilByTutor(idTutor).then(function(response){

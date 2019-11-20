@@ -27,6 +27,7 @@ export default class BlocksRegistry extends Component {
     openDialog: true,
     hasEditedBlocks: false,
     tutorship: 0,
+    registeredBlocks: []
   };
 
   getLastTutorship() {
@@ -51,10 +52,31 @@ export default class BlocksRegistry extends Component {
     });
   }
 
+  editBlock = (block) => {
+    return axios.post('http://localhost:5000/api/db/editBlock', {
+      idBlock: block.idBlock,
+      idCareer: block.idCareer,
+      start: block.start,
+      end: block.end
+    });
+  }
+
   saveBlocks = () =>{
     const blocks = this.state.blocks;
+    const registeredBlocks = this.state.registeredBlocks;
     blocks.forEach(block => {
-      this.saveBlock(block);
+      var isRegistered = false;
+      registeredBlocks.forEach(registeredBlock => {
+        if(block.idBlock === registeredBlock.idBlock){
+          isRegistered = true
+        }
+      })
+
+      if(isRegistered){
+
+      } else {
+        this.saveBlock(block)
+      }
     });
   }
 
@@ -107,7 +129,7 @@ export default class BlocksRegistry extends Component {
         console.log(result2)
         const blocks = result2.data;
         console.log(blocks);
-        this.setState({blocks: blocks, loadBlocks: false, tutorship: idTutorship});
+        this.setState({blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks});
       });
     });
     this.setState({openDialog: false});
