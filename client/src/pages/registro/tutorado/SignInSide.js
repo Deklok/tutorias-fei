@@ -155,6 +155,7 @@ const Inicio = memo(props =>  {
         .then((result)=>{
           if(result){
             console.log(result);
+            cookies.set('token','id=' + username + ';token=' + result.data);
             axios({
               method: 'post',
               url: 'http://localhost:5000/api/auth',
@@ -163,8 +164,7 @@ const Inicio = memo(props =>  {
               }
             })
             .then((result)=>{
-              //sessionStorage.setItem("token", result.data);
-              cookies.set('token','session=' + result.data + ';id=' + username);
+              cookies.set('token',cookies.get('token') + ';session=' + result.data);
               window.location.reload();
             })
             .catch((err)=>{

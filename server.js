@@ -50,6 +50,31 @@ app.use(
 );
 
 
+/**
+ * Function to check if the petition has a valid session
+ * Use the following format in the petitions to check session
+ * 
+ * hasSession(req.header('Authorization')).then(function(){
+ * 
+ * }).catch(function(){
+ * 
+ * })
+ */
+function hasSession(session) {
+  var promise = new Promise(function(resolve,reject) {
+    store.get(session, function(error,storeSession) {
+      console.log("Received: " + session);
+      console.log(storeSession);
+      if (storeSession != undefined) {
+        resolve(true);
+      } else {
+        reject(false);
+      }
+    });
+  });
+  return promise;
+}
+
 app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
 });
@@ -280,9 +305,13 @@ app.post('/api/db/tutorData', (req,res) => {
 *Response: [[{studentID, name, email, careerName, idTutor}],{BD info}]
 */
 app.post('/api/db/pupilData', (req,res) => {
-  var studentId = req.body["studentId"];
-  database.getDataPupil(studentId).then(function(response){
-    res.json(response);
+  hasSession(req.header('Authorization')).then(function(){
+    var studentId = req.body["studentId"];
+    database.getDataPupil(studentId).then(function(response){
+      res.json(response);
+    });
+  }).catch(function(){
+    res.status(401).json({ error: "Access denied" });
   });
 });
 
