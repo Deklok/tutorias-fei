@@ -118,8 +118,7 @@ export default class BlocksRegistry extends Component {
             editBlock={this.editBlock}
             deleteBlock={this.deleteBlock} />
         </div>
-      </Container>
-      </main>
+      </div>
     );
   }
 

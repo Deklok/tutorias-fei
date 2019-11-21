@@ -11,6 +11,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
 import axios from 'axios';
 import Input from '@material-ui/core/Input';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
+
+const cookies = new Cookies();
 const cors = require('cors');
 
 export default function Schedule(props) {

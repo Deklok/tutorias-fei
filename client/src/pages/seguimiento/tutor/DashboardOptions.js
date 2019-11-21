@@ -9,6 +9,7 @@ import CancelPresentation from '@material-ui/icons/CancelPresentation';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DasboardIcon from '@material-ui/icons/Dashboard';
+import CachedIcon from '@material-ui/icons/Cached'
 import {
   BrowserRouter as Router,
   Switch,
@@ -55,6 +56,12 @@ export const mainListItems = (
 export const secondaryListItems = (
   <div>
     <ListSubheader inset>Cuenta</ListSubheader>
+    <ListItem button>
+      <ListItemIcon>
+        <CachedIcon />
+      </ListItemIcon>
+      <ListItemText primary="Recargar Datos" />
+    </ListItem>
     <ListItem button component="a" href="/logout">
       <ListItemIcon>
         <ExitToAppIcon />
