@@ -40,11 +40,12 @@ const DashboardTutorado = memo(props => {
   async function cargarDatos() {
     var user = utilities.splitCookie(cookies.get('token')).id;
     var token = utilities.splitCookie(cookies.get('token')).token;
+    var role = utilities.splitCookie(cookies.get('token')).session;
     return axios.post('http://localhost:5000/api/db/pupilData', {
       studentId: user
     },
     {
-      headers: { Authorization: token }
+      headers: { Authorization: token + ";" + role }
     });
   }
 

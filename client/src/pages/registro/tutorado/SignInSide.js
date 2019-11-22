@@ -159,9 +159,7 @@ const Inicio = memo(props =>  {
             axios({
               method: 'post',
               url: 'http://localhost:5000/api/auth',
-              data: {
-                session: result.data
-              }
+              headers: { Authorization: result.data }
             })
             .then((result)=>{
               cookies.set('token',cookies.get('token') + ';session=' + result.data);

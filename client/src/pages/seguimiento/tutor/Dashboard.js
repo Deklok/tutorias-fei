@@ -22,6 +22,10 @@ import {
   Route
 } from "react-router-dom";
 import Main from './components/Main';
+import Cookies from 'universal-cookie';
+import utilities from '../../../utilities';
+
+const cookies = new Cookies();
 
 const Dashboard = memo(props => {
   const classes = props.classes;
@@ -38,11 +42,15 @@ const Dashboard = memo(props => {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
 
   async function cargarDatos() {
     if(connect){
       return axios.post('http://localhost:5000/api/db/tutorData', {
         personnelNum: 'Z13011798',
+      },{
+        headers: { Authorization: token + ";" + role }
       });
     }else{
       return null;
@@ -53,6 +61,8 @@ const Dashboard = memo(props => {
     if (connect){
       return axios.post('http://localhost:5000/api/db/sessions', {
         idTutorship: 1,
+      },{
+        headers: { Authorization: token + ";" + role }
       });
     }else{
       return null;

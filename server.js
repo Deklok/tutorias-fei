@@ -49,6 +49,31 @@ app.use(
   })
 );
 
+function hasSession(req,res,next) {
+  if (req.path == '/api/user/login' || req.path == '/api/test/session' || req.path == '/api/auth') { 
+    return next();
+  } else {
+    var session = req.header('Authorization');
+    session = session.split(';');
+    console.log(session[0]);
+    new Promise(function(resolve,reject) {
+      store.get(session[0], function(error,storeSession) {
+        if (storeSession != undefined && storeSession.role.toString() == session[1]) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+    }).then(function(){
+      return next();
+    }).catch(function(){
+      res.status(401).json({ error: "Access denied" });
+    });
+    
+  }
+}
+
+app.all('*',hasSession);
 
 /**
  * Function to check if the petition has a valid session
@@ -60,6 +85,7 @@ app.use(
  * 
  * })
  */
+/*
 function hasSession(session) {
   var promise = new Promise(function(resolve,reject) {
     store.get(session, function(error,storeSession) {
@@ -74,7 +100,7 @@ function hasSession(session) {
   });
   return promise;
 }
-
+*/
 app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
 });
@@ -92,7 +118,8 @@ app.post('/api/test/session', (request,res) => {
 });
 
 app.post('/api/auth', (req,res) => {
-  store.get(req.body.session, function(error,session) {
+  var token = req.header('Authorization');
+  store.get(token, function(error,session) {
     if (session != null && session != undefined) {
       res.send(session.role);
     } else {
@@ -305,13 +332,9 @@ app.post('/api/db/tutorData', (req,res) => {
 *Response: [[{studentID, name, email, careerName, idTutor}],{BD info}]
 */
 app.post('/api/db/pupilData', (req,res) => {
-  hasSession(req.header('Authorization')).then(function(){
-    var studentId = req.body["studentId"];
-    database.getDataPupil(studentId).then(function(response){
-      res.json(response);
-    });
-  }).catch(function(){
-    res.status(401).json({ error: "Access denied" });
+  var studentId = req.body["studentId"];
+  database.getDataPupil(studentId).then(function (response) {
+    res.json(response);
   });
 });
 
