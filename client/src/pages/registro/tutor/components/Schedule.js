@@ -11,7 +11,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
 import axios from 'axios';
 import Input from '@material-ui/core/Input';
-const cors = require('cors');
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
 
 export default function Schedule(props) {
   const [tutorshipNum, setTutorshipNum] = React.useState(1);
@@ -19,14 +20,13 @@ export default function Schedule(props) {
   const [indications, setIndications] = React.useState('');
   const [place, setPlace] = React.useState('');
   const [email, setEmail] = React.useState('');
-  //const [idTutorship, setIdTutorship] = React.useState(0);
   const [size, setSize] = React.useState(0);
-  
+  const [connect, setConnect] = React.useState(true);
+
   var idTutorship = 0;
   var startDate = new Date('December 1, 2019 07:00:00');
   var endDate = new Date('December 1, 2019 07:00:00');
   var period = '';
-  //var idTutorship = 0;
 
   const tutorshipNumChange = event => {
     setTutorshipNum(event.target.value);
@@ -58,49 +58,80 @@ export default function Schedule(props) {
   }
 
   function calculateTime() {
-    endDate.setMinutes(size*15);
+    endDate.setMinutes(size * 15);
   }
 
-  function saveTutorialship() {
-    var month = date.getMonth() + 1;
-    var id = utilities.splitCookie(cookies.get('token')).id;
-    return axios.post('http://localhost:5000/api/db/addTutorship', {
-      place: place,
-      tutorshipNum: tutorshipNum,
-      period: period,
-      indications: indications,
-      date: date.getFullYear() + "-" + month + "-" + date.getDate(),
-      idTutor: id
-      //idTutor: 'Z13011798'
-    });
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
+
+  async function saveTutorialship() {
+    if (connect) {
+      var month = date.getMonth() + 1;
+      var id = utilities.splitCookie(cookies.get('token')).id;
+      return axios.post('http://localhost:5000/api/db/addTutorship', {
+        place: place,
+        tutorshipNum: tutorshipNum,
+        period: period,
+        indications: indications,
+        date: date.getFullYear() + "-" + month + "-" + date.getDate(),
+        idTutor: id
+        //idTutor: 'Z13011798'
+      }, {
+        headers: { Authorization: token + ";" + role }
+      });
+    } else {
+      return null;
+    }
   }
-  function saveBlock(){
-    var start = startDate.getHours()+":"+startDate.getMinutes()+":"+startDate.getMilliseconds();
-    var end = endDate.getHours()+":"+endDate.getMinutes()+":"+endDate.getMilliseconds();
-    return axios.post('http://localhost:5000/api/db/addBlock', {
+
+  async function saveBlock() {
+    if (connect) {
+      var start = startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getMilliseconds();
+      var end = endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getMilliseconds();
+      return axios.post('http://localhost:5000/api/db/addBlock', {
         idCareer: 5, // 5 = career general
         start: start,
         end: end,
         idTutorship: idTutorship
-    });
+      }, {
+        headers: { Authorization: token + ";" + role }
+      });
+    } else {
+      return null;
+    }
   }
 
-  async function saveEmail(){
-    var id = utilities.splitCookie(cookies.get('token')).id;
-    return axios.post('http://localhost:5000/api/notify/email/signup',{
-      idTutor: id,
-      email: email
-    });
+  async function saveEmail() {
+    if (connect) {
+      var id = utilities.splitCookie(cookies.get('token')).id;
+      return axios.post('http://localhost:5000/api/notify/email/signup', {
+        idTutor: id,
+        email: email
+      }, {
+        headers: { Authorization: token + ";" + role }
+      });
+    } else {
+      return null;
+    }
   }
 
   async function getPupil() {
-    return axios.post('http://localhost:5000/api/db/getPupils', {
-      idTutor: 'Z13011798'
-    });
+    if (connect) {
+      return axios.post('http://localhost:5000/api/db/getPupils', {
+        idTutor: 'Z13011798'
+      }, {
+        headers: { Authorization: token + ";" + role }
+      });
+    } else {
+      return null;
+    }
   }
 
   getPupil().then(result => {
-    setSize(result.data[0]['size']);
+    if (result) {
+      setSize(result.data[0]['size']);
+      setConnect(false);
+    }
   }).catch(console.log);
 
   const save = () => {
@@ -113,17 +144,29 @@ export default function Schedule(props) {
           if (regExpEmail.test(email)) {
             calculatePeriod();
             calculateTime();
-            
-            saveEmail().catch(console.log);
-            
-            saveTutorialship().then(result =>{
-              idTutorship = result.data['insertId'];
-              saveBlock().then(result =>{
-                console.log(result);
-                props.closeAction();
-                alert("La tutoria se ha calendarizado exitosamente.");
-              }).catch(console.log);
+
+            saveTutorialship().then(result => {
+              if (result) {
+                idTutorship = result.data['insertId'];
+
+                saveEmail().then(result => {
+                  if (result) {
+                    setConnect(false);
+                  }
+                }).catch(console.log);
+
+                saveBlock().then(result => {
+                  if (result) {
+                    setConnect(false);
+                    props.closeAction();
+                    alert("La tutoria se ha calendarizado exitosamente.");
+                  }
+                }).catch(console.log);
+
+                setConnect(false);
+              }
             }).catch(console.log);
+
           } else {
             alert("Correo electronico con formato invalido.");
           }
