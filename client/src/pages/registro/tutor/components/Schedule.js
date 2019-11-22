@@ -11,6 +11,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { TextareaAutosize } from '@material-ui/core';
 import axios from 'axios';
 import Input from '@material-ui/core/Input';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
@@ -22,11 +24,22 @@ export default function Schedule(props) {
   const [email, setEmail] = React.useState('');
   const [size, setSize] = React.useState(0);
   const [connect, setConnect] = React.useState(true);
+  const [title, setTitle] = React.useState("Error");
+  const [message, setMessage] = React.useState("");
+  const [openDialog, setOpenDialog] = React.useState(false);
 
   var idTutorship = 0;
   var startDate = new Date('December 1, 2019 07:00:00');
   var endDate = new Date('December 1, 2019 07:00:00');
   var period = '';
+
+  const openDialogError = () => {
+    setOpenDialog(true);
+  };
+
+  const closeDialogError = () => {
+    setOpenDialog(false);
+  };
 
   const tutorshipNumChange = event => {
     setTutorshipNum(event.target.value);
@@ -159,7 +172,9 @@ export default function Schedule(props) {
                   if (result) {
                     setConnect(false);
                     props.closeAction();
-                    alert("La tutoria se ha calendarizado exitosamente.");
+                    setTitle("Éxito");
+                    setMessage("La tutoria se ha calendarizado exitosamente.");
+                    openDialogError();
                   }
                 }).catch(console.log);
 
@@ -168,16 +183,24 @@ export default function Schedule(props) {
             }).catch(console.log);
 
           } else {
-            alert("Correo electronico con formato invalido.");
+            setTitle("Error en el correo.");
+            setMessage("Correo electronico con formato invalido.");
+            openDialogError();
           }
         } else {
-          alert("Hubo un error al redactar las indicaciones.");
+          setTitle("Error en las indicaciones.");
+          setMessage("Hubo un error al redactar las indicaciones.");
+          openDialogError();
         }
       } else {
-        alert("El año no puede ser mayor al año actual");
+        setTitle("Error en el año.");
+        setMessage("El año no puede ser mayor al año actual.");
+        openDialogError();
       }
     } else {
-      alert("No puede haber valores nulos");
+      setTitle("Error.");
+      setMessage("No puede haber campos vacios.");
+      openDialogError();
     }
   }
 
@@ -249,6 +272,21 @@ export default function Schedule(props) {
           <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
         </div>
       </div>
+
+      <Dialog open={openDialog} onClose={closeDialogError}>
+        <div id="dialogError">
+          <DialogTitle >
+            {title}
+          </DialogTitle>
+          <DialogContentText>
+            {message}
+          </DialogContentText>
+          <Button id="acceptBtn" onClick={closeDialogError}>
+            Aceptar
+          </Button>
+        </div>
+      </Dialog>
+
     </Dialog>
   );
 }
