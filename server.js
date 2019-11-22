@@ -3,8 +3,7 @@ const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
 const session = require('express-session');
-const redis = require('redis');
-const RedisStore = require('connect-redis')(session);
+var MemoryStore = require('memorystore')(session)
 const cors = require('cors');
 const app = express();
 const auth = require('./server/authws/auth.js');
@@ -15,20 +14,10 @@ const director = require('./requestDirector.js');
 const dotenv = require('dotenv');
 dotenv.config();
 
-/*
-const redisClient = redis.createClient({
-  host: process.env.HOST,
-  port: process.env.REDIS_PORT
+const store = new MemoryStore({
+  checkPeriod: 3600000,
+  ttl: 3600000
 });
-*/
-
-const store = new session.MemoryStore();
-//const store = new RedisStore({ host: process.env.HOST, port: process.env.REDIS_PORT, client: redisClient, ttl: 86400 });
-
-/*
-redisClient.on("error", function(err) {
-  console.log("Redis client error: " + err);
-});*/
 
 store.on("error", function(err) {
   console.log("Redis storage error: " + err);
@@ -41,7 +30,6 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     name: '_sessionid',
-    //store: store,
     store: store,
     resave: false,
     saveUninitialized: false,

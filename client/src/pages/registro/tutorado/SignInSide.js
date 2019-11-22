@@ -162,7 +162,7 @@ const Inicio = memo(props =>  {
               headers: { Authorization: result.data }
             })
             .then((result)=>{
-              cookies.set('token',cookies.get('token') + ';session=' + result.data);
+              cookies.set('token',cookies.get('token') + ';session=' + result.data, { maxAge: 3600 });
               window.location.reload();
             })
             .catch((err)=>{
