@@ -117,7 +117,7 @@ export default function SignInS() {
               color="primary"
               className={classes.submit}
               component="a"
-              href="/registro-bloques"
+              href="/dashboard-inicio"
             >
               Iniciar sesión
           </Button>
