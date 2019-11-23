@@ -3,10 +3,16 @@ const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
 const databaseTest = require('./server/db/SchedulerRegistryDB.js');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 
 app.get('/api/miuv/test', (req,res) =>{
   res.send(miuvws.test());
