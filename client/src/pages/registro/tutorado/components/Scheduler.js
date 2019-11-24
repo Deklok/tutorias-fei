@@ -37,31 +37,53 @@ const Schedule = memo(props => {
     var bloque = appointments;
     const rows = [];
 
-    var inicio = start.split(":");
-    var auxinicio = parseInt(inicio[0],10);
-    var fin = end.split(":");
+    /*Crear bloque desde "datos de la base". Se supone que se obtienen datos del bloque
+    desde la BD, se obtiene el inicio y fin del bloque con el formato "HH:MM:SS"
+    */ 
+    var blockInicio = bloque[0]['blockStart'].split(":");
+    var auxinicio = parseInt(blockInicio[0],10);
+    var fin = bloque[0]['blockEnd'].split(":");
     var auxfin = parseInt(fin[0],10);
-    console.log(start);
     var tiempo = (auxfin - auxinicio) * 4;
 
-    var tiempo = (bloque[0]['endDayHour'] - bloque[0]['startDayHour']) * 4;
+    /*Validar alguna sesion con los bloques que se van a colocar. Se obtiene de la BD información
+    de alguna session, en el caso de que ya se haya escogido una sesión. Se valida solo la hora de inicio
+    de la session bajo el formato "YYYY-MM-DD HH:MM:SS"
+    */
+    var sessionInicio = bloque[0]['sessionStart'].split(" ");
+    var sessionHoraInicio = sessionInicio[1].split(":");
+    var horaAux = parseInt(sessionHoraInicio[0],10);
+    var minAux = parseInt(sessionHoraInicio[1],10);
+
     var aux = 0;
-    var inicio = bloque[0]['startDayHour'];
+    var inicio = auxinicio;
 
     for(var i = 1; i <= tiempo; i++){
-      if (aux == 0) {
+      if (aux === 0) {
         aux = 1;
-        rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 0),new Date(2019, 5, 25, inicio, 15),"Cubículo 30"));
-      } else if (aux == 1) {
+        if (horaAux === inicio && minAux === 0){
+        } else {
+          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 0),new Date(2019, 5, 25, inicio, 15),"Cubículo 30"));
+        }
+      } else if (aux === 1) {
         aux = 2;
-        rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 15),new Date(2019, 5, 25, inicio, 30),"Cubículo 30"));
-      } else if (aux == 2) {
+        if (horaAux === inicio && minAux === 15){
+        } else {
+          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 15),new Date(2019, 5, 25, inicio, 30),"Cubículo 30"));
+        }
+      } else if (aux === 2) {
         aux = 3;
-        rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 30),new Date(2019, 5, 25, inicio, 45),"Cubículo 30"));
+        if (horaAux === inicio && minAux === 30){
+        } else {
+          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 30),new Date(2019, 5, 25, inicio, 45),"Cubículo 30"));
+        }
       } else {
         aux = 0;
         inicio = inicio + 1;
-        rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio - 1, 45),new Date(2019, 5, 25, inicio, 0),"Cubículo 30"));
+        if (horaAux === inicio - 1 && minAux === 45){
+        } else {
+          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio - 1, 45),new Date(2019, 5, 25, inicio, 0),"Cubículo 30"));
+        }
       }
     }
 
@@ -70,7 +92,7 @@ const Schedule = memo(props => {
             <Title>Bloques de tutoría</Title>
             <Scheduler data={rows}>
                 <ViewState currentDate={bloque[0]['currentDate']} />
-                <DayView startDayHour={bloque[0]['startDayHour']} endDayHour={bloque[0]['endDayHour']} />
+                <DayView startDayHour={auxinicio} endDayHour={auxfin} />
                 <Appointments />
             </Scheduler>
         </Paper>
