@@ -138,6 +138,36 @@ function setTutorPrivacyAgreement(personnelNum){
 		});
 	});
 }
+
+function getFeedbackData(idTutorship) {
+	return new Promise((resolve,reject) => {
+		pool.query('call sp_get_feedbackStats(?)',[idTutorship],(err,results) => {
+			if (err) {
+				return reject(err);
+			} else {
+				return resolve(results);
+			}
+		});
+	});
+}
+
+function saveFeedback(grade,idSession,comments) {
+	return new Promise((resolve,reject) => {
+		var commentArray = [0,0,0,0,0];
+		if (comments) {
+			for (let i=0; i < comments.length; i++) {
+				commentArray[parseInt(comments[i]) - 1] = 1;
+			}
+		}
+		pool.query('call sp_add_feedback(?,?,?,?,?,?,?)',[idSession,grade,commentArray[0],commentArray[1],commentArray[2],commentArray[3],commentArray[4]],(err,results) => {
+			if (err) {
+				return reject(err);
+			} else {
+				return resolve(results);
+			}
+		})
+	});
+}
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -151,4 +181,6 @@ module.exports = {
 	isPupilPrivacyAgreement: isTutorPrivacyAgreement,
 	setPupilPrivacyAgreement: setPupilPrivacyAgreement,
 	setTutorPrivacyAgreement: setTutorPrivacyAgreement,
+	getFeedbackData: getFeedbackData,
+	saveFeedback: saveFeedback
 }
