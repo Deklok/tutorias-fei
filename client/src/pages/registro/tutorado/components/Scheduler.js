@@ -3,7 +3,7 @@ import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import Title from '../../../seguimiento/components/Title';
 import {appointments} from './data';
-import es from 'date-fns/locale/es';
+import axios from 'axios';
 import {
     Scheduler,
     DayView,
@@ -11,6 +11,24 @@ import {
   } from "@devexpress/dx-react-scheduler-material-ui";
 
 const Schedule = memo(props => {
+  const classes = props.classes;
+  const [open, setOpen] = React.useState(true);
+  const [start, setStart] = React.useState('');
+  const [end, setEnd] = React.useState('');
+
+  async function cargarDatos() {
+    return axios.post('http://localhost:5000/api/db/getBlock', {
+      idCareer: 1,
+      idTutorship: 4
+    });
+  }
+
+  cargarDatos()
+    .then(result => {
+      console.log(result);
+      setStart(result.data[0][0]['start']);
+      setEnd(result.data[0][0]['end']);
+    }).catch(console.log);
 
     function createBlock(id, title, startDate, endDate, location){
       return { id, title, startDate, endDate, location };
@@ -18,6 +36,14 @@ const Schedule = memo(props => {
 
     var bloque = appointments;
     const rows = [];
+
+    var inicio = start.split(":");
+    var auxinicio = parseInt(inicio[0],10);
+    var fin = end.split(":");
+    var auxfin = parseInt(fin[0],10);
+    console.log(start);
+    var tiempo = (auxfin - auxinicio) * 4;
+
     var tiempo = (bloque[0]['endDayHour'] - bloque[0]['startDayHour']) * 4;
     var aux = 0;
     var inicio = bloque[0]['startDayHour'];

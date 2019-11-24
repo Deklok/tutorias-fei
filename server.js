@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
-const databaseTest = require('./server/db/SchedulerRegistryDB.js');
 const cors = require('cors');
 
 const app = express();

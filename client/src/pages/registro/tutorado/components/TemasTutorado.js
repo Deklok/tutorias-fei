@@ -5,7 +5,7 @@ import './style.css';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import TextareaAutosize from 'react-textarea-autosize';
+import Input from '@material-ui/core/Input';
 
 const useStyles = makeStyles({
   depositContext: {
@@ -31,12 +31,10 @@ export default function TemasTutorado() {
       <Typography variant="h6" gutterBottom>
         Intereses del Tutorado
       </Typography>
-      <TextareaAutosize
-        id = "tema"
-        minRows = "3"
-        maxRows = "5"
-        maxLength = "500"
-        className={classes.textArea}
+      <Input
+        multiline
+        fullWidth
+        rows = "6"
       />
       <div>
         <Button id="returnBtn" variant="contained" href="/dashboard-inicio">Cancelar</Button>
