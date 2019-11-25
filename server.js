@@ -479,5 +479,81 @@ app.get('*',(req,res) =>{
 });
 */
 
+/*
+*Service to create tutorship
+*Params: 
+*   place = place where the tutorship will take place
+*   tutorshipNum = number tutorship
+*   period = period current
+*   indicatios = indications for pupil
+*   date = tutorship date 
+*   userName = turor userName 
+*Resturns:
+*   200: number of rows modified
+*   400: Param expected
+*/
+app.post('/api/db/addTutorship', (req, res) => {
+  var place = req.body.place;
+  var tutorshipNum = req.body.tutorshipNum;
+  var period = req.body.period;
+  var indications = req.body.indications;
+  var date = req.body.date;
+  var userName = req.body.userName;
+
+  if(place && tutorshipNum, period, indications, date, userName){
+    database.addTutorship(place, tutorshipNum, period, indications, date, userName).then(function (response) {
+      res.status(201).send(response);
+    });
+  }else{
+    res.status(400);
+  }
+  
+});
+
+/*
+*Service to create block general
+*Params: 
+*   idCareer = identified career
+*   start = time start block tutorship
+*   end = time end block tutorship
+*   idTutorship = identified tutorshipo scheduled
+*Resturns:
+*   200: number of rows modified
+*   400: Param expected
+*/
+app.post('/api/db/addBlock', (req, res) =>{
+  var idCareer = req.body.idCareer;
+  var start = req.body.start;
+  var end = req.body.end;
+  var idTutorship = req.body.idTutorship;
+  if(idCareer && start, end, idTutorship){
+    database.addBlock(idCareer, start, end, idTutorship).then(function (response){
+      res.send(response);
+    });
+  }else{
+    res.status(400)
+  }
+  
+});
+
+/*
+*Service to create tutorship general
+*Params: 
+*   userName = turor userName 
+*Resturns:
+*   200: all pupils by tutor
+*   400: Param expected
+*/
+app.post('/api/db/getAllPupilByTutor', (req, res) =>{
+  var userName = req.body.userName;
+  if(idTutor){
+    database.getAllPupilByTutor(userName).then(function (response){
+      res.json(response);
+    });
+  }else{
+    res.status(400);
+  }
+});
+
 app.listen(5000);
 console.log('App listening on port 5000');
