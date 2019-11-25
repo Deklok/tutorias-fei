@@ -12,9 +12,6 @@ import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
 import Schedule from './components/Schedule';
 import Cookies from 'universal-cookie';
-import utilities from '../../../'
-import { bool } from 'prop-types';
-import { useUtils } from '@material-ui/pickers';
 
 export default class BlocksRegistry extends Component {
 
@@ -33,13 +30,13 @@ export default class BlocksRegistry extends Component {
     registeredBlocks: []
   };
 
-  cookie = Cookies();
-  token = utilities.splitCookie(cookies.get('token')).token;
-  role = utilities.splitCookie(cookies.get('token')).session;
+  cookies = Cookies();
+  token = utilities.splitCookie(this.cookies.get('token')).token;
+  role = utilities.splitCookie(this.cookies.get('token')).session;
 
   getLastTutorship() {
 
-    const id = utilities.splitCookie(this.cookie.get('token')).id;
+    const id = utilities.splitCookie(this.cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/db/lastTutorship', {
       idTutor: id
     }, {
