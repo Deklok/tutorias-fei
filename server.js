@@ -19,6 +19,8 @@ const store = new MemoryStore({
   ttl: 3600000
 });
 
+const publicRoutes = ['/api/user/login','/api/test/session','/api/auth'];
+
 store.on("error", function(err) {
   console.log("Redis storage error: " + err);
 });
@@ -37,8 +39,11 @@ app.use(
   })
 );
 
+/**
+ * Middleware to check if the petition has a valid session
+ */
 function hasSession(req,res,next) {
-  if (req.path == '/api/user/login' || req.path == '/api/test/session' || req.path == '/api/auth') { 
+  if (publicRoutes.includes(req.path)) { 
     return next();
   } else {
     var session = req.header('Authorization');
@@ -60,35 +65,8 @@ function hasSession(req,res,next) {
     
   }
 }
-
 app.all('*',hasSession);
 
-/**
- * Function to check if the petition has a valid session
- * Use the following format in the petitions to check session
- * 
- * hasSession(req.header('Authorization')).then(function(){
- * 
- * }).catch(function(){
- * 
- * })
- */
-/*
-function hasSession(session) {
-  var promise = new Promise(function(resolve,reject) {
-    store.get(session, function(error,storeSession) {
-      console.log("Received: " + session);
-      console.log(storeSession);
-      if (storeSession != undefined) {
-        resolve(true);
-      } else {
-        reject(false);
-      }
-    });
-  });
-  return promise;
-}
-*/
 app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
 });
@@ -417,6 +395,63 @@ app.post('/api/db/agreement', (req,res) => {
         res.sendStatus(code);
       });
     }
+  } else {
+    res.sendStatus(400);
+  }
+});
+
+/**
+ * Service to add a feedback register
+ * Params:
+ *  grade: 5
+ *  idSession: 45,
+ *  comments(optional): "1,3,4" -> String with the id of the comment separated by commas
+ */
+app.post('/api/db/feedback/add', (req,res) => {
+  var grade = req.body.grade;
+  var idSession = req.body.idSession;
+  var comments = req.body.comments;
+  if (grade && idSession) {
+    if (comments) {
+      comments = comments.split(',');
+    } 
+    database.saveFeedback(grade,idSession,comments).then(function() {
+      res.sendStatus(200);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+})
+
+/**
+ * Service to get the feedback stats of a tutorship
+ * Params: 
+ *  idTutorship: 4
+ * Response:
+ *  {
+    "average": 4,
+    "c1": 2,
+    "c2": 1,
+    "c3": 1,
+    "c4": 0,
+    "c5": 1,
+    "total": 3,
+    "complete": 0,
+    "absent": 3
+    }
+ */
+app.get('/api/db/feedback/get',(req,res) => {
+  var idTutorship = req.body.idTutorship;
+  if (idTutorship) {
+    database.getFeedbackData(idTutorship).then(function (response) {
+      res.json(response[0][0]);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
   } else {
     res.sendStatus(400);
   }
