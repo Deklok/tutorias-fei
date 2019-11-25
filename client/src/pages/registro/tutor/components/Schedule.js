@@ -108,7 +108,7 @@ export default function Schedule(props) {
   async function saveEmail() {
     var id = utilities.splitCookie(cookies.get('token')).id;
       return axios.post('http://localhost:5000/api/notify/email/signup', {
-        idTutor: id,
+        userName: id,
         email: email
       }, {
         headers: { Authorization: token + ";" + role }
@@ -116,8 +116,8 @@ export default function Schedule(props) {
   }
 
   async function getPupil() {
-    return axios.post('http://localhost:5000/api/db/getPupils', {
-        idTutor: 'Z13011798'
+    return axios.post('http://localhost:5000/api/db/getPupilByTutor', {
+      userName: 'Z13011798'
       }, {
         headers: { Authorization: token + ";" + role }
       });
