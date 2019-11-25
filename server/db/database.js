@@ -48,6 +48,19 @@ function getAllSessions(idTutorship){
 		});
 	});
 }
+
+function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData) {
+	return new Promise((resolve, reject) => {
+		pool.query('call sp_tutor_data_import(?,?,?)',[tutorPersonnelNum, tutorName, pupilsData],(err,results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
 function saveStudentSuscribedOn(studentId){
 	return new Promise((resolve, reject) => {
 		pool.query('UPDATE Pupil SET isEmailSuscribed = 1 WHERE studentId = ?',[studentId],(err, results) => {
@@ -182,5 +195,6 @@ module.exports = {
 	setPupilPrivacyAgreement: setPupilPrivacyAgreement,
 	setTutorPrivacyAgreement: setTutorPrivacyAgreement,
 	getFeedbackData: getFeedbackData,
-	saveFeedback: saveFeedback
+	saveFeedback: saveFeedback,
+	tutorDataImport: tutorDataImport
 }

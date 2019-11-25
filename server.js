@@ -10,6 +10,7 @@ const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
 const director = require('./requestDirector.js');
+const dataimport = require('./server/dataimport/dataimport');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -43,7 +44,7 @@ app.use(
  * Middleware to check if the petition has a valid session
  */
 function hasSession(req,res,next) {
-  if (publicRoutes.includes(req.path)) { 
+  if (publicRoutes.includes(req.path)) {
     return next();
   } else {
     var session = req.header('Authorization');
@@ -62,7 +63,7 @@ function hasSession(req,res,next) {
     }).catch(function(){
       res.status(401).json({ error: "Access denied" });
     });
-    
+
   }
 }
 app.all('*',hasSession);
@@ -328,14 +329,14 @@ app.post('/api/db/isagree', (req,res) => {
       database.isPupilPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     } else {
       database.isTutorPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     }
@@ -356,14 +357,14 @@ app.post('/api/db/isagree', (req,res) => {
       database.isPupilPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     } else {
       database.isTutorPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     }
@@ -383,7 +384,7 @@ app.post('/api/db/agreement', (req,res) => {
       database.setPupilPrivacyAgreement(userId).then(function (response) {
        if (response.toString().includes("error")) {
           code = 500;
-        }       
+        }
         res.sendStatus(code);
       });
     } else {
@@ -391,7 +392,7 @@ app.post('/api/db/agreement', (req,res) => {
         console.table(response);
         if (response.toString().includes("error")) {
           code = 500;
-        }       
+        }
         res.sendStatus(code);
       });
     }
@@ -399,6 +400,19 @@ app.post('/api/db/agreement', (req,res) => {
     res.sendStatus(400);
   }
 });
+
+/**
+ * Service to trigger tutor's data import
+ *
+ */
+app.post('/api/dataimport/tutor', (req,res) => {
+  let user = req.body["user"];
+  let pass = req.body["pass"];
+  dataimport.importTutor(user, pass).then(function (response) {
+    res.send(response);
+  })
+});
+
 
 /**
  * Service to add a feedback register
@@ -414,7 +428,7 @@ app.post('/api/db/feedback/add', (req,res) => {
   if (grade && idSession) {
     if (comments) {
       comments = comments.split(',');
-    } 
+    }
     database.saveFeedback(grade,idSession,comments).then(function() {
       res.sendStatus(200);
     }).catch(function (error) {
@@ -428,7 +442,7 @@ app.post('/api/db/feedback/add', (req,res) => {
 
 /**
  * Service to get the feedback stats of a tutorship
- * Params: 
+ * Params:
  *  idTutorship: 4
  * Response:
  *  {
