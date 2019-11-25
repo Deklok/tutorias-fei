@@ -27,8 +27,11 @@ const Main = memo(props => {
 	}
 
 	const siguienteTutorado=()=>{
-		tutorados.pop();
-		setTutorados(tutorados);
+		console.log('siguiente');
+	    var tutorados_aux = tutorados;
+	    tutorados_aux.splice(0,1);
+	    console.log(tutorados_aux);
+	    setPupil(tutorados_aux[0]);
 	}
 
 	return (
@@ -48,7 +51,7 @@ const Main = memo(props => {
 		          	}
 		        </Grid>
 		        <Grid item xs={12} md={5} lg={5}>
-		          <NextTutorado comenzado = {comenzado} tutorado = {nextPupil} setAtendiendo={setAtendiendo} next={siguienteTutorado} setCurrentPupil={setCurrentPupil}/>
+		          <NextTutorado comenzado = {comenzado} tutorado = {nextPupil}  atendiendo = {atendiendo} setAtendiendo={setAtendiendo} next={siguienteTutorado} setCurrentPupil={setCurrentPupil}/>
 		        </Grid>
 		      </Grid>
 		      <Grid container spacing={3}>

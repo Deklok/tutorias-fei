@@ -45,6 +45,24 @@ const Dashboard = memo(props => {
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
 
+  React.useEffect(()=>{
+    cargarDatos()
+    .then(result => {
+      if(result){
+        setNombre(result.data[0]['name']);
+        setContacto(result.data[0]['contact']);
+      }
+    }).then(()=>{
+      cargarTutorados()
+        .then(result=>{
+          if(result){
+            setTutorados(result.data[0]);
+            setConnect(false);
+          }
+        })
+    }).catch(console.log);
+  });
+
   async function cargarDatos() {
     if(connect){
       return axios.post('http://localhost:5000/api/db/tutorData', {
@@ -88,23 +106,6 @@ Cualquier cosa estoy a sus órdenes
 
 Saludos
 `
-
-  cargarDatos()
-    .then(result => {
-      if(result){
-        setNombre(result.data[0]['name']);
-        setContacto(result.data[0]['contact']);
-        setConnect(false);
-      }
-    }).catch(console.log);
-
-    cargarTutorados()
-    .then(result=>{
-      if(result){
-        setTutorados(result.data[0]);
-        setConnect(false);
-      }
-    }).catch(console.log);
 
   return (
     <div className={classes.root}>

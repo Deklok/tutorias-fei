@@ -18,10 +18,26 @@ const Tutorados = memo(props => {
   }
   var tutorados = props.tutorados;
   const rows = [];
+  const [lineas, setLineas]=React.useState([]);
 
-  for (var i = 0; i < tutorados.length; i++) {
-    rows.push(createData(i,tutorados[i]['studentId'],tutorados[i]['name'], tutorados[i]['start']));
+
+  const actualizar = () =>{
+    clrtb();
+    for (var i = 0; i < tutorados.length; i++) {
+      rows.push(createData(i,tutorados[i]['studentId'],tutorados[i]['name'], tutorados[i]['start']));
+    }
   }
+
+  const clrtb=()=>{
+    for(var i = 0, length1 = rows.length; i < length1; i++){
+      rows[i].pop();
+    }
+  }
+
+  React.useEffect(()=>{
+    actualizar();
+    setLineas(rows);
+  });
 
   const useStyles = makeStyles(theme => ({
     seeMore: {
@@ -41,7 +57,7 @@ const Tutorados = memo(props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
+          {lineas.map(row => (
             <TableRow key={row.id}>
               <TableCell>{row.matricula}</TableCell>
               <TableCell>{row.nombre}</TableCell>

@@ -74,11 +74,12 @@ const NextTutorado = memo(props => {
   const setCurrentPupil = props.setCurrentPupil;
   const setAtendiendo = props.setAtendiendo;
   const tutorados = props.tutorados;
+  const atendiendo = props.atendiendo;
 
   function comenzarTutoria(){
+    props.next();
     setCurrentPupil(tutorado);
     setAtendiendo(true);
-    props.next();
   }
 
   return (
@@ -101,24 +102,30 @@ const NextTutorado = memo(props => {
               </div>
             </Grid>
             <Grid item md={4} xs={6}>
-              <div className={classes.clock}>
-                <Typography variant="h3" className={classes.textOverlay}>
-                  {tutorado['start']}
-                </Typography>
-                <Typography paragraph variant="h6" className={classes.textOverlay}>
-                  {tutorado['studentId']}
-                </Typography>
-              </div>
+              {tutorado != undefined ?
+                <div className={classes.clock}>
+                  <Typography variant="h3" className={classes.textOverlay}>
+                    {tutorado['start']}
+                  </Typography>
+                  <Typography paragraph variant="h6" className={classes.textOverlay}>
+                    {tutorado['studentId']}
+                  </Typography>
+                </div>
+                : null
+              }
             </Grid>
           </Grid>
         </div>
         <CardContent>
           <div className={classes.details}>
-            <Typography variant="subtitle1" color="text" component="p" noWrap>
-              {tutorado['name']}
-            </Typography>
+            {tutorado != undefined ?
+              <Typography variant="subtitle1" color="text" component="p" noWrap>
+                {tutorado['name']}
+              </Typography>
+              : null
+            }
             <div className={classes.options}>
-              {comenzado ?
+              {comenzado && !atendiendo ?
                 <div>
                   <Tooltip title="Atender">
                     <IconButton onClick={comenzarTutoria} aria-label="play" size="small">
