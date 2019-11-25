@@ -82,6 +82,14 @@ const NextTutorado = memo(props => {
     setAtendiendo(true);
   }
 
+  function saltar(){
+    props.next();
+  }
+
+  function validate(){
+    return !atendiendo && tutorados.length > 0 && tutorados[0].name!=undefined;
+  }
+
   return (
     <React.Fragment>
       <Card className={classes.paper, classes.card}>
@@ -125,7 +133,7 @@ const NextTutorado = memo(props => {
               : null
             }
             <div className={classes.options}>
-              {comenzado && !atendiendo ?
+              {comenzado && validate()?
                 <div>
                   <Tooltip title="Atender">
                     <IconButton onClick={comenzarTutoria} aria-label="play" size="small">
@@ -133,7 +141,7 @@ const NextTutorado = memo(props => {
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Saltar">
-                    <IconButton aria-label="skip" size="small">
+                    <IconButton onClick={saltar} aria-label="skip" size="small">
                       <SkipNextIcon />
                     </IconButton>
                   </Tooltip>

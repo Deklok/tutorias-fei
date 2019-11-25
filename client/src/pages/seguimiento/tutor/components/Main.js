@@ -63,6 +63,7 @@ const Main = memo(props => {
 		          	next={siguienteTutorado}
 		          	setCurrentPupil={setCurrentPupil}
 		          	setVerify = {setVerify}
+		          	tutorados = {tutorados}
 		          	/>
 		        </Grid>
 		      </Grid>
