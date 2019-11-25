@@ -1,128 +1,40 @@
-import React from 'react';
+import React, { memo } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import Agenda from './Agenda';
-import Tutorados from './Tutorados';
-import TemasTutorado from './TemasTutorado';
+import Agenda from '../components/Agenda';
+import Tutorados from './components/Tutorados';
+import TemasTutorado from '../components/TemasTutorado';
+import Feedback from './components/Feedback';
+import CurrentTutorado from './components/CurrentTutorado';
+import NextTutorado from './components/NextTutorado';
+import BlockRegistry from '../../registro/tutor/BlocksRegistry';
+import SideBar from './components/SideBar';
+import NavBar from './components/NavBar';
 import axios from 'axios';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import Main from './components/Main';
+import Cookies from 'universal-cookie';
+import utilities from '../../../utilities';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+const cookies = new Cookies();
 
-const drawerWidth = 240;
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-  },
-  toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
-  },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: 36,
-  },
-  menuButtonHidden: {
-    display: 'none',
-  },
-  title: {
-    flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
-  },
-  appBarSpacer: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
-  },
-  container: {
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-  },
-  paper: {
-    padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
-  },
-  fixedHeight: {
-    height: 240,
-  },
-}));
-
-export default class Dashboard extends React.Component {
-  /*const classes = useStyles();
+const Dashboard = memo(props => {
+  const classes = props.classes;
   const [open, setOpen] = React.useState(true);
-  const [correo, setCorreo] = React.useState('');
-  const [carrera, setCarrera] = React.useState('');
-
+  const [nombre, setNombre] = React.useState('');
+  const [contacto, setContacto] = React.useState('');
+  const [tutorados, setTutorados] = React.useState('');
+  const [connect, setConnect] = React.useState(true);
+  const [comenzado, setComenzado] = React.useState(false);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -130,124 +42,111 @@ export default class Dashboard extends React.Component {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
 
-  async function cargarDatos(){
-    return axios.post('http://localhost:5000/api/miuv/datos', {user: 'zS16011721',
-      pass: '************' });
+  React.useEffect(()=>{
+    cargarDatos()
+    .then(result => {
+      if(result){
+        setNombre(result.data[0]['name']);
+        setContacto(result.data[0]['contact']);
+      }
+    }).then(()=>{
+      cargarTutorados()
+        .then(result=>{
+          if(result){
+            setTutorados(result.data[0]);
+            setConnect(false);
+          }
+        })
+    }).catch(console.log);
+  });
+
+  async function cargarDatos() {
+    if(connect){
+      return axios.post('http://localhost:5000/api/db/tutorData', {
+        personnelNum: 'Z13011798',
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+    }else{
+      return null;
+    }
   }
 
-  cargarDatos()
-  .then(result=>{
-      setCorreo(result.data['correo']);
-      setCarrera(result.data['carrera']);
-  }).catch(console.log);
-*/
-
-  constructor(props){
-    super(props);
-
-    this.handleDrawerClose=this.handleDrawerClose.bind(this);
-    this.handleDrawerOpen=this.handleDrawerOpen.bind(this);
-    this.cargarDatos=this.cargarDatos.bind(this);
+  async function cargarTutorados() {
+    if (connect){
+      return axios.post('http://localhost:5000/api/db/sessions', {
+        idTutorship: 1,
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+    }else{
+      return null;
+    }
   }
 
-  handleDrawerOpen = () => {
-    this.setState(this.increment);
-  };
+  const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
+Estimados tutorados
 
-  handleDrawerClose = () => {
-    this.setState(this.decrement);
-  }
+El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios
 
-  increment(state){
-    return {state, open: true};
-  }
+9:00 am a 11:30 am  Atención a estudiantes de Ingeniería de Software
+11:30 am a 14:30 pm Atención a estudiantes de Redes y Servicios de Cómputo
 
-  decrement(state){
-    return {state, open:false};
-  }
+Les recuerdo a los tutorados de nuevo ingreso que traigan lo que es encargué en la primera tutoría. Los temas que vamos a platicar mañana son:
 
-  cargarDatos = () => {
-    return useStyles();
-  }
+- Resultados de los primeros parciales
+- Comentarios previos a la acreditación de la LIS
+- Detectar problemas académicos que podamos atender a tiempo
+- Asuntos generales.
 
-    state={
-    correo: '',
-    carrera:'',
-    open:false,
-    classes: this.cargarDatos,
-    fixedHeightPaper: clsx(useStyles.paper, useStyles.fixedHeight),
-  }
+Cualquier cosa estoy a sus órdenes
 
-  render(){
-    return (
-      <div className={this.state.classes.root}>
-        <CssBaseline />
-        <AppBar position="absolute" className={clsx(this.state.classes.appBar, this.state.open && useStyles.appBarShift)}>
-          <Toolbar className={useStyles.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={this.handleDrawerOpen}
-              className={clsx(useStyles.menuButton, this.state.open && useStyles.menuButtonHidden)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography component="h1" variant="h6" color="inherit" noWrap className={useStyles.title}>
-              Tutorado {`${this.state.correo}, ${this.state.carrera}`}
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="#ffffff">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: clsx(useStyles.drawerPaper, !this.state.open && useStyles.drawerPaperClose),
-          }}
-          open={this.state.open}
-        >
-          <div className={useStyles.toolbarIcon}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          <List>{mainListItems}</List>
-          <Divider />
-          <List>{secondaryListItems}</List>
-        </Drawer>
-        <main className={useStyles.content}>
-          <div className={useStyles.appBarSpacer} />
-          <Container maxWidth="lg" className={useStyles.container}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={3} lg={4}>
-                <Paper className={this.state.fixedHeightPaper}>
-                  <Agenda />
-                </Paper>
-              </Grid>
-              {/* Chart */}
-              <Grid item xs={12} md={3} lg={4}>
-                <Paper className={this.state.fixedHeightPaper}>
-                  <TemasTutorado />
-                </Paper>
-              </Grid>
-              {/* Recent Tutorados */}
-              <Grid item xs={12} md={6} lg={4}>
-                <Paper className={useStyles.paper}>
-                  <Tutorados />
-                </Paper>
-              </Grid>
-            </Grid>
-          </Container>
-          <Copyright />
-        </main>
-      </div>
-    );
-  }
-}
+Saludos
+`
+
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <NavBar
+        open = {open}
+        handleDrawerOpen = {handleDrawerOpen}
+        classes = {classes}
+        nombre = {nombre}
+        contacto = {contacto}
+      />
+      <SideBar
+          open = {open}
+          handleDrawerClose = {handleDrawerClose}
+          classes = {classes}
+      />
+      <Switch>
+        <Route exact path="/tutor">
+          <Main
+            classes={classes}
+            test={test}
+            tutorados={tutorados}
+            setTutorados={setTutorados}
+            comenzado={comenzado}
+            setComenzado = {setComenzado}
+          />
+        </Route>
+        <Route path="/tutor/feedback">
+          <Feedback
+          classes={classes}
+          />
+        </Route>
+        <Route path="/tutor/registro-bloques">
+            <BlockRegistry
+                classes={classes}
+                registryBlockClasses={props.registryBlockClasses}
+            />
+        </Route>
+      </Switch>
+    </div>
+  );
+});
+
+export default Dashboard;
