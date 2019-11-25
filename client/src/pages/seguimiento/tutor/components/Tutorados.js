@@ -19,9 +19,10 @@ const Tutorados = memo(props => {
   var tutorados = props.tutorados;
   const rows = [];
   const [lineas, setLineas]=React.useState([]);
-
-
+  const isInitialMount = React.useRef(true);
+  const [verify, setVerify] = React.useState(true);
   const actualizar = () =>{
+    console.log('actualizando');
     clrtb();
     for (var i = 0; i < tutorados.length; i++) {
       rows.push(createData(i,tutorados[i]['studentId'],tutorados[i]['name'], tutorados[i]['start']));
@@ -35,8 +36,12 @@ const Tutorados = memo(props => {
   }
 
   React.useEffect(()=>{
-    actualizar();
-    setLineas(rows);
+    if(props.verify && tutorados.length > 0) {
+      console.log(tutorados.length);
+      actualizar();
+      setLineas(rows);
+      props.setVerify(false);
+    }
   });
 
   const useStyles = makeStyles(theme => ({
