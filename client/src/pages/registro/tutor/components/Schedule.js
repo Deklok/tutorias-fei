@@ -85,7 +85,7 @@ export default function Schedule(props) {
         period: period,
         indications: indications,
         date: date.getFullYear() + "-" + month + "-" + date.getDate(),
-        idTutor: id
+        userName: id
         //idTutor: 'Z13011798'
       }, {
         headers: { Authorization: token + ";" + role }
