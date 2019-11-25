@@ -46,9 +46,7 @@ const Banner = memo(props => {
                     Primera Tutoría
                   </Typography>
                   <Typography variant="h5" color="inherit">
-                  Estimados tutorados
-  
-                  El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios ...
+                  https://images.unsplash.com/photo-1504275107627-0c2ba7a43dba?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1334&q=80"
                   </Typography>
                   <Link variant="subtitle1" href="#agenda">
                     Continuar leyendo
