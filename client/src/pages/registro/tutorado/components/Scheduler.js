@@ -3,6 +3,7 @@ import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import Title from '../../../seguimiento/components/Title';
 import {appointments} from './data';
+import {datos} from './dataSession';
 import axios from 'axios';
 import {
     Scheduler,
@@ -50,38 +51,76 @@ const Schedule = memo(props => {
     de alguna session, en el caso de que ya se haya escogido una sesión. Se valida solo la hora de inicio
     de la session bajo el formato "YYYY-MM-DD HH:MM:SS"
     */
-    var sessionInicio = bloque[0]['sessionStart'].split(" ");
-    var sessionHoraInicio = sessionInicio[1].split(":");
-    var horaAux = parseInt(sessionHoraInicio[0],10);
-    var minAux = parseInt(sessionHoraInicio[1],10);
+
+    function createSession(horas, minutos) {
+      return { horas, minutos };
+    }
+
+    var sesiones = datos;
+    const horasMin = [];
+
+    for (var i = 0; i < sesiones.length; i++){
+      var sessionInicio = sesiones[i]['sessionStart'].split(" ");
+      var sessionHoraInicio = sessionInicio[1].split(":");
+      var horaAux = parseInt(sessionHoraInicio[0],10);
+      var minAux = parseInt(sessionHoraInicio[1],10);
+      horasMin.push(createSession(horaAux,minAux));
+    }
+
+    console.log(horasMin.length);
 
     var aux = 0;
     var inicio = auxinicio;
+    var count = 0;
 
     for(var i = 1; i <= tiempo; i++){
       if (aux === 0) {
         aux = 1;
-        if (horaAux === inicio && minAux === 0){
-        } else {
+        count = 0;
+        var valido = false;
+        for (var j = 0; j < horasMin.length; j++){
+          if (horasMin[j]['horas'] === inicio && horasMin[j]['minutos'] === 0){
+            valido = true;
+          }
+        }
+        if (valido === false){
           rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 0),new Date(2019, 5, 25, inicio, 15),"Cubículo 30"));
         }
       } else if (aux === 1) {
         aux = 2;
-        if (horaAux === inicio && minAux === 15){
-        } else {
+        count = 0;
+        var valido = false;
+        for (var j = 0; j < horasMin.length; j++){
+          if (horasMin[j]['horas'] === inicio && horasMin[j]['minutos'] === 15){
+            valido = true;
+          }
+        }
+        if (valido === false){
           rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 15),new Date(2019, 5, 25, inicio, 30),"Cubículo 30"));
         }
       } else if (aux === 2) {
         aux = 3;
-        if (horaAux === inicio && minAux === 30){
-        } else {
+        count = 0;
+        var valido = false;
+        for (var j = 0; j < horasMin.length; j++){
+          if (horasMin[j]['horas'] === inicio && horasMin[j]['minutos'] === 30){
+            valido = true;
+          }
+        }
+        if (valido === false){
           rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 30),new Date(2019, 5, 25, inicio, 45),"Cubículo 30"));
         }
       } else {
         aux = 0;
+        count = 0;
         inicio = inicio + 1;
-        if (horaAux === inicio - 1 && minAux === 45){
-        } else {
+        var valido = false;
+        for (var j = 0; j < horasMin.length; j++){
+          if (horasMin[j]['horas'] === (inicio - 1) && horasMin[j]['minutos'] === 45){
+            valido = true;
+          }
+        }
+        if (valido === false){
           rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio - 1, 45),new Date(2019, 5, 25, inicio, 0),"Cubículo 30"));
         }
       }
