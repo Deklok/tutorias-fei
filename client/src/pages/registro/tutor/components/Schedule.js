@@ -23,7 +23,6 @@ export default function Schedule(props) {
   const [place, setPlace] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [size, setSize] = React.useState(0);
-  const [connect, setConnect] = React.useState(true);
   const [title, setTitle] = React.useState("Error");
   const [message, setMessage] = React.useState("");
   const [openDialog, setOpenDialog] = React.useState(false);
@@ -78,8 +77,7 @@ export default function Schedule(props) {
   var role = utilities.splitCookie(cookies.get('token')).session;
 
   async function saveTutorialship() {
-    if (connect) {
-      var month = date.getMonth() + 1;
+    var month = date.getMonth() + 1;
       var id = utilities.splitCookie(cookies.get('token')).id;
       return axios.post('http://localhost:5000/api/db/addTutorship', {
         place: place,
@@ -92,14 +90,10 @@ export default function Schedule(props) {
       }, {
         headers: { Authorization: token + ";" + role }
       });
-    } else {
-      return null;
-    }
   }
 
   async function saveBlock() {
-    if (connect) {
-      var start = startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getMilliseconds();
+    var start = startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getMilliseconds();
       var end = endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getMilliseconds();
       return axios.post('http://localhost:5000/api/db/addBlock', {
         idCareer: 5, // 5 = career general
@@ -109,41 +103,29 @@ export default function Schedule(props) {
       }, {
         headers: { Authorization: token + ";" + role }
       });
-    } else {
-      return null;
-    }
   }
 
   async function saveEmail() {
-    if (connect) {
-      var id = utilities.splitCookie(cookies.get('token')).id;
+    var id = utilities.splitCookie(cookies.get('token')).id;
       return axios.post('http://localhost:5000/api/notify/email/signup', {
         idTutor: id,
         email: email
       }, {
         headers: { Authorization: token + ";" + role }
       });
-    } else {
-      return null;
-    }
   }
 
   async function getPupil() {
-    if (connect) {
-      return axios.post('http://localhost:5000/api/db/getPupils', {
+    return axios.post('http://localhost:5000/api/db/getPupils', {
         idTutor: 'Z13011798'
       }, {
         headers: { Authorization: token + ";" + role }
       });
-    } else {
-      return null;
-    }
   }
 
   getPupil().then(result => {
     if (result) {
       setSize(result.data[0]['size']);
-      setConnect(false);
     }
   }).catch(console.log);
 
@@ -163,14 +145,10 @@ export default function Schedule(props) {
                 idTutorship = result.data['insertId'];
 
                 saveEmail().then(result => {
-                  if (result) {
-                    setConnect(false);
-                  }
                 }).catch(console.log);
 
                 saveBlock().then(result => {
                   if (result) {
-                    setConnect(false);
                     props.closeAction();
                     setTitle("Éxito");
                     setMessage("La tutoria se ha calendarizado exitosamente.");
@@ -178,7 +156,6 @@ export default function Schedule(props) {
                   }
                 }).catch(console.log);
 
-                setConnect(false);
               }
             }).catch(console.log);
 
