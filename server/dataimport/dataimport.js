@@ -45,7 +45,8 @@ function importTutor(user, pass) {
             return database.tutorDataImport(
                 scraperResponse.teacher.personalNumber,
                 scraperResponse.teacher.name,
-                encodedPupils
+                encodedPupils,
+                user
             );
         })
         .then(dbResult => { // format db result to response

@@ -289,8 +289,8 @@ app.post('/api/notify/student/canceledday', function (req, res){
 *Response: [{personnelNum, name, contact, isEmailSuscribed}]
 */
 app.post('/api/db/tutorData', (req,res) => {
-  var personnelNum = req.body["personnelNum"];
-  database.getDataTutor(personnelNum).then(function(response){
+  var username = req.body["username"];
+  database.getDataTutor(username).then(function(response){
     res.send(response);
   });
 });

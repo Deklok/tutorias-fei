@@ -2,9 +2,9 @@ const mysql = require('mysql');
 const pool = require('./config.js');
 
 
-function getDataTutor(tutorId){
+function getDataTutor(username){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT * FROM Tutor WHERE personnelNum = ?',[tutorId],(err, results) => {
+		pool.query('SELECT * FROM Tutor WHERE username = ?',[username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -49,9 +49,9 @@ function getAllSessions(idTutorship){
 	});
 }
 
-function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData) {
+function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData, username) {
 	return new Promise((resolve, reject) => {
-		pool.query('call sp_tutor_data_import(?,?,?)',[tutorPersonnelNum, tutorName, pupilsData],(err,results) => {
+		pool.query('call sp_tutor_data_import(?,?,?,?)',[tutorPersonnelNum, tutorName, pupilsData, username],(err,results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -72,9 +72,9 @@ function saveStudentSuscribedOn(studentId){
 		});
 	});
 }
-function saveTutorSuscribedOn(personnelNum){
+function saveTutorSuscribedOn(username){
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE personnelNum = ?',[personnelNum],(err, results) => {
+		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE username = ?',[username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -105,9 +105,9 @@ function getIdCareer(careerName){
 		});
 	});
 }
-function isTutorPrivacyAgreement(personnelNum){
+function isTutorPrivacyAgreement(username){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT privacyAgreement FROM Tutor WHERE personnelNum = ?',[personnelNum],(err, results) => {
+		pool.query('SELECT privacyAgreement FROM Tutor WHERE username = ?',[username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -139,10 +139,10 @@ function setPupilPrivacyAgreement(studentId){
 		});
 	});
 }
-function setTutorPrivacyAgreement(personnelNum){
+function setTutorPrivacyAgreement(username){
 	var dateTime = new Date(); //This works for the current server timer
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor set privacyAgreement = ? WHERE personnelNum = ?',[dateTime, personnelNum],(err, results) => {
+		pool.query('UPDATE Tutor set privacyAgreement = ? WHERE username = ?',[dateTime, username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
