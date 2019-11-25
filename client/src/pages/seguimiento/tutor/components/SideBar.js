@@ -92,31 +92,6 @@ const SideBar = memo(props => {
 				<div>
 					<ListSubheader inset>Cuenta</ListSubheader>
 					<ListItem button onClick={handleClickOpen}>
-						<Dialog open={openDialog} aria-labelledby="form-dialog-title">
-							<DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-							<DialogContent>
-								<DialogContentText>
-									To subscribe to this website, please enter your email address here. We will send updates
-									occasionally.
-          						</DialogContentText>
-								<TextField
-									autoFocus
-									margin="dense"
-									id="name"
-									label="Email Address"
-									type="email"
-									fullWidth
-								/>
-							</DialogContent>
-							<DialogActions>
-								<Button color="primary">
-									Cancel
-          						</Button>
-								<Button color="primary">
-									Subscribe
-          						</Button>
-							</DialogActions>
-						</Dialog>
 						<ListItemIcon>
 							<CachedIcon />
 						</ListItemIcon>
@@ -130,6 +105,31 @@ const SideBar = memo(props => {
 					</ListItem>
 				</div>
 			</List>
+			<Dialog open={openDialog} aria-labelledby="form-dialog-title">
+				<DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						To subscribe to this website, please enter your email address here. We will send updates
+						occasionally.
+						</DialogContentText>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="name"
+						label="Email Address"
+						type="email"
+						fullWidth
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button color="primary" onClick={handleClose}>
+						Cancel
+						</Button>
+					<Button color="primary">
+						Subscribe
+						</Button>
+				</DialogActions>
+			</Dialog>
 		</Drawer>
 	);
 });
