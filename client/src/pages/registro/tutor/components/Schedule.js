@@ -116,8 +116,10 @@ export default function Schedule(props) {
   }
 
   async function getPupil() {
+    var id = utilities.splitCookie(cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/db/getPupilByTutor', {
-      userName: 'Z13011798'
+      //userName: 'Z13011798'
+      userName: id
       }, {
         headers: { Authorization: token + ";" + role }
       });
