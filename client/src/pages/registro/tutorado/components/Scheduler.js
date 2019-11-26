@@ -1,4 +1,4 @@
-import React, {memo} from "react";
+import React, {memo, Component} from "react";
 import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import {
@@ -6,14 +6,13 @@ import {
   Week, WorkWeek, Month, Agenda,
   EventSettingsModel, ViewDirective, ViewsDirective
 } from '@syncfusion/ej2-react-schedule';
-import React, { Component } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Title from '../../../seguimiento/components/Title';
 import {datos} from './dataSession';
 import {appointments} from './data';
 import axios from 'axios';
 import {
-  //Scheduler2,
+  Scheduler,
   DayView,
   Appointments
 } from "@devexpress/dx-react-scheduler-material-ui";

@@ -325,7 +325,7 @@ module.exports = {
 	tutorDataImport: tutorDataImport,
 	addTutorship: addTutorship,
     addBlock: addBlock,
-    getAllPupilByTutor: getAllPupilByTutor
+    getAllPupilByTutor: getAllPupilByTutor,
 	getAllSessions: getAllSessions,
 	getBlock: getBlock,
     getTutorship: getTutorship,
