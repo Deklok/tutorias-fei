@@ -171,7 +171,7 @@ app.post('/api/notify/email/signup',async function (request, res){
   var tutorId = request.body.user;
   var email = request.body.email;
   if (tutorId && email) {
-    var emailToPushRecord = {emailAddress: email, 
+    var emailToPushRecord = {emailAddress: email,
               externalId: tutorId};
     var code = await emailpush.registerEmailToNotification(emailToPushRecord);
     res.sendStatus(code);
@@ -482,13 +482,13 @@ app.get('*',(req,res) =>{
 
 /*
 *Service to create tutorship
-*Params: 
+*Params:
 *   place = place where the tutorship will take place
 *   tutorshipNum = number tutorship
 *   period = period current
 *   indicatios = indications for pupil
-*   date = tutorship date 
-*   userName = turor userName 
+*   date = tutorship date
+*   userName = turor userName
 *Resturns:
 *   200: number of rows modified
 *   400: Param expected
@@ -508,12 +508,12 @@ app.post('/api/db/addTutorship', (req, res) => {
   }else{
     res.status(400);
   }
-  
+
 });
 
 /*
 *Service to create block general
-*Params: 
+*Params:
 *   idCareer = identified career
 *   start = time start block tutorship
 *   end = time end block tutorship
@@ -534,13 +534,13 @@ app.post('/api/db/addBlock', (req, res) =>{
   }else{
     res.status(400)
   }
-  
+
 });
 
 /*
 *Service to create tutorship general
-*Params: 
-*   userName = turor userName 
+*Params:
+*   userName = turor userName
 *Resturns:
 *   200: all pupils by tutor
 *   400: Param expected
@@ -555,6 +555,7 @@ app.post('/api/db/getAllPupilByTutor', (req, res) =>{
     res.status(400);
   }
 });
+
 app.post('/api/db/getBlock', (req, res) => {
   var idCareer = req.body["idCareer"];
   var idTutorship = req.body["idTutorship"];

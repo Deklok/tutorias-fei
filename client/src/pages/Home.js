@@ -1,4 +1,4 @@
-import React, { memo, Component } from 'react';
+import React, { memo } from 'react';
 import Inicio from './registro/tutorado/LogIn';
 import Dashboard from './seguimiento/tutor/Dashboard';
 import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado';
@@ -6,8 +6,6 @@ import DashboardInicio from './registro/tutorado/DashboardInicio';
 import DashboardFin from './registro/tutorado/DashboardFin';
 import { useStyles, registryBlockStyles} from './Styles';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import BlockRegistry from './registro/tutor/BlocksRegistry';
-import { makeStyles } from '@material-ui/styles';
 import Cookies from 'universal-cookie';
 import utilities from '../utilities';
 
