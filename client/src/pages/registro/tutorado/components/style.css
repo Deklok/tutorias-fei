@@ -1,6 +1,6 @@
 
 
-#cancelBtn{
+#returnBtn{
     margin-right: auto;
     margin-top: 20px;
     margin-bottom: 10px;
@@ -11,7 +11,7 @@
     color: white;
   }
   
-  #acceptBtn{
+  #agendBtn{
     margin-right: auto;
     margin-top: 20px;
     margin-bottom: 10px;

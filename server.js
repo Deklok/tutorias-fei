@@ -555,8 +555,52 @@ app.post('/api/db/getAllPupilByTutor', (req, res) =>{
     res.status(400);
   }
 });
+app.post('/api/db/getBlock', (req, res) => {
+  var idCareer = req.body["idCareer"];
+  var idTutorship = req.body["idTutorship"];
+  database.getBlock(idCareer,idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
 
+app.post('/api/db/getTutorship', (req, res) => {
+  var idTutorship = req.body["idTutorship"];
+  database.getTutorship(idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/reserveSession', (req, res) => {
+  var startTime = req.body["startTime"];
+  var endTime = req.body["endTime"];
+  var idBlock = req.body["idBlock"];
+  var idPupil = req.body["idPupil"];
+  database.reserveSession(startTime,endTime,idBlock,idPupil).then(function (response) {
+    res.status(201).send(`${response.insertId}`);
+  });
+});
+
+app.post('/api/db/addSession', (req, res) => {
+  var idSession = req.body["idSession"];
+  var topics = req.body["topics"];
+  database.addSession(idSession,topics).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/deleteTutorship', (req, res) => {
+  var idTutorship = req.body["idTutorship"];
+  database.deleteTutorship(idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
+
+app.post('/api/db/deleteSession', (req, res) => {
+  var idSession = req.body["idSession"];
+  database.deleteSession(idSession).then(function (response) {
+    res.json(response);
+  });
+});
 const httpServer = http.createServer(app);
 httpServer.listen(5000);
-
 console.log('App listening on port 5000');

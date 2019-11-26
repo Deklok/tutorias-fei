@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Title from '../../../seguimiento/components/Title';
 
 function generateTutorias(cubiculo, hora, fecha, contacto) {
