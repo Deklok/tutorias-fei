@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+const http = require('http');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
@@ -10,6 +12,7 @@ const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
 const director = require('./requestDirector.js');
+const dataimport = require('./server/dataimport/dataimport');
 
 const dotenv = require('dotenv');
 dotenv.config();
@@ -43,7 +46,7 @@ app.use(
  * Middleware to check if the petition has a valid session
  */
 function hasSession(req,res,next) {
-  if (publicRoutes.includes(req.path)) { 
+  if (publicRoutes.includes(req.path)) {
     return next();
   } else {
     var session = req.header('Authorization');
@@ -62,10 +65,10 @@ function hasSession(req,res,next) {
     }).catch(function(){
       res.status(401).json({ error: "Access denied" });
     });
-    
+
   }
 }
-app.all('*',hasSession);
+app.all('/api',hasSession);
 
 app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
@@ -288,8 +291,8 @@ app.post('/api/notify/student/canceledday', function (req, res){
 *Response: [{personnelNum, name, contact, isEmailSuscribed}]
 */
 app.post('/api/db/tutorData', (req,res) => {
-  var personnelNum = req.body["personnelNum"];
-  database.getDataTutor(personnelNum).then(function(response){
+  var username = req.body["username"];
+  database.getDataTutor(username).then(function(response){
     res.send(response);
   });
 });
@@ -328,14 +331,14 @@ app.post('/api/db/isagree', (req,res) => {
       database.isPupilPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     } else {
       database.isTutorPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     }
@@ -356,14 +359,14 @@ app.post('/api/db/isagree', (req,res) => {
       database.isPupilPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     } else {
       database.isTutorPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
-        }        
+        }
         res.send(isAgree);
       });
     }
@@ -383,7 +386,7 @@ app.post('/api/db/agreement', (req,res) => {
       database.setPupilPrivacyAgreement(userId).then(function (response) {
        if (response.toString().includes("error")) {
           code = 500;
-        }       
+        }
         res.sendStatus(code);
       });
     } else {
@@ -391,7 +394,7 @@ app.post('/api/db/agreement', (req,res) => {
         console.table(response);
         if (response.toString().includes("error")) {
           code = 500;
-        }       
+        }
         res.sendStatus(code);
       });
     }
@@ -399,6 +402,19 @@ app.post('/api/db/agreement', (req,res) => {
     res.sendStatus(400);
   }
 });
+
+/**
+ * Service to trigger tutor's data import
+ *
+ */
+app.post('/api/dataimport/tutor', (req,res) => {
+  let user = req.body["user"];
+  let pass = req.body["pass"];
+  dataimport.importTutor(user, pass).then(function (response) {
+    res.send(response);
+  })
+});
+
 
 /**
  * Service to add a feedback register
@@ -414,7 +430,7 @@ app.post('/api/db/feedback/add', (req,res) => {
   if (grade && idSession) {
     if (comments) {
       comments = comments.split(',');
-    } 
+    }
     database.saveFeedback(grade,idSession,comments).then(function() {
       res.sendStatus(200);
     }).catch(function (error) {
@@ -428,7 +444,7 @@ app.post('/api/db/feedback/add', (req,res) => {
 
 /**
  * Service to get the feedback stats of a tutorship
- * Params: 
+ * Params:
  *  idTutorship: 4
  * Response:
  *  {
@@ -456,14 +472,91 @@ app.get('/api/db/feedback/get',(req,res) => {
     res.sendStatus(400);
   }
 });
+
 // Use this code when is on production
-/*
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
-*/
 
-app.listen(5000);
+/*
+*Service to create tutorship
+*Params: 
+*   place = place where the tutorship will take place
+*   tutorshipNum = number tutorship
+*   period = period current
+*   indicatios = indications for pupil
+*   date = tutorship date 
+*   userName = turor userName 
+*Resturns:
+*   200: number of rows modified
+*   400: Param expected
+*/
+app.post('/api/db/addTutorship', (req, res) => {
+  var place = req.body.place;
+  var tutorshipNum = req.body.tutorshipNum;
+  var period = req.body.period;
+  var indications = req.body.indications;
+  var date = req.body.date;
+  var userName = req.body.userName;
+
+  if(place && tutorshipNum, period, indications, date, userName){
+    database.addTutorship(place, tutorshipNum, period, indications, date, userName).then(function (response) {
+      res.status(201).send(response);
+    });
+  }else{
+    res.status(400);
+  }
+  
+});
+
+/*
+*Service to create block general
+*Params: 
+*   idCareer = identified career
+*   start = time start block tutorship
+*   end = time end block tutorship
+*   idTutorship = identified tutorshipo scheduled
+*Resturns:
+*   200: number of rows modified
+*   400: Param expected
+*/
+app.post('/api/db/addBlock', (req, res) =>{
+  var idCareer = req.body.idCareer;
+  var start = req.body.start;
+  var end = req.body.end;
+  var idTutorship = req.body.idTutorship;
+  if(idCareer && start, end, idTutorship){
+    database.addBlock(idCareer, start, end, idTutorship).then(function (response){
+      res.send(response);
+    });
+  }else{
+    res.status(400)
+  }
+  
+});
+
+/*
+*Service to create tutorship general
+*Params: 
+*   userName = turor userName 
+*Resturns:
+*   200: all pupils by tutor
+*   400: Param expected
+*/
+app.post('/api/db/getAllPupilByTutor', (req, res) =>{
+  var userName = req.body.userName;
+  if(idTutor){
+    database.getAllPupilByTutor(userName).then(function (response){
+      res.json(response);
+    });
+  }else{
+    res.status(400);
+  }
+});
+
+const httpServer = http.createServer(app);
+httpServer.listen(5000);
+
 console.log('App listening on port 5000');

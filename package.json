@@ -2,7 +2,7 @@
   "name": "tutorias-fei",
   "version": "1.0.0",
   "description": "Sistema de reserva de tutorías de la Facultad de Estadística e Informática de la Universidad Veracruzana",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "client": "cd client && npm run start",
     "server": "nodemon server.js",

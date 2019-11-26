@@ -11,7 +11,8 @@ import AddBox from './components/AddBox'
 import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
 import Schedule from './components/Schedule';
-import { bool } from 'prop-types';
+import Cookies from 'universal-cookie';
+import utilities from '../../../utilities';
 
 export default class BlocksRegistry extends Component {
 
@@ -30,10 +31,19 @@ export default class BlocksRegistry extends Component {
     registeredBlocks: []
   };
 
+  cookies = Cookies();
+  token = utilities.splitCookie(this.cookies.get('token')).token;
+  role = utilities.splitCookie(this.cookies.get('token')).session;
+
   getLastTutorship() {
+
+    const id = utilities.splitCookie(this.cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/db/lastTutorship', {
-      idTutor: 'Z13011798'
+      idTutor: id
+    }, {
+      headers: {Authorization: this.token + ";" + this.role}
     });
+
   }
 
   getBlocks(idTutorship) {
@@ -49,6 +59,8 @@ export default class BlocksRegistry extends Component {
       start: block.start,
       end: block.end,
       idTutorship: idTutorship
+    }, {
+      headers: {Authorization: this.token + ";" + this.role}
     });
   }
 
@@ -58,21 +70,23 @@ export default class BlocksRegistry extends Component {
       idCareer: block.idCareer,
       start: block.start,
       end: block.end
+    }, {
+      headers: {Authorization: this.token + ";" + this.role}
     });
   }
 
-  saveBlocks = () =>{
+  saveBlocks = () => {
     const blocks = this.state.blocks;
     const registeredBlocks = this.state.registeredBlocks;
     blocks.forEach(block => {
       var isRegistered = false;
       registeredBlocks.forEach(registeredBlock => {
-        if(block.idBlock === registeredBlock.idBlock){
+        if (block.idBlock === registeredBlock.idBlock) {
           isRegistered = true
         }
       })
 
-      if(isRegistered){
+      if (isRegistered) {
 
       } else {
         this.saveBlock(block)
@@ -130,10 +144,10 @@ export default class BlocksRegistry extends Component {
         console.log(result2)
         const blocks = result2.data;
         console.log(blocks);
-        this.setState({blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks});
+        this.setState({ blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks });
       });
     });
-    this.setState({openDialog: false});
+    this.setState({ openDialog: false });
   }
 
   addBlock = (career, startTime, endTime) => {
@@ -155,13 +169,13 @@ export default class BlocksRegistry extends Component {
     const blocks = this.state.blocks;
     var actualBlocks = [];
     blocks.forEach(block => {
-      if (block.idBlock== blockId) {
+      if (block.idBlock == blockId) {
         this.setState({ editingBlock: block });
       } else {
         actualBlocks.push(block);
       }
     });
-    this.setState({blocks: actualBlocks});
+    this.setState({ blocks: actualBlocks });
   }
 
   deleteBlock = (blockId) => {

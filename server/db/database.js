@@ -2,9 +2,9 @@ const mysql = require('mysql');
 const pool = require('./config.js');
 
 
-function getDataTutor(tutorId){
+function getDataTutor(username){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT * FROM Tutor WHERE personnelNum = ?',[tutorId],(err, results) => {
+		pool.query('SELECT * FROM Tutor WHERE username = ?',[username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -48,6 +48,19 @@ function getAllSessions(idTutorship){
 		});
 	});
 }
+
+function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData, username) {
+	return new Promise((resolve, reject) => {
+		pool.query('call sp_tutor_data_import(?,?,?,?)',[tutorPersonnelNum, tutorName, pupilsData, username],(err,results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
 function saveStudentSuscribedOn(studentId){
 	return new Promise((resolve, reject) => {
 		pool.query('UPDATE Pupil SET isEmailSuscribed = 1 WHERE studentId = ?',[studentId],(err, results) => {
@@ -59,9 +72,9 @@ function saveStudentSuscribedOn(studentId){
 		});
 	});
 }
-function saveTutorSuscribedOn(personnelNum){
+function saveTutorSuscribedOn(username){
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE personnelNum = ?',[personnelNum],(err, results) => {
+		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE username = ?',[username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -92,9 +105,9 @@ function getIdCareer(careerName){
 		});
 	});
 }
-function isTutorPrivacyAgreement(personnelNum){
+function isTutorPrivacyAgreement(username){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT privacyAgreement FROM Tutor WHERE personnelNum = ?',[personnelNum],(err, results) => {
+		pool.query('SELECT privacyAgreement FROM Tutor WHERE username = ?',[username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -126,10 +139,10 @@ function setPupilPrivacyAgreement(studentId){
 		});
 	});
 }
-function setTutorPrivacyAgreement(personnelNum){
+function setTutorPrivacyAgreement(username){
 	var dateTime = new Date(); //This works for the current server timer
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor set privacyAgreement = ? WHERE personnelNum = ?',[dateTime, personnelNum],(err, results) => {
+		pool.query('UPDATE Tutor set privacyAgreement = ? WHERE username = ?',[dateTime, username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -168,6 +181,44 @@ function saveFeedback(grade,idSession,comments) {
 		})
 	});
 }
+
+function addTutorship(place, tutorshipNum, period, indications, date, userName) {
+    return new Promise((resolve, reject) => {
+        pool.query('INSERT INTO tutorship (place, tutorshipNum, period, indications, date, userName) VALUES (?, ?, ?, ?, ?, ?)'
+            , [place, tutorshipNum, period, indications, date, userName], (err, results) => {
+                if (err) {
+                    return reject(err);
+                } else {
+                    return resolve(results);
+                }
+            });
+    });
+}
+
+function addBlock(idCareer, start, end, idTutorship){
+    return new Promise((resolve, reject) =>{
+        pool.query('INSERT INTO block (idCareer, start, end, idTutorship) VALUES (?, ?, ?, ?)', [idCareer, start, end, idTutorship], (err, results) =>{
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            }
+        });
+    });
+}
+
+function getAllPupilByTutor(userName){
+    return new Promise((resolve, reject) =>{
+        pool.query('SELECT COUNT(*) AS size FROM pupil WHERE userName = ?', [userName], (err, results) =>{
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            }
+        });
+    });
+}
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -182,5 +233,9 @@ module.exports = {
 	setPupilPrivacyAgreement: setPupilPrivacyAgreement,
 	setTutorPrivacyAgreement: setTutorPrivacyAgreement,
 	getFeedbackData: getFeedbackData,
-	saveFeedback: saveFeedback
+	saveFeedback: saveFeedback,
+	tutorDataImport: tutorDataImport,
+	addTutorship: addTutorship,
+    addBlock: addBlock,
+    getAllPupilByTutor: getAllPupilByTutor
 }

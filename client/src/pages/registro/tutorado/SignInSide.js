@@ -14,7 +14,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import loginImg from '../../login.jpg';
-import logoUv from '../../../Logo-UV2.jpg';
 import { Route, Switch } from 'react-router-dom';
 import BlockRegistry from '../tutor/BlocksRegistry';
 import axios from 'axios';
@@ -27,7 +26,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <Link color="inherit">
-        Tutorías FEI
+        Xahni
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -64,7 +63,7 @@ const useStyles = makeStyles(theme => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-  logoUv: {
+  logoXahni: {
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -187,7 +186,7 @@ const Inicio = memo(props =>  {
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
       <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
         <div className={classes.paper}>
-          <img className={classes.logoUv} src={logoUv} />
+          <img className={classes.logoXahni} src={process.env.PUBLIC_URL + '/static/logo.png'} />
           <Typography component="h1" variant="h5">
             Iniciar Sesion
           </Typography>

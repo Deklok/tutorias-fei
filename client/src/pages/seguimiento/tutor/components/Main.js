@@ -21,16 +21,20 @@ const Main = memo(props => {
 	const [currentPupil,setCurrentPupil] = React.useState([]);
 	const [atendiendo,setAtendiendo] = React.useState(false);
 	const [nextPupil, setPupil] = React.useState([]);
+	const [verify, setVerify] = React.useState(true);
+
 	const comenzarTutoria = () =>{
 		setPupil(tutorados[0]);
 		setComenzado(true);
 	}
 
 	const siguienteTutorado=()=>{
-		console.log('siguiente');
 	    var tutorados_aux = tutorados;
 	    tutorados_aux.splice(0,1);
-	    console.log(tutorados_aux);
+	    if(tutorados_aux.length == 0){
+	    	tutorados_aux.push([]);
+	    }
+	    setVerify(true);
 	    setPupil(tutorados_aux[0]);
 	}
 
@@ -51,7 +55,16 @@ const Main = memo(props => {
 		          	}
 		        </Grid>
 		        <Grid item xs={12} md={5} lg={5}>
-		          <NextTutorado comenzado = {comenzado} tutorado = {nextPupil}  atendiendo = {atendiendo} setAtendiendo={setAtendiendo} next={siguienteTutorado} setCurrentPupil={setCurrentPupil}/>
+		          <NextTutorado
+		          	comenzado = {comenzado}
+		          	tutorado = {nextPupil}
+		          	atendiendo = {atendiendo}
+		          	setAtendiendo={setAtendiendo}
+		          	next={siguienteTutorado}
+		          	setCurrentPupil={setCurrentPupil}
+		          	setVerify = {setVerify}
+		          	tutorados = {tutorados}
+		          	/>
 		        </Grid>
 		      </Grid>
 		      <Grid container spacing={3}>
@@ -76,6 +89,8 @@ const Main = memo(props => {
 		          <Paper className={classes.paper}>
 		            <Tutorados
 		            	tutorados={tutorados}
+		            	verify = {verify}
+		            	setVerify = {setVerify}
 		            />
 		          </Paper>
 		        </Grid>

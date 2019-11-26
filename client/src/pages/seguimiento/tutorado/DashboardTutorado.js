@@ -23,7 +23,7 @@ import TemasTutorado from '../components/TemasTutorado'
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
-import {Redirect} from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 const cookies = new Cookies();
 
@@ -36,6 +36,12 @@ const DashboardTutorado = memo(props => {
   const [carrera, setCarrera] = React.useState('');
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  function logout() {
+    console.log("Loggin out");
+    cookies.remove('token');
+    window.location.reload();
+  }
 
   async function cargarDatos() {
     var user = utilities.splitCookie(cookies.get('token')).id;
@@ -93,7 +99,7 @@ const DashboardTutorado = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton href="/logout" color="inherit" label="Cerrar">
+            <IconButton onClick={logout} color="inherit" label="Cerrar">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>

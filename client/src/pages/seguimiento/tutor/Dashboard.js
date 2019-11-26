@@ -44,6 +44,7 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
+  var username = utilities.splitCookie(cookies.get('token')).id;
 
   React.useEffect(()=>{
     cargarDatos()
@@ -64,9 +65,10 @@ const Dashboard = memo(props => {
   });
 
   async function cargarDatos() {
+    
     if(connect){
       return axios.post('http://localhost:5000/api/db/tutorData', {
-        personnelNum: 'Z13011798',
+        username: username,
       },{
         headers: { Authorization: token + ";" + role }
       });
