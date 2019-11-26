@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+const http = require('http');
 const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
@@ -66,7 +68,7 @@ function hasSession(req,res,next) {
 
   }
 }
-app.all('*',hasSession);
+app.all('/api',hasSession);
 
 app.get('/api/miuv/test', (req,res) => {
   res.send("Hello world, this is a test");
@@ -470,14 +472,13 @@ app.get('/api/db/feedback/get',(req,res) => {
     res.sendStatus(400);
   }
 });
+
 // Use this code when is on production
-/*
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
-*/
 
 /*
 *Service to create tutorship
@@ -555,5 +556,7 @@ app.post('/api/db/getAllPupilByTutor', (req, res) =>{
   }
 });
 
-app.listen(5000);
+const httpServer = http.createServer(app);
+httpServer.listen(5000);
+
 console.log('App listening on port 5000');
