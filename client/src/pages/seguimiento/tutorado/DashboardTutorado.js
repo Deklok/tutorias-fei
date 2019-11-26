@@ -1,19 +1,14 @@
 import React, { memo } from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Banner from './components/Banner'
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper'
@@ -23,13 +18,48 @@ import TemasTutorado from '../components/TemasTutorado'
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
+import StarIcon from '@material-ui/icons/Star'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Button from '@material-ui/core/Button';
+import Rating from '@material-ui/lab/Rating';
+import Box from '@material-ui/core/Box';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Switch, Route } from "react-router-dom";
 
 const cookies = new Cookies();
 
 const DashboardTutorado = memo(props => {
   const classes = props.classes;
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState(5);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const [state, setState] = React.useState({
+    Option1: false,
+    Option2: false,
+    Option3: false,
+    Option4: false,
+    Option5: false,
+  });
+
+  const handleChange = name => event => {
+    setState({ ...state, [name]: event.target.checked });
+  };
+
   const [matricula, setMatricula] = React.useState('');
   const [nombre, setNombre] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -50,9 +80,9 @@ const DashboardTutorado = memo(props => {
     return axios.post('http://localhost:5000/api/db/pupilData', {
       studentId: user
     },
-    {
-      headers: { Authorization: token + ";" + role }
-    });
+      {
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
@@ -93,17 +123,106 @@ const DashboardTutorado = memo(props => {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+          <Tooltip title="Fake Feedback">
+            <IconButton onClick={handleClickOpen} color="inherit">
+              <StarIcon />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="Cerrar Sesión">
             <IconButton onClick={logout} color="inherit" label="Cerrar">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
         </Toolbar>
+        <Dialog open={open} disableBackdropClick
+          disableEscapeKeyDown
+          aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Retroalimentación</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Ha finalizado tu tutoría, por favor asigna una calificación
+						</DialogContentText>
+            <Box component="fieldset" mb={3} borderColor="transparent">
+              <Typography component="legend">Calificación</Typography>
+              <Rating
+                name="simple-controlled"
+                size="large"
+                value={value}
+                onChange={(event, newValue) => {
+                  setValue(newValue);
+                }}
+              />
+            </Box>
+            <DialogContentText>
+              ¿Hubo algún problema?
+						</DialogContentText>
+            <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.Option1}
+                    onChange={handleChange('Option1')}
+                    value="Option1"
+                    color="primary"
+                  />
+                }
+                label="La información fue irrelevante"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.Option2}
+                    onChange={handleChange('Option2')}
+                    value="Option2"
+                    color="primary"
+                  />
+                }
+                label="No solucionó mis dudas"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.Option3}
+                    onChange={handleChange('Option3')}
+                    value="Option3"
+                    color="primary"
+                  />
+                }
+                label="Mi tutor no asistió/no llego a tiempo"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.Option4}
+                    onChange={handleChange('Option4')}
+                    value="Option4"
+                    color="primary"
+                  />
+                }
+                label="Espere mucho para ser atendido"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.Option5}
+                    onChange={handleChange('Option5')}
+                    value="Option5"
+                    color="primary"
+                  />
+                }
+                label="El tiempo no fue suficiente"
+              />
+            </FormGroup>
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={handleClose}>
+              Cancel
+						</Button>
+            <Button color="primary">
+              Subscribe
+						</Button>
+          </DialogActions>
+        </Dialog>
       </AppBar>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
