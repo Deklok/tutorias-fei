@@ -80,7 +80,7 @@ const CurrentTutorado = memo(props => {
           component="img"
           alt="Tutorado Actual"
           height="140"
-          image={process.env.PUBLIC_URL + 'static/current_tutorado.png'}
+          image={process.env.PUBLIC_URL + '/static/current_tutorado.png'}
           title="Tutorado Actual"
         />
         <div className={classes.overlay}>

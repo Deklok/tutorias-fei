@@ -97,7 +97,7 @@ const NextTutorado = memo(props => {
           component="img"
           alt="Siguiente Tutorado"
           height="140"
-          image={process.env.PUBLIC_URL + 'static/next_tutorado.png'}
+          image={process.env.PUBLIC_URL + '/static/next_tutorado.png'}
           title="Siguiente Tutorado"
         />
         <div className={classes.overlay}>
