@@ -12,7 +12,7 @@ import BlockList from './components/BlockList';
 import { Button } from '@material-ui/core';
 import Schedule from './components/Schedule';
 import Cookies from 'universal-cookie';
-import utilities from '../../../utilities';
+import utilities from '../../../utilities'
 
 export default class BlocksRegistry extends Component {
 
