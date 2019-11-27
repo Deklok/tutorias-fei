@@ -102,6 +102,9 @@ app.post('/api/auth', (req,res) => {
 /**
  * Service to return email and career of the student provided
  * Webscraping from MiUV
+ * Params:
+ *   userId = student or professor identifier
+ *   pass = student or professor password
  * Response: {"mail":"someEmail", "career":"ingenieria de software"}
  */
  app.post('/api/miuv/student', (request,res) => {
@@ -127,13 +130,15 @@ app.post('/api/auth', (req,res) => {
   miuvws.tutor(user,pass)
   .then(function(response){
     res.send(response);
-    //director.setupTutorData(response); //Working
   });
 });
 
 /*
 *Service to authenticate the user (student/professor) against UV LDAP server, it does not provide user information or session.
 *NOTE: this service works only in UV network.
+* Params:
+*   userId = student or professor identifier
+*   pass = student or professor password
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available (Probably you are trying to connect outside UV network)
@@ -161,7 +166,7 @@ app.post('/api/user/login', function (request, res){
 /*
 *Service to signup professor to email notifications.
 *NOTE: ONLY FOR PROFESSOR
-*Param: user = extenal professor ID (12345), email = email@host.com
+*Param: user = extenal professor ID (mariogarcia), email = mariogarcia@uv.cmx
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available
@@ -220,8 +225,8 @@ app.post('/api/notify/student/youarenext', function (req, res){
 });
 /*
 *Service to notify the professor by email and push that his student canceled.
-*Param: user = professor external ID (12345/Personal number).
-*NOTE: It's possible to get a 500 if the professor is only associated to an email account (it try to send a webpush but is a email).
+*Param: user = professor external ID (mariogarcia).
+*NOTE: It's possible to get a 500 if the professor is only associated to an email account (it'll try to send a webpush but is a email).
 *However, this doesn't mean email notification didn't work.
 *Responses:
 *   400: Param expected
@@ -232,13 +237,9 @@ app.post('/api/notify/tutor/studentcanceled', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.studentCanceledEmail(userId).then(function(responseEmail){
-      if (responseEmail == 200) {
         webpush.studentCanceled(userId).then(function(response){
           res.sendStatus(response);
         });
-      } else {
-        res.sendStatus(responseEmail);
-      }
     });
   } else {
     res.sendStatus(400);
@@ -246,7 +247,7 @@ app.post('/api/notify/tutor/studentcanceled', function (req, res){
 });
 /*
 *Service to notify all the students by email and push related to this professor that tutoring day is available.
-*Param: user = professor external ID (12345/Personal number).
+*Param: user = professor external ID (mariogarcia).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
@@ -256,13 +257,9 @@ app.post('/api/notify/student/publishedday', function (req, res){
   var userId = req.body.user;
   if (userId) {
     webpush.publishedDay(userId).then(function(response){
-      if (response == 200) {
         webpush.publishedDayEmail(userId).then(function(responseEmail){
           res.sendStatus(responseEmail);
         });
-      } else {
-        res.sendStatus(response);
-      }
     });
   } else {
     res.sendStatus(400);
@@ -270,7 +267,7 @@ app.post('/api/notify/student/publishedday', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day was cancel.
-*Param: user = professor external ID (12345/Personal number).
+*Param: user = professor external ID (mariogarcia).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
@@ -320,36 +317,10 @@ app.post('/api/db/sessions', (req,res) => {
 
 /*
 *Service to check user agreement state.
-*Param: S13011111/ 12345 (?)
+*Param: userId = S13011111(student)/ mariogarcia(tutor)
 *Response: true/false
-*/
-app.post('/api/db/isagree', (req,res) => {
-  var userId = req.body.userId;
-  if (userId) {
-    var isAgree = false;
-    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
-      database.isPupilPrivacyAgreement(userId).then(function (response) {
-        if (response) {
-          isAgree = true;
-        }
-        res.send(isAgree);
-      });
-    } else {
-      database.isTutorPrivacyAgreement(userId).then(function (response) {
-        if (response) {
-          isAgree = true;
-        }
-        res.send(isAgree);
-      });
-    }
-  } else {
-    res.sendStatus(400);
-  }
-});
-/*
-*Service to check user agreement state.
-*Param: S13011111/ 12345 (?)
-*Response: true/false
+* 200: true/false
+* 400: Param excepected
 */
 app.post('/api/db/isagree', (req,res) => {
   var userId = req.body.userId;
@@ -376,12 +347,15 @@ app.post('/api/db/isagree', (req,res) => {
 });
 /*
 *Service to set user privacy agreement date time.
-*Param: S13011111/ 12345 (?)
+*Param: userId = S13011111(student)/ mariogarcia(tutor)
+*Responses: 
+* 201: Agreement state changed
+* 500: DB error
 */
 app.post('/api/db/agreement', (req,res) => {
   var userId = req.body.userId;
   if (userId) {
-    var code = 200;
+    var code = 201;
     if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
       database.setPupilPrivacyAgreement(userId).then(function (response) {
        if (response.toString().includes("error")) {
@@ -490,7 +464,7 @@ app.get('*',(req,res) =>{
 *   date = tutorship date
 *   userName = turor userName
 *Resturns:
-*   200: number of rows modified
+*   201: number of rows modified
 *   400: Param expected
 */
 app.post('/api/db/addTutorship', (req, res) => {
@@ -538,10 +512,10 @@ app.post('/api/db/addBlock', (req, res) =>{
 });
 
 /*
-*Service to create tutorship general
+*Service to create tutorship general (?)
 *Params:
-*   userName = turor userName
-*Resturns:
+*   userName = tutor userName
+*Returns:
 *   200: all pupils by tutor
 *   400: Param expected
 */
@@ -555,52 +529,126 @@ app.post('/api/db/getAllPupilByTutor', (req, res) =>{
     res.status(400);
   }
 });
-
+/*
+*Service to retrieve block data from tutorship
+*Params:
+*   idCareer = Student id carrer (?)
+*   idTutorship = tutorship identifier number
+*Returns:
+*   200: Block info
+*   400: Param expected
+*/
 app.post('/api/db/getBlock', (req, res) => {
   var idCareer = req.body["idCareer"];
   var idTutorship = req.body["idTutorship"];
-  database.getBlock(idCareer,idTutorship).then(function (response) {
-    res.json(response);
-  });
-});
+  if (idCareer && idTutorship) {
+    database.getBlock(idCareer,idTutorship).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 
+});
+/*
+*Service to retrieve tutorship data 
+*Params:
+*   idTutorship = tutorship identifier number
+*Returns:
+*   200: tutorship info
+*   400: Param expected
+*/
 app.post('/api/db/getTutorship', (req, res) => {
   var idTutorship = req.body["idTutorship"];
-  database.getTutorship(idTutorship).then(function (response) {
-    res.json(response);
-  });
+  if (idTutorship) {
+    database.getTutorship(idTutorship).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 });
-
+/*
+*Service to create a reservation for a session 
+*Params:
+*   startTime = reservation start time
+*   endTime = reservation end time
+*   idBlock = block identifier number
+*   idPupil = student identifier
+*Returns:
+*   200: confirmation insert
+*   400: Param expected
+*/
 app.post('/api/db/reserveSession', (req, res) => {
   var startTime = req.body["startTime"];
   var endTime = req.body["endTime"];
   var idBlock = req.body["idBlock"];
   var idPupil = req.body["idPupil"];
-  database.reserveSession(startTime,endTime,idBlock,idPupil).then(function (response) {
-    res.status(201).send(`${response.insertId}`);
-  });
+  if (idPupil && idBlock, endTime, startTime) {
+    database.reserveSession(startTime,endTime,idBlock,idPupil).then(function (response) {
+      res.status(201).send(`${response.insertId}`);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 });
-
+/*
+*Service to create a session 
+*Params:
+*   idSession = session identifier number
+*   topics = student interest topics
+*Returns:
+*   200: confirmation insert
+*   400: Param expected
+*/ 
 app.post('/api/db/addSession', (req, res) => {
   var idSession = req.body["idSession"];
   var topics = req.body["topics"];
-  database.addSession(idSession,topics).then(function (response) {
-    res.json(response);
-  });
+  if (topics && idSession) {
+    database.addSession(idSession,topics).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 });
-
+/*
+*Service to delete a tutorship 
+*Params:
+*   idTutorship = tutorship identifier number
+*Returns:
+*   200: confirmation update
+*   400: Param expected
+*/ 
 app.post('/api/db/deleteTutorship', (req, res) => {
   var idTutorship = req.body["idTutorship"];
-  database.deleteTutorship(idTutorship).then(function (response) {
-    res.json(response);
-  });
-});
+  if (idTutorship) {
+    database.deleteTutorship(idTutorship).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 
+});
+/*
+*Service to delete a session 
+*Params:
+*   idSession = session identifier number
+*Returns:
+*   200: confirmation update
+*   400: Param expected
+*/ 
 app.post('/api/db/deleteSession', (req, res) => {
   var idSession = req.body["idSession"];
-  database.deleteSession(idSession).then(function (response) {
-    res.json(response);
-  });
+  if (idSession) {
+    database.deleteSession(idSession).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+
 });
 const httpServer = http.createServer(app);
 httpServer.listen(5000);
