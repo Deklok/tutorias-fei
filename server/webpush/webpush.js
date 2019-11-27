@@ -45,11 +45,11 @@ function canceledDay (professorId) {
 function studentCanceled (professorId) {
 	var promise = new Promise(function (resolve,reject) {
 		var externalId = [];
-		externalId.push(professorId); //I hope they send me professor external id
+		externalId.push(professorId);
 		var message = { 
 			app_id: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
 			template_id: "081b2dcd-e51a-4ceb-a1b4-3d18382b6381",
-			include_external_user_ids: externalId, //It will try send an email if external ID is related only to email 
+			include_external_user_ids: externalId,
 		};
 		resolve(sendNotification(message, "push"));
 	});
@@ -58,7 +58,7 @@ function studentCanceled (professorId) {
 function studentCanceledEmail (professorId) {
 	var promise = new Promise(function (resolve,reject) {
 		var externalId = [];
-		externalId.push(professorId); //I hope they send me professor external id
+		externalId.push(professorId);
 		var message = { 
 			app_id: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
 			template_id: "f02fe446-cc69-4c7d-8696-c5e3d13efdb8",
