@@ -184,7 +184,7 @@ function saveFeedback(grade,idSession,comments) {
 
 function addTutorship(place, tutorshipNum, period, indications, date, userName) {
     return new Promise((resolve, reject) => {
-        pool.query('INSERT INTO tutorship (place, tutorshipNum, period, indications, date, userName) VALUES (?, ?, ?, ?, ?, ?)'
+        pool.query('INSERT INTO Tutorship (place, tutorshipNum, period, indications, date, userName) VALUES (?, ?, ?, ?, ?, ?)'
             , [place, tutorshipNum, period, indications, date, userName], (err, results) => {
                 if (err) {
                     return reject(err);
@@ -197,7 +197,7 @@ function addTutorship(place, tutorshipNum, period, indications, date, userName) 
 
 function addBlock(idCareer, start, end, idTutorship){
     return new Promise((resolve, reject) =>{
-        pool.query('INSERT INTO block (idCareer, start, end, idTutorship) VALUES (?, ?, ?, ?)', [idCareer, start, end, idTutorship], (err, results) =>{
+        pool.query('INSERT INTO Block (idCareer, start, end, idTutorship) VALUES (?, ?, ?, ?)', [idCareer, start, end, idTutorship], (err, results) =>{
             if(err){
                 return reject(err);
             }else{
@@ -209,7 +209,7 @@ function addBlock(idCareer, start, end, idTutorship){
 
 function getAllPupilByTutor(userName){
     return new Promise((resolve, reject) =>{
-        pool.query('SELECT COUNT(*) AS size FROM pupil WHERE userName = ?', [userName], (err, results) =>{
+        pool.query('SELECT COUNT(*) AS size FROM Pupil WHERE userName = ?', [userName], (err, results) =>{
             if(err){
                 return reject(err);
             }else{
@@ -233,7 +233,7 @@ function getBlock(idTutorship){
 
 function getBlock(idCareer, idTutorship){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT start, end FROM block WHERE idCareer = ? AND idTutorship = ?',
+        pool.query('SELECT start, end FROM Block WHERE idCareer = ? AND idTutorship = ?',
         [idCareer,idTutorship],(err,results) => {
             if(err){
                 return reject(err);
@@ -246,7 +246,7 @@ function getBlock(idCareer, idTutorship){
 
 function getTutorship(idTutorship){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT place, indications, date FROM tutorship WHERE idTutorship = ?',
+        pool.query('SELECT place, indications, date FROM Tutorship WHERE idTutorship = ?',
         [idTutorship],(err,results) => {
             if(err){
                 return reject(err);
@@ -259,7 +259,7 @@ function getTutorship(idTutorship){
 
 function reserveSession(startTime, endTime, idBlock, idPupil){
     return new Promise((resolve,reject) => {
-        pool.query('INSERT INTO session (status,startTime,endTime,idBlock,idPupil) VALUES (?,?,?,?,?)',
+        pool.query('INSERT INTO Session (status,startTime,endTime,idBlock,idPupil) VALUES (?,?,?,?,?)',
         [2,startTime,endTime,idBlock,idPupil],(err,results) => {
             if(err){
                 return reject(err);
@@ -297,7 +297,7 @@ function deleteTutorship(idTutorship){
 
 function deleteSession(idSession){
     return new Promise((resolve,reject) => {
-        pool.query('DELETE FROM session WHERE idSession = ?',[idSession],(err,results) => {
+        pool.query('DELETE FROM Session WHERE idSession = ?',[idSession],(err,results) => {
             if(err){
                 return reject(err);
             }else{
