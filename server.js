@@ -473,10 +473,10 @@ app.post('/api/db/addTutorship', (req, res) => {
   var period = req.body.period;
   var indications = req.body.indications;
   var date = req.body.date;
-  var userName = req.body.userName;
+  var username = req.body.username;
 
-  if(place && tutorshipNum, period, indications, date, userName){
-    database.addTutorship(place, tutorshipNum, period, indications, date, userName).then(function (response) {
+  if(place && tutorshipNum, period, indications, date, username){
+    database.addTutorship(place, tutorshipNum, period, indications, date, username).then(function (response) {
       res.status(201).send(response);
     });
   }else{
@@ -520,9 +520,28 @@ app.post('/api/db/addBlock', (req, res) =>{
 *   400: Param expected
 */
 app.post('/api/db/getAllPupilByTutor', (req, res) =>{
-  var userName = req.body.userName;
+  var personnelNum = req.body.personnelNum;
   if(idTutor){
-    database.getAllPupilByTutor(userName).then(function (response){
+    database.getAllPupilByTutor(personnelNum).then(function (response){
+      res.json(response);
+    });
+  }else{
+    res.status(400);
+  }
+});
+
+/*
+*Service to get personnelNum tutor
+*Params:
+*   username = tutor username
+*Returns:
+*   200: get personnelNum
+*   400: Param expected
+*/
+app.post('/api/db/getpersonnelNumTutor', (req, res)=>{
+  var username = req.body.username;
+  if(username){
+    database.getPersonnelNumTutor(username).then(function (response){
       res.json(response);
     });
   }else{

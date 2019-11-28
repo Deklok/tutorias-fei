@@ -31,6 +31,7 @@ export default function Schedule(props) {
   const [openDialog, setOpenDialog] = React.useState(false);
 
   var idTutorship = 0;
+  var personnelNum = 0;
   var startDate = new Date('December 1, 2019 07:00:00');
   var endDate = new Date('December 1, 2019 07:00:00');
   var period = '';
@@ -88,7 +89,7 @@ export default function Schedule(props) {
         period: period,
         indications: indications,
         date: date.getFullYear() + "-" + month + "-" + date.getDate(),
-        userName: id
+        username: id
         //idTutor: 'Z13011798'
       }, {
         headers: { Authorization: token + ";" + role }
@@ -111,26 +112,39 @@ export default function Schedule(props) {
   async function saveEmail() {
     var id = utilities.splitCookie(cookies.get('token')).id;
       return axios.post('http://localhost:5000/api/notify/email/signup', {
-        userName: id,
+        username: id,
         email: email
       }, {
         headers: { Authorization: token + ";" + role }
       });
   }
 
-  async function getPupil() {
+  async function getPersonnelNumTutor(){
     var id = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post('http://localhost:5000/api/db/getpersonnelNumTutor',{
+      username: id
+    },{
+      headers: { Authorization: token + ";" + role }
+    });
+  }
+
+  async function getPupil() {
     return axios.post('http://localhost:5000/api/db/getPupilByTutor', {
       //userName: 'Z13011798'
-      userName: id
+      personnelNum: personnelNum
       }, {
         headers: { Authorization: token + ";" + role }
       });
   }
 
-  getPupil().then(result => {
-    if (result) {
-      setSize(result.data[0]['size']);
+  getPersonnelNumTutor().then(result =>{
+    if(result){
+      personnelNum = result.data[0]['personnelNum']
+      getPupil().then(result => {
+        if (result) {
+          setSize(result.data[0]['size']);
+        }
+      }).catch(console.log);
     }
   }).catch(console.log);
 

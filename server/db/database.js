@@ -184,7 +184,7 @@ function saveFeedback(grade,idSession,comments) {
 
 function addTutorship(place, tutorshipNum, period, indications, date, userName) {
     return new Promise((resolve, reject) => {
-        pool.query('INSERT INTO Tutorship (place, tutorshipNum, period, indications, date, userName) VALUES (?, ?, ?, ?, ?, ?)'
+        pool.query('INSERT INTO Tutorship (place, tutorshipNum, period, indications, date, username) VALUES (?, ?, ?, ?, ?, ?)'
             , [place, tutorshipNum, period, indications, date, userName], (err, results) => {
                 if (err) {
                     return reject(err);
@@ -207,9 +207,9 @@ function addBlock(idCareer, start, end, idTutorship){
     });
 }
 
-function getAllPupilByTutor(userName){
+function getAllPupilByTutor(personnelNum){
     return new Promise((resolve, reject) =>{
-        pool.query('SELECT COUNT(*) AS size FROM Pupil WHERE userName = ?', [userName], (err, results) =>{
+        pool.query('SELECT COUNT(*) AS size FROM Pupil WHERE personnelNum = ?', [personnelNum], (err, results) =>{
             if(err){
                 return reject(err);
             }else{
@@ -217,6 +217,18 @@ function getAllPupilByTutor(userName){
             }
         });
     });
+}
+
+function getPersonnelNumTutor(username){
+	return new Promise((resolve, reject)=>{
+		pool.query('SELECT personnelNum from Tutor WHERE username = ?', [username], (err, results)=>{
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		})
+	})
 }
 
 function getBlock(idTutorship){
@@ -332,5 +344,6 @@ module.exports = {
     reserveSession: reserveSession,
     addSession: addSession,
     deleteTutorship: deleteTutorship,
-    deleteSession: deleteSession
+	deleteSession: deleteSession,
+	getPersonnelNumTutor: getPersonnelNumTutor
 }
