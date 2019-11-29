@@ -348,7 +348,7 @@ app.post('/api/db/isagree', (req,res) => {
 /*
 *Service to set user privacy agreement date time.
 *Param: userId = S13011111(student)/ mariogarcia(tutor)
-*Responses: 
+*Responses:
 * 201: Agreement state changed
 * 500: DB error
 */
@@ -433,7 +433,7 @@ app.post('/api/db/feedback/add', (req,res) => {
     "absent": 3
     }
  */
-app.get('/api/db/feedback/get',(req,res) => {
+app.post('/api/db/feedback/get',(req,res) => {
   var idTutorship = req.body.idTutorship;
   if (idTutorship) {
     database.getFeedbackData(idTutorship).then(function (response) {
@@ -570,7 +570,7 @@ app.post('/api/db/getBlock', (req, res) => {
 
 });
 /*
-*Service to retrieve tutorship data 
+*Service to retrieve tutorship data
 *Params:
 *   idTutorship = tutorship identifier number
 *Returns:
@@ -588,7 +588,7 @@ app.post('/api/db/getTutorship', (req, res) => {
   }
 });
 /*
-*Service to create a reservation for a session 
+*Service to create a reservation for a session
 *Params:
 *   startTime = reservation start time
 *   endTime = reservation end time
@@ -612,14 +612,14 @@ app.post('/api/db/reserveSession', (req, res) => {
   }
 });
 /*
-*Service to create a session 
+*Service to create a session
 *Params:
 *   idSession = session identifier number
 *   topics = student interest topics
 *Returns:
 *   200: confirmation insert
 *   400: Param expected
-*/ 
+*/
 app.post('/api/db/addSession', (req, res) => {
   var idSession = req.body["idSession"];
   var topics = req.body["topics"];
@@ -632,13 +632,13 @@ app.post('/api/db/addSession', (req, res) => {
   }
 });
 /*
-*Service to delete a tutorship 
+*Service to delete a tutorship
 *Params:
 *   idTutorship = tutorship identifier number
 *Returns:
 *   200: confirmation update
 *   400: Param expected
-*/ 
+*/
 app.post('/api/db/deleteTutorship', (req, res) => {
   var idTutorship = req.body["idTutorship"];
   if (idTutorship) {
@@ -651,13 +651,13 @@ app.post('/api/db/deleteTutorship', (req, res) => {
 
 });
 /*
-*Service to delete a session 
+*Service to delete a session
 *Params:
 *   idSession = session identifier number
 *Returns:
 *   200: confirmation update
 *   400: Param expected
-*/ 
+*/
 app.post('/api/db/deleteSession', (req, res) => {
   var idSession = req.body["idSession"];
   if (idSession) {
