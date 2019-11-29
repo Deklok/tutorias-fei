@@ -551,7 +551,6 @@ app.post('/api/db/getpersonnelNumTutor', (req, res)=>{
 /*
 *Service to retrieve block data from tutorship
 *Params:
-*   idCareer = Student id carrer (?)
 *   idTutorship = tutorship identifier number
 *Returns:
 *   200: Block info
@@ -561,13 +560,42 @@ app.post('/api/db/getBlock', (req, res) => {
   var idCareer = req.body["idCareer"];
   var idTutorship = req.body["idTutorship"];
   if (idCareer && idTutorship) {
-    database.getBlock(idCareer,idTutorship).then(function (response) {
+    database.getBlock(idTutorship).then(function (response) {
       res.json(response);
     });
   } else {
     res.sendStatus(400);
   }
-
+});
+/*
+*Service to retrieve block data from tutorship and career
+*Params:
+*   idCareer = Student id carrer (?)
+*   idTutorship = tutorship identifier number
+*Returns:
+*   200: Block info
+*   400: Param expected
+*/
+app.post('/api/db/getOneBlock', (req, res) => {
+  var idCareer = req.body["idCareer"];
+  var idTutorship = req.body["idTutorship"];
+  database.getOneBlock(idCareer,idTutorship).then(function (response) {
+    res.json(response);
+  });
+});
+/*
+*Service to retrieve session data from block
+*Params:
+*   idBlock = block identifier number
+*Returns:
+*   200: Session info
+*   400: Param expected
+*/
+app.post('/api/db/getBlockSessions', (req, res) => {
+  var idBlock = req.body["idBlock"];
+  database.getBlockSessions(idBlock).then(function (response){
+    res.json(response);
+  });
 });
 /*
 *Service to retrieve tutorship data
