@@ -30,7 +30,12 @@ const Feedback = memo(props => {
   var role = utilities.splitCookie(cookies.get('token')).session;
   const [estrellas, setEstrellas]=React.useState(0);
   const [coment, setComm]=React.useState([]);
-  const coment_aux= [];
+  const coment_aux = [];
+  const [absent, setAbsent] = React.useState(0);
+  const [complete, setComplete] = React.useState(0);
+  const [missing, setMissing] = React.useState(0);
+  const [total_real, setTotalReal] = React.useState(0);
+  const[total, setTotal] = React.useState(0);
   async function cargarFeedback() {
     if(connect){
       return axios.post('http://localhost:5000/api/db/feedback/get', {
@@ -57,23 +62,31 @@ const Feedback = memo(props => {
     if(result && result.length !== 0){
         setEstrellas(result.data.average);
         clrtb();
-        coment_aux.push(createData(result.data.c1));
-        coment_aux.push(createData(result.data.c2));
-        coment_aux.push(createData(result.data.c3));
-        coment_aux.push(createData(result.data.c4));
-        coment_aux.push(createData(result.data.c5));
+        coment_aux.push(result.data.c1);
+        coment_aux.push(result.data.c2);
+        coment_aux.push(result.data.c3);
+        coment_aux.push(result.data.c4);
+        coment_aux.push(result.data.c5);
       }
   }
 
   React.useEffect(()=>{
     cargarFeedback()
     .then(result=>{
-      actualizar(result)
-      setComm(coment_aux);
-      console.log(coment);
+      if(connect){
+        console.log(result)
+        actualizar(result);
+        setComm(coment_aux);
+        setAbsent(result.data.absent);
+        setComplete(result.data.complete);
+        setTotal(result.data.total);
+        if(coment.length != 0){
+           setConnect(false);
+        }
+      }
     })
     .catch(console.log);
-  },[]);
+  });
 
   return (
     <main className={classes_aux.content}>
@@ -106,9 +119,9 @@ const Feedback = memo(props => {
                       loader={<div>Loading Chart</div>}
                       data={[
                         ['Estado', 'Frecuencia'],
-                        ['Asistió', 11],
-                        ['Confirmó y no vino', 2],
-                        ['No confirmó', 2],
+                        ['Asistió', {complete}],
+                        ['Confirmó y no vino', {absent}],
+                        ['No confirmó', {total}],
                       ]}
                       options={{
                         pieSliceText: 'label',
@@ -132,11 +145,11 @@ const Feedback = memo(props => {
                   loader={<div>Cargando Chart</div>}
                   data={[
                     ['Opción', 'Frecuencia'],
-                    ['Información\nIrrelevante',5],
-                    ['No solucionó\nmis dudas', 6],
-                    ['Impuntualidad', 1],
-                    ['Larga\nEspera', 10],
-                    ['Tiempo\nInsuficiente', 4],
+                    ['Información\nIrrelevante',coment[0]],
+                    ['No solucionó\nmis dudas', coment[1]],
+                    ['Impuntualidad', coment[2]],
+                    ['Larga\nEspera', coment[3]],
+                    ['Tiempo\nInsuficiente', coment[4]],
                   ]}
                   options={{
                     // Material design options
