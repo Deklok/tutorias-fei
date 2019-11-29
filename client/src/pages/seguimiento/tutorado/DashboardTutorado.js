@@ -33,6 +33,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import { Switch, Route } from "react-router-dom";
+import { notifications } from '../pushOneSignal';
 
 const cookies = new Cookies();
 
@@ -115,11 +116,14 @@ const DashboardTutorado = memo(props => {
       setEmail(result.data[0][0]['email']);
     }).catch(console.log);
 
+  //notifications();
+      
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar>
         <Toolbar>
+          <div id="userData" data-userid={matricula}></div>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
           </Typography>

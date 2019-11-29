@@ -7,7 +7,8 @@ const pool = mysql.createPool({
 	user: process.env.DB_USER,
 	database: process.env.DB_NAME,
 	host: process.env.HOST,
-	port: process.env.PORT
+	port: process.env.PORT,
+	chartset: 'utf8mb4_unicode_ci'
 });
 
 module.exports = pool;
