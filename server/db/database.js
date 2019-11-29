@@ -2,6 +2,18 @@ const mysql = require('mysql');
 const pool = require('./config.js');
 
 
+function updateSessionStatus(idPupil, idTutorship, new_status){
+	return new Promise((resolve, reject) => {
+		pool.query('CALL sp_updateStatus(?, ?, ?)',[username],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
 function getDataTutor(username){
 	return new Promise((resolve, reject) => {
 		pool.query('SELECT * FROM Tutor WHERE username = ?',[username],(err, results) => {
@@ -251,7 +263,7 @@ function getBlock(idCareer, idTutorship){
                 return reject(err);
             }else{
                 return resolve(results);
-            } 
+            }
         });
     });
 }
@@ -345,5 +357,6 @@ module.exports = {
     addSession: addSession,
     deleteTutorship: deleteTutorship,
 	deleteSession: deleteSession,
-	getPersonnelNumTutor: getPersonnelNumTutor
+	getPersonnelNumTutor: getPersonnelNumTutor,
+	updateSessionStatus: updateSessionStatus
 }
