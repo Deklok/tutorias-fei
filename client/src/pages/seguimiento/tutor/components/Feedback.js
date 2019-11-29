@@ -22,6 +22,27 @@ const useStyles = makeStyles({
   },
 });
 
+const PieChart = (props) => {
+  return(
+      <Chart
+      width={'100%'}
+      height={'100%'}
+      chartType="PieChart"
+      loader={<div>Loading Chart</div>}
+      data={[
+        ['Estado', 'Frecuencia'],
+        ['Asistió', props.absent],
+        ['Confirmó y no vino', props.complete],
+        ['No confirmó', props.missing],
+      ]}
+      options={{
+        pieSliceText: 'label',
+      }}
+      rootProps={{ 'data-testid': '1' }}
+    />
+  );
+}
+
 const Feedback = memo(props => {
   const classes = useStyles();
   const classes_aux = props.classes;
@@ -81,7 +102,9 @@ const Feedback = memo(props => {
         setComplete(result.data.complete);
         setTotal(result.data.total);
         if(coment.length != 0){
-           setConnect(false);
+          setMissing(total - (absent + complete));
+          console.log(total, absent, complete, missing);
+          setConnect(false);
         }
       }
     })
@@ -112,22 +135,11 @@ const Feedback = memo(props => {
                 <Paper className={classes_aux.depositContext, classes_aux.paper}>
                   <React.Fragment>
                     <Title>Participación</Title>
-                    <Chart
-                      width={'100%'}
-                      height={'100%'}
-                      chartType="PieChart"
-                      loader={<div>Loading Chart</div>}
-                      data={[
-                        ['Estado', 'Frecuencia'],
-                        ['Asistió', {complete}],
-                        ['Confirmó y no vino', {absent}],
-                        ['No confirmó', {total}],
-                      ]}
-                      options={{
-                        pieSliceText: 'label',
-                      }}
-                      rootProps={{ 'data-testid': '1' }}
-                    />
+                    <PieChart
+                     absent={absent}
+                     complete = {complete}
+                     missing={missing}
+                     />
                   </React.Fragment>
                 </Paper>
               </Grid>
