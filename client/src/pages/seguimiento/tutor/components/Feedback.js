@@ -10,6 +10,11 @@ import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import { Chart } from "react-google-charts";
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
+
+const cookies = new Cookies();
 
 const useStyles = makeStyles({
   depositContext: {
@@ -20,6 +25,56 @@ const useStyles = makeStyles({
 const Feedback = memo(props => {
   const classes = useStyles();
   const classes_aux = props.classes;
+  const [connect, setConnect] = React.useState(true);
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
+  const [estrellas, setEstrellas]=React.useState(0);
+  const [coment, setComm]=React.useState([]);
+  const coment_aux= [];
+  async function cargarFeedback() {
+    if(connect){
+      return axios.post('http://localhost:5000/api/db/feedback/get', {
+        idTutorship: 1,
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+    }else{
+      return null;
+    }
+  }
+
+  function createData(c1) {
+    return { c1 };
+  }
+
+  const clrtb=()=>{
+    for(var i = 0, length1 = coment_aux.length; i < length1; i++){
+      coment_aux[i].pop();
+    }
+  }
+
+  async function actualizar(result){
+    if(result && result.length !== 0){
+        setEstrellas(result.data.average);
+        clrtb();
+        coment_aux.push(createData(result.data.c1));
+        coment_aux.push(createData(result.data.c2));
+        coment_aux.push(createData(result.data.c3));
+        coment_aux.push(createData(result.data.c4));
+        coment_aux.push(createData(result.data.c5));
+      }
+  }
+
+  React.useEffect(()=>{
+    cargarFeedback()
+    .then(result=>{
+      actualizar(result)
+      setComm(coment_aux);
+      console.log(coment);
+    })
+    .catch(console.log);
+  },[]);
+
   return (
     <main className={classes_aux.content}>
       <div className={classes_aux.appBarSpacer} />
@@ -33,8 +88,8 @@ const Feedback = memo(props => {
                     <Title>Calificación</Title>
                     <div>
                       <Box component="fieldset" mb={3} borderColor="transparent">
-                        <Rating value={3} size="large" readOnly />
-                        <Typography component="legend">3 Estrellas</Typography>
+                        <Rating value={estrellas} size="large" readOnly />
+                        <Typography component="legend">{estrellas} Estrellas</Typography>
                       </Box>
                     </div>
                   </React.Fragment>
@@ -77,7 +132,7 @@ const Feedback = memo(props => {
                   loader={<div>Cargando Chart</div>}
                   data={[
                     ['Opción', 'Frecuencia'],
-                    ['Información\nIrrelevante', 2],
+                    ['Información\nIrrelevante',5],
                     ['No solucionó\nmis dudas', 6],
                     ['Impuntualidad', 1],
                     ['Larga\nEspera', 10],
