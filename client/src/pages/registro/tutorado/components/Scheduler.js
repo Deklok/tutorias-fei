@@ -2,14 +2,14 @@ import React, {memo} from "react";
 import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import Title from '../../../seguimiento/components/Title';
-import {appointments} from './data';
-import {datos} from './dataSession';
 import axios from 'axios';
 import {
     Scheduler,
     DayView,
     Appointments
   } from "@devexpress/dx-react-scheduler-material-ui";
+import { StepConnector } from "@material-ui/core";
+import { invalid } from "moment";
 
 const Schedule = memo(props => {
   const classes = props.classes;
@@ -31,6 +31,9 @@ const Schedule = memo(props => {
 
   if(fecha.length > 1){
     var fechaDate = new Date(fecha);
+    var anioB = fecha.split("-")[0];
+    var mesB = fecha.split("-")[1];
+    var diaB = fecha.split("-")[2];
   }
 
   if(lugar.length > 1){
@@ -56,13 +59,6 @@ const Schedule = memo(props => {
       }
     }
   }
-  /**
-   * iniH, iniM, finH, finM
-        startTime: fechaDate.getFullYear()+'-'+fechaDate.getMonth()+'-'+fechaDate.getDay()+'-'+iniH+':'+iniM+':00',
-        endTime: fechaDate.getFullYear()+'-'+fechaDate.getMonth()+'-'+fechaDate.getDay()+'-'+finH+':'+finM+':00',
-   */
-
-  console.log(dataSession);
   
   if(inicioBloque.length > 1){
     var inicioHora = inicioBloque.split(":")[0];
@@ -73,32 +69,14 @@ const Schedule = memo(props => {
     var finMin = finBloque.split(":")[1];
   }
 
-  async function reservarSesion(matricula){
-    return axios.post('http://localhost:5000/api/db/reserveSession', {
-      startTime: '2019-6-25 9:00:00',
-      endTime: '2019-6-25 9:15:00',
-      idBlock: 10,
-      idPupil: matricula
-    });
-  }
-
-  React.useEffect(()=>{
-    reservarSesion('S16011686')
-      .then(result => {
-      console.log(result);
-    }).catch(console.log);
-  },[]);
-
-  function loadPage(){
-    var bloques = document.getElementsByClassName("Appointment-appointment-317");
-    var count = 0;
-    if(bloques.length > 0){
-      if(count === 0){
-        count = count + 1;
-      }
+    async function reservarSesion(matricula, idBlock, iniH, iniM, finH, finM){
+      return axios.post('http://localhost:5000/api/db/reserveSession', {
+        startTime: anioB+'-'+mesB+'-'+diaB+' '+iniH+':'+iniM+':00',
+        endTime: anioB+'-'+mesB+'-'+diaB+' '+finH+':'+finM+':00',
+        idBlock: idBlock,
+        idPupil: matricula
+      });
     }
-  }
-  window.addEventListener("load", loadPage());
 
     function createBlock(id, title, startDate, endDate, location){
       return { id, title, startDate, endDate, location };
@@ -122,10 +100,14 @@ const Schedule = memo(props => {
     }
     var dataBlock = [];
     var count = 1;
-    if(fechaDate > 0){
-      var anio = fechaDate.getFullYear();
-      var mes = fechaDate.getMonth();
-      var dia = fechaDate.getDay();
+    if(anioB !== undefined){
+      var anio = anioB;
+    }
+    if(mesB !== undefined){
+      var mes = mesB;
+    }
+    if(diaB !== undefined){
+      var dia = diaB.split("T")[0];
     }
     var conteo = 1;
     
@@ -133,13 +115,19 @@ const Schedule = memo(props => {
       if(auxMin === 45){
         var valido = false;
         for (var j = 0; j < dataSession.length; j++){
-          if (dataSession[j]['horas'] === auxHora && dataSession[j]['minutos'] === 45){
-            valido = true;
+          if (dataSession[j]['horas'] === auxHora){
+            if(dataSession[j]['minutos'] === 45){
+              valido = true;
+              console.log("Adios");
+            }
           }
         }
         if(valido === false){
-          dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio,mes,dia,auxHora,auxMin),
-          new Date(anio,mes,dia,auxHora,auxMin+15),auxLugar));
+          if(anio !== undefined && mes !== undefined && dia !== undefined){
+            console.log("Hola");
+            dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+auxMin+":0"),
+            new Date(anio+"-"+mes+"-"+dia+" "+(auxHora+1)+":0:0"),auxLugar));
+          }
         }
         auxMin = 0;
         auxHora = auxHora + 1;
@@ -161,8 +149,10 @@ const Schedule = memo(props => {
           }
         }
         if(valido === false){
-          dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio,mes,dia,auxHora,auxMin),
-          new Date(anio,mes,dia,auxHora,auxMin+15),auxLugar));
+          if(anio !== undefined && mes !== undefined && dia !== undefined){
+            dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+auxMin+":0"),
+            new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+(auxMin+15)+":0"),auxLugar));
+          }
           if(conteo === 3){
             conteo = 1;
           } else {
@@ -173,12 +163,19 @@ const Schedule = memo(props => {
         count = count + 1;
       }
     }
-
-    var limite = 0;
-    if(dataBlock.length > 0 && dataBlock[0]['endDate'] > 0 && dataBlock[0]['location'] !== undefined && limite === 0){
-      console.log(dataBlock);
-      limite = limite + 1;
-      return (
+    function loadPage(){
+      var bloques = document.getElementsByClassName("Appointment-appointment-317");
+      console.log(bloques.length);
+      if(bloques.length > 0){
+        for(var i = 0; i < bloques.length; i++){
+          bloques[i].addEventListener("click",function(event){
+          });
+        }
+      }
+    }
+    window.addEventListener("load", loadPage());
+  
+    return (
           <Paper>
               <Title>Bloques de tutoría</Title>
               <Scheduler data={dataBlock}>
@@ -188,8 +185,6 @@ const Schedule = memo(props => {
               </Scheduler>
           </Paper>
       );
-    }
-    
 });
 
 export default Schedule;

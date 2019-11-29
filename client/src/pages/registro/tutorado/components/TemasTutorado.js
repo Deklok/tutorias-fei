@@ -9,6 +9,7 @@ import Input from '@material-ui/core/Input';
 import axios from 'axios';
 
 const TemasTutorado = memo(props => {
+  const idSession = props.idSession;
   const useStyles = makeStyles({
     depositContext: {
       flex: 1,
@@ -17,8 +18,6 @@ const TemasTutorado = memo(props => {
       width: '100%',
     }
   });
-
-  const idSession = 3;
 
   async function cancelarReserva(idSession){
     return axios.post('http://localhost:5000/api/db/deleteSession',{
