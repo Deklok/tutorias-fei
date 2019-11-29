@@ -1,11 +1,6 @@
 import React, {memo, Component} from "react";
 import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
-import {
-  Inject, ScheduleComponent, Day,
-  Week, WorkWeek, Month, Agenda,
-  EventSettingsModel, ViewDirective, ViewsDirective
-} from '@syncfusion/ej2-react-schedule';
 import { makeStyles } from '@material-ui/core/styles';
 import Title from '../../../seguimiento/components/Title';
 import {datos} from './dataSession';
