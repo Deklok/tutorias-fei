@@ -73,21 +73,21 @@ const Schedule = memo(props => {
     var finMin = finBloque.split(":")[1];
   }
 
-    async function reservarSesion(){
-      return axios.post('http://localhost:5000/api/db/reserveSession', {
-        startTime: '2019-6-25 9:00:00',
-        endTime: '2019-6-25 9:15:00',
-        idBlock: 10,
-        idPupil: matricula
-      });
-    }
+  async function reservarSesion(matricula){
+    return axios.post('http://localhost:5000/api/db/reserveSession', {
+      startTime: '2019-6-25 9:00:00',
+      endTime: '2019-6-25 9:15:00',
+      idBlock: 10,
+      idPupil: matricula
+    });
+  }
 
-    React.useEffect(()=>{
-      reservarSesion()
-        .then(result => {
-        console.log(result);
-      }).catch(console.log);
-    },[]);
+  React.useEffect(()=>{
+    reservarSesion('S16011686')
+      .then(result => {
+      console.log(result);
+    }).catch(console.log);
+  },[]);
 
   function loadPage(){
     var bloques = document.getElementsByClassName("Appointment-appointment-317");
