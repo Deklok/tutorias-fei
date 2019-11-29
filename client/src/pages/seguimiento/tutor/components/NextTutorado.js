@@ -115,8 +115,8 @@ const NextTutorado = memo(props => {
                   <Typography variant="h3" className={classes.textOverlay}>
                     {tutorado['start']}
                   </Typography>
-                  <Typography paragraph variant="h6" className={classes.textOverlay}>
-                    {tutorado['studentId']}
+                  <Typography paragraph variant="h5" className={classes.textOverlay}>
+                    {tutorado['career_name']}
                   </Typography>
                 </div>
                 : null
@@ -127,7 +127,7 @@ const NextTutorado = memo(props => {
         <CardContent>
           <div className={classes.details}>
             {tutorado != undefined ?
-              <Typography variant="subtitle1" color="text" component="p" noWrap>
+              <Typography variant="body1" color="text" component="p" noWrap>
                 {tutorado['name']}
               </Typography>
               : null

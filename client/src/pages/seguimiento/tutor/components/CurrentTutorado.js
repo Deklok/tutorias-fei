@@ -94,8 +94,8 @@ const CurrentTutorado = memo(props => {
             </Grid>
             <Grid item md={4} xs={6}>
               <div className={classes.clock}>
-                <Typography paragraph variant="h6" className={classes.textOverlay}>
-                  {currentPupil['studentId']}
+                <Typography paragraph variant="h4" className={classes.textOverlay}>
+                  {currentPupil['career_name']}
                 </Typography>
               </div>
             </Grid>
@@ -103,7 +103,7 @@ const CurrentTutorado = memo(props => {
         </div>
         <CardContent>
           <div className={classes.details}>
-            <Typography variant="subtitle1" color="text" component="p" noWrap>
+            <Typography variant="h6" color="text" component="p" noWrap>
             {currentPupil['name']}
             </Typography>
             <div className={classes.options}>
