@@ -124,7 +124,7 @@ const Feedback = memo(props => {
                     <Title>Calificación</Title>
                     <div>
                       <Box component="fieldset" mb={3} borderColor="transparent">
-                        <Rating value={estrellas} size="large" readOnly />
+                        <Rating value={estrellas} precision={0.5} size="large" readOnly />
                         <Typography component="legend">{estrellas} Estrellas</Typography>
                       </Box>
                     </div>

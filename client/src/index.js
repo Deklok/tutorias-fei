@@ -24,7 +24,7 @@ const theme = createMuiTheme({
 });
 
 render((
-    <BrowserRouter basename="/xahni">
+    <BrowserRouter>
         <MuiThemeProvider theme={theme}>
             <App />
         </MuiThemeProvider>

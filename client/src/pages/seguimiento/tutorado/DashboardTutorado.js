@@ -220,10 +220,7 @@ const DashboardTutorado = memo(props => {
           </DialogContent>
           <DialogActions>
             <Button color="primary" onClick={handleClose}>
-              Cancel
-						</Button>
-            <Button color="primary">
-              Subscribe
+              Enviar
 						</Button>
           </DialogActions>
         </Dialog>
