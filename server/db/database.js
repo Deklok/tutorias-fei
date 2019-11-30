@@ -258,7 +258,7 @@ function getBlock(idTutorship){
 
 function getOneBlock(idCareer, idTutorship){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT idBlock, start, end FROM block WHERE idCareer = ? AND idTutorship = ?',
+        pool.query('SELECT idBlock, start, end FROM Block WHERE idCareer = ? AND idTutorship = ?',
         [idCareer,idTutorship],(err,results) => {
             if(err){
                 return reject(err);
@@ -271,7 +271,7 @@ function getOneBlock(idCareer, idTutorship){
 
 function getBlockSessions(idBlock){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT startTime, endTime FROM session WHERE idBlock = ?',
+        pool.query('SELECT startTime, endTime FROM Session WHERE idBlock = ?',
         [idBlock],(err,results) => {
             if(err){
                 return reject(err);
@@ -284,7 +284,7 @@ function getBlockSessions(idBlock){
 
 function getSession(idSession){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT startTime, endTime FROM session WHERE idSession = ?',
+        pool.query('SELECT startTime, endTime FROM Session WHERE idSession = ?',
         [idSession],(err,results) => {
             if(err){
                 return reject(err);
@@ -323,7 +323,7 @@ function reserveSession(startTime, endTime, idBlock, idPupil){
 
 function addSession(idSession, topics){
     return new Promise((resolve,reject) => {
-        pool.query('UPDATE session SET topics = ?, status = ? WHERE idSession = ?',
+        pool.query('UPDATE Session SET topics = ?, status = ? WHERE idSession = ?',
         [topics,3,idSession],(err,results) => {
             if(err){
                 return reject(err);

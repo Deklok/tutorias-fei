@@ -8,11 +8,8 @@ import {
     DayView,
     Appointments
   } from "@devexpress/dx-react-scheduler-material-ui";
-import { StepConnector } from "@material-ui/core";
-import { invalid } from "moment";
 
 const Schedule = memo(props => {
-  const classes = props.classes;
   const inicioBloque = props.inicioBloque;
   const finBloque = props.finBloque;
   const bloque = props.bloque;
@@ -66,13 +63,12 @@ const Schedule = memo(props => {
   }
   if(finBloque.length > 1){
     var finHora = finBloque.split(":")[0];
-    var finMin = finBloque.split(":")[1];
   }
 
-    async function reservarSesion(matricula, idBlock, iniH, iniM, finH, finM){
+    async function reservarSesion(matricula, idBlock, fechaI, horaI, fechaF, horaF){
       return axios.post('http://localhost:5000/api/db/reserveSession', {
-        startTime: anioB+'-'+mesB+'-'+diaB+' '+iniH+':'+iniM+':00',
-        endTime: anioB+'-'+mesB+'-'+diaB+' '+finH+':'+finM+':00',
+        startTime: fechaI+" "+horaI,
+        endTime: fechaF+" "+horaF,
         idBlock: idBlock,
         idPupil: matricula
       });
@@ -92,14 +88,10 @@ const Schedule = memo(props => {
     if(inicioMin !== undefined){
       var auxMin = parseInt(inicioMin,10);
     }
-    if(finHora !== undefined){
-      var auxFin = parseInt(finHora,10);
-    }
     if(lugarBloque !== undefined){
       var auxLugar = lugarBloque;
     }
     var dataBlock = [];
-    var count = 1;
     if(anioB !== undefined){
       var anio = anioB;
     }
@@ -109,22 +101,22 @@ const Schedule = memo(props => {
     if(diaB !== undefined){
       var dia = diaB.split("T")[0];
     }
-    var conteo = 1;
     
+    var count = 1;
+    var valido = false;
+
     while(count <= ((finHora - inicioHora)*4)){
       if(auxMin === 45){
-        var valido = false;
-        for (var j = 0; j < dataSession.length; j++){
-          if (dataSession[j]['horas'] === auxHora){
-            if(dataSession[j]['minutos'] === 45){
+        valido = false;
+        for (var p = 0; p < dataSession.length; p++){
+          if (dataSession[p]['horas'] === auxHora){
+            if(dataSession[p]['minutos'] === 45){
               valido = true;
-              console.log("Adios");
             }
           }
         }
         if(valido === false){
           if(anio !== undefined && mes !== undefined && dia !== undefined){
-            console.log("Hola");
             dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+auxMin+":0"),
             new Date(anio+"-"+mes+"-"+dia+" "+(auxHora+1)+":0:0"),auxLugar));
           }
@@ -133,19 +125,14 @@ const Schedule = memo(props => {
         auxHora = auxHora + 1;
         count = count + 1;
       } else {
-        var valido = false;
+        valido = false;
         for (var j = 0; j < dataSession.length; j++){
-          if (dataSession[j]['horas'] === auxHora){
-            if(dataSession[j]['minutos'] === 0 && conteo === 1){
-              valido = true;
-              conteo = 2;
-            } else if(dataSession[j]['minutos'] === 15 && conteo === 2){
-              valido = true;
-              conteo = 3
-            } else if(dataSession[j]['minutos'] === 30 && conteo === 3){
-              valido = true;
-              conteo = 1;
-            }
+          if(dataSession[j]['horas']+":"+dataSession[j]['minutos'] === auxHora+":"+auxMin){
+            valido = true;
+          } else if(dataSession[j]['horas']+":"+dataSession[j]['minutos'] === auxHora+":"+auxMin){
+            valido = true;
+          } else if(dataSession[j]['horas']+":"+dataSession[j]['minutos'] === auxHora+":"+auxMin){
+            valido = true;
           }
         }
         if(valido === false){
@@ -153,32 +140,132 @@ const Schedule = memo(props => {
             dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+auxMin+":0"),
             new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+(auxMin+15)+":0"),auxLugar));
           }
-          if(conteo === 3){
-            conteo = 1;
-          } else {
-            conteo = conteo + 1;
-          }
         }
         auxMin = auxMin + 15;
         count = count + 1;
       }
     }
+
+    var idSession;
+    
     function loadPage(){
       var bloques = document.getElementsByClassName("Appointment-appointment-317");
-      console.log(bloques.length);
-      if(bloques.length > 0){
-        for(var i = 0; i < bloques.length; i++){
+      var horas = document.getElementsByClassName("VerticalAppointment-time-322");
+      if(horas.length > 0){
+        for(var i = 0; i < horas.length; i++){
           bloques[i].addEventListener("click",function(event){
+            var string = event.srcElement.childElementCount;
+            if(string === 2){
+              var hora = event.srcElement.childNodes[1].childNodes[0].data;
+              var datoSimple = hora.split(" ");
+              var datoHora = parseInt(datoSimple[0].split(":")[0],10);
+              var datoMinuto = parseInt(datoSimple[0].split(":")[1],10);
+              var tipoDato = datoSimple[1];
+              if(tipoDato === "PM"){
+                if(datoHora !== 12){
+                  datoHora = datoHora + 12;
+                }
+              }
+              if(dataBlock.length > 0){
+                for(var i = 0; i < dataBlock.length; i++){
+                  if(dataBlock[i]['startDate'].getHours() === datoHora && dataBlock[i]['startDate'].getMinutes() === datoMinuto){
+                    var horaF = dataBlock[i]['endDate'].getHours();
+                    var minF = dataBlock[i]['endDate'].getMinutes();
+                    var horaI = dataBlock[i]['startDate'].getHours();
+                    var minI = dataBlock[i]['startDate'].getMinutes();
+                    if(anioB !== undefined && mesB !== undefined && diaB !== undefined && matricula !== undefined && bloque !== undefined){
+                      var formatoUTCF = anioB+'-'+mesB+'-'+diaB+' '+horaF+':'+minF+':00';
+                      var divisionF = formatoUTCF.split("T");
+                      var fechaFF = divisionF[0];
+                      var horaFF = divisionF[1].split(" ")[1];
+                      var formatoUTCI = anioB+'-'+mesB+'-'+diaB+' '+horaI+':'+minI+':00';
+                      var divisionI = formatoUTCI.split("T");
+                      var fechaFI = divisionI[0];
+                      var horaFI = divisionI[1].split(" ")[1];
+                      reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
+                        var sessionReserved = response;
+                        idSession = sessionReserved.data;
+                        console.log(idSession);
+                     });
+                    }
+                  }
+                }
+              }
+            }else{
+              var dato = event.srcElement.childNodes[0].data;
+              if(dato.split(" ")[0] === "Tutoría"){
+                if(dataBlock.length > 0){
+                  for(var i = 0; i < dataBlock.length; i++){
+                    if (dataBlock[i]['title'] === dato){
+                      var horaF = dataBlock[i]['endDate'].getHours();
+                      var minF = dataBlock[i]['endDate'].getMinutes();
+                      var horaI = dataBlock[i]['startDate'].getHours();
+                      var minI = dataBlock[i]['startDate'].getMinutes();
+                      if(anioB !== undefined && mesB !== undefined && diaB !== undefined && matricula !== undefined && bloque !== undefined){
+                        var formatoUTCF = anioB+'-'+mesB+'-'+diaB+' '+horaF+':'+minF+':00';
+                        var divisionF = formatoUTCF.split("T");
+                        var fechaFF = divisionF[0];
+                        var horaFF = divisionF[1].split(" ")[1];
+                        var formatoUTCI = anioB+'-'+mesB+'-'+diaB+' '+horaI+':'+minI+':00';
+                        var divisionI = formatoUTCI.split("T");
+                        var fechaFI = divisionI[0];
+                        var horaFI = divisionI[1].split(" ")[1];
+                        reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
+                          var sessionReserved = response;
+                          idSession = sessionReserved.data;
+                          console.log(idSession);
+                        });
+                      }
+                    }
+                  }
+                }
+              }else{
+                var datoSimple = dato.split(" ");
+                var datoHora = parseInt(datoSimple[0].split(":")[0],10);
+                var datoMinuto = parseInt(datoSimple[0].split(":")[1],10);
+                var tipoDato = datoSimple[1];
+                if(tipoDato === "PM"){
+                  if(datoHora !== 12){
+                    datoHora = datoHora + 12;
+                  }
+                }
+                if(dataBlock.length > 0){
+                  for(var i = 0; i < dataBlock.length; i++){
+                    if(dataBlock[i]['startDate'].getHours() === datoHora && dataBlock[i]['startDate'].getMinutes() === datoMinuto){
+                      var horaF = dataBlock[i]['endDate'].getHours();
+                      var minF = dataBlock[i]['endDate'].getMinutes();
+                      var horaI = dataBlock[i]['startDate'].getHours();
+                      var minI = dataBlock[i]['startDate'].getMinutes();
+                      if(anioB !== undefined && mesB !== undefined && diaB !== undefined && matricula !== undefined && bloque !== undefined){
+                        var formatoUTCF = anioB+'-'+mesB+'-'+diaB+' '+horaF+':'+minF+':00';
+                        var divisionF = formatoUTCF.split("T");
+                        var fechaFF = divisionF[0];
+                        var horaFF = divisionF[1].split(" ")[1];
+                        var formatoUTCI = anioB+'-'+mesB+'-'+diaB+' '+horaI+':'+minI+':00';
+                        var divisionI = formatoUTCI.split("T");
+                        var fechaFI = divisionI[0];
+                        var horaFI = divisionI[1].split(" ")[1];
+                        reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
+                          var sessionReserved = response;
+                          idSession = sessionReserved.data;
+                          console.log(idSession);
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+            }
           });
         }
       }
     }
     window.addEventListener("load", loadPage());
-  
+
     return (
           <Paper>
               <Title>Bloques de tutoría</Title>
-              <Scheduler data={dataBlock}>
+              <Scheduler data={dataBlock} locale="es-MX">
                   <ViewState currentDate={fechaDate} />
                   <DayView startDayHour={inicioHora} endDayHour={finHora} />
                   <Appointments />
