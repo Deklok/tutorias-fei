@@ -674,8 +674,8 @@ app.post('/api/db/updateStatus', (req, res)=>{
   var idTutorship = req.body['idTutorship'];
   var idPupil = req.body['idPupil'];
   var new_status = req.body['new_status'];
-  if(idTutorship && idPupil && new_status){
-    database.updateSessionStatus(idTutorship, idPupil, new_status)
+  if(idTutorship!=null && idPupil!=null && new_status!=null){
+    database.updateSessionStatus(idPupil, idTutorship, new_status)
     .then(function(response){
       res.json(response);
     });

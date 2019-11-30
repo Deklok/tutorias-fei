@@ -10,8 +10,12 @@ import CardMedia from '@material-ui/core/CardMedia';
 import { red } from '@material-ui/core/colors';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
-import StopIcon from '@material-ui/icons/Stop'
+import StopIcon from '@material-ui/icons/Stop';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
 
+const cookies = new Cookies();
 const useStyles = makeStyles(theme => ({
   depositContext: {
     flex: 1,
@@ -68,8 +72,27 @@ const CurrentTutorado = memo(props => {
   const classes = useStyles();
   const currentPupil = props.currentPupil;
   const setAtendiendo = props.setAtendiendo;
+  const[connect, setConnect] = React.useState(false);
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
+
+  async function updateEstatus() {
+    if(connect){
+      return
+    }else{
+      return null;
+    }
+  }
 
   function finalizarTutoria(){
+    console.log(currentPupil['studentId']);
+    axios.post('http://localhost:5000/api/db/updateStatus', {
+      idTutorship: 1,
+      idPupil: currentPupil['studentId'],
+      new_status: 3
+    },{
+      headers: { Authorization: token + ";" + role }
+    });
     setAtendiendo(false);
   }
 

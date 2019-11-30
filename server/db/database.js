@@ -3,8 +3,9 @@ const pool = require('./config.js');
 
 
 function updateSessionStatus(idPupil, idTutorship, new_status){
+	console.log(typeof(idTutorship), typeof(idPupil), typeof(new_status));
 	return new Promise((resolve, reject) => {
-		pool.query('CALL sp_updateStatus(?, ?, ?)',[username],(err, results) => {
+		pool.query('CALL sp_updateStatus(?, ?, ?)',[idPupil, idTutorship, new_status],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{

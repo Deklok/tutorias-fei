@@ -31,8 +31,8 @@ const PieChart = (props) => {
       loader={<div>Loading Chart</div>}
       data={[
         ['Estado', 'Frecuencia'],
-        ['Asistió', props.absent],
-        ['Confirmó y no vino', props.complete],
+        ['Asistió', props.complete],
+        ['Confirmó y no vino', props.absent],
         ['No confirmó', props.missing],
       ]}
       options={{

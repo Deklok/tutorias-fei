@@ -12,6 +12,11 @@ import SkipNextIcon from '@material-ui/icons/SkipNext';
 import IconButton from '@material-ui/core/IconButton';
 import { green } from '@material-ui/core/colors';
 import Tooltip from '@material-ui/core/Tooltip';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
+
+const cookies = new Cookies();
 
 const useStyles = makeStyles(theme => ({
   depositContext: {
@@ -75,15 +80,57 @@ const NextTutorado = memo(props => {
   const setAtendiendo = props.setAtendiendo;
   const tutorados = props.tutorados;
   const atendiendo = props.atendiendo;
+  const[connect, setConnect] = React.useState(true);
+
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
+
+  async function comenzar() {
+    if(connect){
+      return axios.post('http://localhost:5000/api/db/updateStatus', {
+        idTutorship: 1,
+        idPupil: tutorado['studentId'],
+        new_status: 1,
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+    }else{
+      return null;
+    }
+  }
+
+  async function pass() {
+    if(connect){
+      return axios.post('http://localhost:5000/api/db/updateStatus', {
+        idTutorship: 1,
+        idPupil: tutorado['studentId'],
+        new_status: 2,
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+    }else{
+      return null;
+    }
+  }
 
   function comenzarTutoria(){
-    props.next();
-    setCurrentPupil(tutorado);
-    setAtendiendo(true);
+    comenzar()
+    .then(result=>{
+      if(result){
+        props.next();
+        setCurrentPupil(tutorado);
+        setAtendiendo(true);
+      }
+    });
   }
 
   function saltar(){
-    props.next();
+    pass()
+    .then(result=>{
+      if(result){
+        props.next();
+      }
+    })
   }
 
   function validate(){
