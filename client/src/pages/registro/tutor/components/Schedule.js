@@ -87,9 +87,10 @@ export default function Schedule(props) {
         place: place,
         tutorshipNum: tutorshipNum,
         period: period,
+        status: 1,
         indications: indications,
         date: date.getFullYear() + "-" + month + "-" + date.getDate(),
-        username: id
+        idTutor: personnelNum
         //idTutor: 'Z13011798'
       }, {
         headers: { Authorization: token + ";" + role }
@@ -129,7 +130,7 @@ export default function Schedule(props) {
   }
 
   async function getPupil() {
-    return axios.post('http://localhost:5000/api/db/getPupilByTutor', {
+    return axios.post('http://localhost:5000/api/db/getAllPupilByTutor', {
       //userName: 'Z13011798'
       personnelNum: personnelNum
       }, {

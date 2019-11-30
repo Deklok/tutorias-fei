@@ -195,10 +195,10 @@ function saveFeedback(grade,idSession,comments) {
 	});
 }
 
-function addTutorship(place, tutorshipNum, period, indications, date, userName) {
+function addTutorship(place, tutorshipNum, period, indications, date, idTutor) {
     return new Promise((resolve, reject) => {
-        pool.query('INSERT INTO Tutorship (place, tutorshipNum, period, indications, date, username) VALUES (?, ?, ?, ?, ?, ?)'
-            , [place, tutorshipNum, period, indications, date, userName], (err, results) => {
+        pool.query('INSERT INTO Tutorship (place, tutorshipNum, period, indications, date, idTutor) VALUES (?, ?, ?, ?, ?, ?)'
+            , [place, tutorshipNum, period, indications, date, idTutor], (err, results) => {
                 if (err) {
                     return reject(err);
                 } else {

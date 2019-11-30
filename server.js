@@ -473,16 +473,15 @@ app.post('/api/db/addTutorship', (req, res) => {
   var period = req.body.period;
   var indications = req.body.indications;
   var date = req.body.date;
-  var username = req.body.username;
+  var idTutor = req.body.idTutor;
 
-  if(place && tutorshipNum, period, indications, date, username){
-    database.addTutorship(place, tutorshipNum, period, indications, date, username).then(function (response) {
+  if(place && tutorshipNum, period, indications, date, idTutor){
+    database.addTutorship(place, tutorshipNum, period, indications, date, idTutor).then(function (response) {
       res.status(201).send(response);
     });
   }else{
     res.status(400);
   }
-
 });
 
 /*
