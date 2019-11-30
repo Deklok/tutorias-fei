@@ -1,142 +1,190 @@
-import React, {memo, Component} from "react";
+import React, {memo} from "react";
 import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
-import { makeStyles } from '@material-ui/core/styles';
 import Title from '../../../seguimiento/components/Title';
-import {datos} from './dataSession';
-import {appointments} from './data';
 import axios from 'axios';
 import {
-  Scheduler,
-  DayView,
-  Appointments
-} from "@devexpress/dx-react-scheduler-material-ui";
+    Scheduler,
+    DayView,
+    Appointments
+  } from "@devexpress/dx-react-scheduler-material-ui";
+import { StepConnector } from "@material-ui/core";
+import { invalid } from "moment";
 
 const Schedule = memo(props => {
   const classes = props.classes;
+  const inicioBloque = props.inicioBloque;
+  const finBloque = props.finBloque;
+  const bloque = props.bloque;
+  const lugar = props.lugar;
+  const fecha = props.fecha;
+  const indicacion = props.indicacion;
+  const matricula = props.matricula;
   const [open, setOpen] = React.useState(true);
-  const [start, setStart] = React.useState('');
-  const [end, setEnd] = React.useState('');
+  const [sessions, setSessions] = React.useState('');
 
-  async function cargarDatos() {
-    return axios.post('http://localhost:5000/api/db/getBlock', {
-      idCareer: 1,
-      idTutorship: 4
+  async function getSessions() {
+    return axios.post('http://localhost:5000/api/db/getBlockSessions', {
+      idBlock: 10
     });
   }
 
-  cargarDatos()
-    .then(result => {
-      console.log(result);
-      setStart(result.data[0][0]['start']);
-      setEnd(result.data[0][0]['end']);
+  if(fecha.length > 1){
+    var fechaDate = new Date(fecha);
+    var anioB = fecha.split("-")[0];
+    var mesB = fecha.split("-")[1];
+    var diaB = fecha.split("-")[2];
+  }
+
+  if(lugar.length > 1){
+    var lugarBloque = lugar;
+  }
+
+  React.useEffect(() => {
+    getSessions()
+      .then(result => {
+      if(result.status === 200){
+        setSessions(result.data);
+      }
     }).catch(console.log);
+  },[]);
+  
+  var dataSession = [];
+
+  if(sessions.length > 1){
+    for(var i = 0; i < sessions.length; i++){
+      var da = new Date(sessions[i]['startTime']);
+      if(da > 0){
+        dataSession.push(createSession(da.getHours(),da.getMinutes()));
+      }
+    }
+  }
+  
+  if(inicioBloque.length > 1){
+    var inicioHora = inicioBloque.split(":")[0];
+    var inicioMin = inicioBloque.split(":")[1];
+  }
+  if(finBloque.length > 1){
+    var finHora = finBloque.split(":")[0];
+    var finMin = finBloque.split(":")[1];
+  }
+
+    async function reservarSesion(matricula, idBlock, iniH, iniM, finH, finM){
+      return axios.post('http://localhost:5000/api/db/reserveSession', {
+        startTime: anioB+'-'+mesB+'-'+diaB+' '+iniH+':'+iniM+':00',
+        endTime: anioB+'-'+mesB+'-'+diaB+' '+finH+':'+finM+':00',
+        idBlock: idBlock,
+        idPupil: matricula
+      });
+    }
 
     function createBlock(id, title, startDate, endDate, location){
       return { id, title, startDate, endDate, location };
     }
 
-    var bloque = appointments;
-    const rows = [];
-
-    /*Crear bloque desde "datos de la base". Se supone que se obtienen datos del bloque
-    desde la BD, se obtiene el inicio y fin del bloque con el formato "HH:MM:SS"
-    */ 
-    var blockInicio = bloque[0]['blockStart'].split(":");
-    var auxinicio = parseInt(blockInicio[0],10);
-    var fin = bloque[0]['blockEnd'].split(":");
-    var auxfin = parseInt(fin[0],10);
-    var tiempo = (auxfin - auxinicio) * 4;
-
-    /*Validar alguna sesion con los bloques que se van a colocar. Se obtiene de la BD información
-    de alguna session, en el caso de que ya se haya escogido una sesión. Se valida solo la hora de inicio
-    de la session bajo el formato "YYYY-MM-DD HH:MM:SS"
-    */
-
     function createSession(horas, minutos) {
       return { horas, minutos };
     }
 
-    var sesiones = datos;
-    const horasMin = [];
-
-    for (var i = 0; i < sesiones.length; i++){
-      var sessionInicio = sesiones[i]['sessionStart'].split(" ");
-      var sessionHoraInicio = sessionInicio[1].split(":");
-      var horaAux = parseInt(sessionHoraInicio[0],10);
-      var minAux = parseInt(sessionHoraInicio[1],10);
-      horasMin.push(createSession(horaAux,minAux));
+    if(inicioHora !== undefined){
+      var auxHora = parseInt(inicioHora,10);
     }
-
-    console.log(horasMin.length);
-
-    var aux = 0;
-    var inicio = auxinicio;
-    var count = 0;
-
-    for(var i = 1; i <= tiempo; i++){
-      if (aux === 0) {
-        aux = 1;
-        count = 0;
+    if(inicioMin !== undefined){
+      var auxMin = parseInt(inicioMin,10);
+    }
+    if(finHora !== undefined){
+      var auxFin = parseInt(finHora,10);
+    }
+    if(lugarBloque !== undefined){
+      var auxLugar = lugarBloque;
+    }
+    var dataBlock = [];
+    var count = 1;
+    if(anioB !== undefined){
+      var anio = anioB;
+    }
+    if(mesB !== undefined){
+      var mes = mesB;
+    }
+    if(diaB !== undefined){
+      var dia = diaB.split("T")[0];
+    }
+    var conteo = 1;
+    
+    while(count <= ((finHora - inicioHora)*4)){
+      if(auxMin === 45){
         var valido = false;
-        for (var j = 0; j < horasMin.length; j++){
-          if (horasMin[j]['horas'] === inicio && horasMin[j]['minutos'] === 0){
-            valido = true;
+        for (var j = 0; j < dataSession.length; j++){
+          if (dataSession[j]['horas'] === auxHora){
+            if(dataSession[j]['minutos'] === 45){
+              valido = true;
+              console.log("Adios");
+            }
           }
         }
-        if (valido === false){
-          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 0),new Date(2019, 5, 25, inicio, 15),"Cubículo 30"));
-        }
-      } else if (aux === 1) {
-        aux = 2;
-        count = 0;
-        var valido = false;
-        for (var j = 0; j < horasMin.length; j++){
-          if (horasMin[j]['horas'] === inicio && horasMin[j]['minutos'] === 15){
-            valido = true;
+        if(valido === false){
+          if(anio !== undefined && mes !== undefined && dia !== undefined){
+            console.log("Hola");
+            dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+auxMin+":0"),
+            new Date(anio+"-"+mes+"-"+dia+" "+(auxHora+1)+":0:0"),auxLugar));
           }
         }
-        if (valido === false){
-          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 15),new Date(2019, 5, 25, inicio, 30),"Cubículo 30"));
-        }
-      } else if (aux === 2) {
-        aux = 3;
-        count = 0;
-        var valido = false;
-        for (var j = 0; j < horasMin.length; j++){
-          if (horasMin[j]['horas'] === inicio && horasMin[j]['minutos'] === 30){
-            valido = true;
-          }
-        }
-        if (valido === false){
-          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio, 30),new Date(2019, 5, 25, inicio, 45),"Cubículo 30"));
-        }
+        auxMin = 0;
+        auxHora = auxHora + 1;
+        count = count + 1;
       } else {
-        aux = 0;
-        count = 0;
-        inicio = inicio + 1;
         var valido = false;
-        for (var j = 0; j < horasMin.length; j++){
-          if (horasMin[j]['horas'] === (inicio - 1) && horasMin[j]['minutos'] === 45){
-            valido = true;
+        for (var j = 0; j < dataSession.length; j++){
+          if (dataSession[j]['horas'] === auxHora){
+            if(dataSession[j]['minutos'] === 0 && conteo === 1){
+              valido = true;
+              conteo = 2;
+            } else if(dataSession[j]['minutos'] === 15 && conteo === 2){
+              valido = true;
+              conteo = 3
+            } else if(dataSession[j]['minutos'] === 30 && conteo === 3){
+              valido = true;
+              conteo = 1;
+            }
           }
         }
-        if (valido === false){
-          rows.push(createBlock(i,"Tutoría "+i,new Date(2019, 5, 25, inicio - 1, 45),new Date(2019, 5, 25, inicio, 0),"Cubículo 30"));
+        if(valido === false){
+          if(anio !== undefined && mes !== undefined && dia !== undefined){
+            dataBlock.push(createBlock(count,"Tutoría "+count,new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+auxMin+":0"),
+            new Date(anio+"-"+mes+"-"+dia+" "+auxHora+":"+(auxMin+15)+":0"),auxLugar));
+          }
+          if(conteo === 3){
+            conteo = 1;
+          } else {
+            conteo = conteo + 1;
+          }
+        }
+        auxMin = auxMin + 15;
+        count = count + 1;
+      }
+    }
+    function loadPage(){
+      var bloques = document.getElementsByClassName("Appointment-appointment-317");
+      console.log(bloques.length);
+      if(bloques.length > 0){
+        for(var i = 0; i < bloques.length; i++){
+          bloques[i].addEventListener("click",function(event){
+          });
         }
       }
     }
-
+    window.addEventListener("load", loadPage());
+  
     return (
-        <Paper>
-            <Title>Bloques de tutoría</Title>
-            <Scheduler data={rows}>
-                <ViewState currentDate={bloque[0]['currentDate']} />
-                <DayView startDayHour={auxinicio} endDayHour={auxfin} />
-                <Appointments />
-            </Scheduler>
-        </Paper>
-    );
+          <Paper>
+              <Title>Bloques de tutoría</Title>
+              <Scheduler data={dataBlock}>
+                  <ViewState currentDate={fechaDate} />
+                  <DayView startDayHour={inicioHora} endDayHour={finHora} />
+                  <Appointments />
+              </Scheduler>
+          </Paper>
+      );
 });
 
 export default Schedule;

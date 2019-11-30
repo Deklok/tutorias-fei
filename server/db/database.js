@@ -256,10 +256,36 @@ function getBlock(idTutorship){
 	});
 }
 
-function getBlock(idCareer, idTutorship){
+function getOneBlock(idCareer, idTutorship){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT start, end FROM Block WHERE idCareer = ? AND idTutorship = ?',
+        pool.query('SELECT idBlock, start, end FROM block WHERE idCareer = ? AND idTutorship = ?',
         [idCareer,idTutorship],(err,results) => {
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            } 
+        });
+    });
+}
+
+function getBlockSessions(idBlock){
+    return new Promise((resolve,reject) => {
+        pool.query('SELECT startTime, endTime FROM session WHERE idBlock = ?',
+        [idBlock],(err,results) => {
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            }
+        });
+    });
+}
+
+function getSession(idSession){
+    return new Promise((resolve,reject) => {
+        pool.query('SELECT startTime, endTime FROM session WHERE idSession = ?',
+        [idSession],(err,results) => {
             if(err){
                 return reject(err);
             }else{
@@ -353,6 +379,9 @@ module.exports = {
     getAllPupilByTutor: getAllPupilByTutor,
 	getAllSessions: getAllSessions,
 	getBlock: getBlock,
+    getOneBlock: getOneBlock,
+    getBlockSessions: getBlockSessions,
+    getSession: getSession,
     getTutorship: getTutorship,
     reserveSession: reserveSession,
     addSession: addSession,
