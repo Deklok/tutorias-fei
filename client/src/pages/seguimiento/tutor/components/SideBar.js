@@ -16,26 +16,47 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DasboardIcon from '@material-ui/icons/Dashboard';
 import CachedIcon from '@material-ui/icons/Cached'
-import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import TextField from '@material-ui/core/TextField';
 
 const SideBar = memo(props => {
 	const open = props.open;
 	const classes = props.classes;
 
-	const [openDialog, setOpen] = React.useState(false);
+	const [terminosDialog, setTerminosDialog] = React.useState(false);
+	const [loginDialog, setLoginDialog] = React.useState(false);
 
-	const handleClickOpen = () => {
-		setOpen(true);
+	const [state, setState] = React.useState({
+		terminos: false,
+	});
+
+	const handleCheckTerminos = name => event => {
+		setState({ ...state, [name]: event.target.checked });
+		console.log(state.terminos)
 	};
 
-	const handleClose = () => {
-		setOpen(false);
+	const handleAbrirTerminos = () => {
+		if (state.terminos) {
+			setLoginDialog(true);
+		} else {
+			setTerminosDialog(true);
+		}
+	};
+
+	const handleLogin = () => {
+		setLoginDialog(false);
+	}
+
+	const handleSiguienteTerminos = () => {
+		setTerminosDialog(false);
+		setLoginDialog(true);
 	};
 
 	return (
@@ -91,7 +112,7 @@ const SideBar = memo(props => {
 			<List>
 				<div>
 					<ListSubheader inset>Cuenta</ListSubheader>
-					<ListItem button onClick={handleClickOpen}>
+					<ListItem button onClick={handleAbrirTerminos}>
 						<ListItemIcon>
 							<CachedIcon />
 						</ListItemIcon>
@@ -105,32 +126,75 @@ const SideBar = memo(props => {
 					</ListItem>
 				</div>
 			</List>
-			<Dialog open={openDialog} aria-labelledby="form-dialog-title">
-				<DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+			<Dialog open={terminosDialog}
+				scroll={'paper'}
+				aria-labelledby="scroll-dialog-title"
+				aria-describedby="scroll-dialog-description">
+
+				<DialogTitle id="scroll-dialog-title">Términos y Condiciones</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						To subscribe to this website, please enter your email address here. We will send updates
-						occasionally.
-						</DialogContentText>
+						{[...new Array(50)]
+							.map(
+								() => `Cras mattis consectetur purus sit amet fermentum.
+									Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+									Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+									Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
+							)
+							.join('\n')}
+					</DialogContentText>
+					<FormControlLabel
+						control={
+							<Checkbox
+								checked={state.terminos}
+								onChange={handleCheckTerminos('terminos')}
+								value="terminos"
+								color="primary"
+							/>
+						}
+						label="Acepto los términos y condiciones"
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button color="primary" disabled={!state.terminos} onClick={handleSiguienteTerminos}>
+						Siguiente
+					</Button>
+				</DialogActions>
+			</Dialog>
+			<Dialog open={loginDialog}
+				scroll={'paper'}
+				aria-labelledby="scroll-dialog-title"
+				aria-describedby="scroll-dialog-description">
+
+				<DialogTitle id="form-dialog-title">Iniciar Sesión</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						Es necesario que revalide sus credenciales para continuar
+					</DialogContentText>
 					<TextField
 						autoFocus
 						margin="dense"
-						id="name"
-						label="Email Address"
+						id="matricula"
+						label="Matrícula"
 						type="email"
+						fullWidth
+					/>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="password"
+						label="Contraseña"
+						type="password"
 						fullWidth
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button color="primary" onClick={handleClose}>
-						Cancel
-						</Button>
-					<Button color="primary">
-						Subscribe
-						</Button>
+					<Button onClick={handleLogin} color="primary">
+						Enviar
+          			</Button>
 				</DialogActions>
 			</Dialog>
-		</Drawer>
+		</Drawer >
 	);
 });
 
