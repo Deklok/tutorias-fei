@@ -5,12 +5,11 @@ import axios from 'axios';
 const Horario = memo (props =>{
 
   const classes = props.classes;
-  const lugar = props.lugar;
-  const hora = props.hora;
-  const fecha = props.fecha;
+  const idSession = props.idSession;
   const [open, setOpen] = React.useState(true);
   const [sessionStart, setSessionStart] = React.useState('');
-  const [sessionEnd, setSessionEnd] = React.useState('');
+  const [place, setPlace] = React.useState('');
+  const [date, setDate] = React.useState('');
 
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/getSession', {
@@ -21,7 +20,8 @@ const Horario = memo (props =>{
   cargarDatos()
     .then(result => {
       setSessionStart(result.data[0]['startTime']);
-      setSessionEnd(result.data[0]['endTime']);
+      setPlace(result.data[0]['place']);
+      setDate(result.data[0]['date']);
     }).catch(console.log);
 
   function generateTutorias(cubiculo, hora, fecha) {
@@ -29,7 +29,7 @@ const Horario = memo (props =>{
   }
 
   const tutorias = [
-    generateTutorias(lugar, hora, fecha)
+    generateTutorias(place, sessionStart, date)
   ];
   
   return (

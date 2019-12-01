@@ -9,8 +9,7 @@ import Input from '@material-ui/core/Input';
 import axios from 'axios';
 
 const TemasTutorado = memo(props => {
-  //const idSession = props.idSession;
-  const idSession = 9;
+  const idSession = props.idSession;
   const useStyles = makeStyles({
     depositContext: {
       flex: 1,

@@ -284,7 +284,7 @@ function getBlockSessions(idBlock){
 
 function getSession(idSession){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT startTime, endTime FROM Session WHERE idSession = ?',
+        pool.query('call sp_get_sessionData(?)',
         [idSession],(err,results) => {
             if(err){
                 return reject(err);
