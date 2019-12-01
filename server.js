@@ -659,6 +659,24 @@ app.post('/api/db/addSession', (req, res) => {
   }
 });
 /*
+*Service to get a session
+*Params:
+*   idSession = session identifier number
+*Returns:
+*   200: confirmation update
+*   400: Param expected
+*/
+app.post('/api/db/getSession', (req, res) => {
+  var idSession = req.body["idSession"];
+  if (idSession) {
+    database.getSession(idSession).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
 *Service to delete a tutorship
 *Params:
 *   idTutorship = tutorship identifier number
@@ -694,7 +712,6 @@ app.post('/api/db/deleteSession', (req, res) => {
   } else {
     res.sendStatus(400);
   }
-
 });
 
 app.post('/api/db/updateStatus', (req, res)=>{

@@ -22,7 +22,7 @@ const Schedule = memo(props => {
 
   async function getSessions() {
     return axios.post('http://localhost:5000/api/db/getBlockSessions', {
-      idBlock: 10
+      idBlock: 19
     });
   }
 
@@ -48,9 +48,10 @@ const Schedule = memo(props => {
   
   var dataSession = [];
 
-  if(sessions.length > 1){
+  if(sessions.length > 0){
     for(var i = 0; i < sessions.length; i++){
       var da = new Date(sessions[i]['startTime']);
+      console.log(da);
       if(da > 0){
         dataSession.push(createSession(da.getHours(),da.getMinutes()));
       }
@@ -105,7 +106,7 @@ const Schedule = memo(props => {
     var count = 1;
     var valido = false;
 
-    while(count <= ((finHora - inicioHora)*4)){
+    while(count <= (((finHora - inicioHora)*4)+1)){
       if(auxMin === 45){
         valido = false;
         for (var p = 0; p < dataSession.length; p++){
@@ -149,23 +150,15 @@ const Schedule = memo(props => {
     var idSession;
     
     function loadPage(){
-      var bloques = document.getElementsByClassName("Appointment-appointment-317");
-      var horas = document.getElementsByClassName("VerticalAppointment-time-322");
-      if(horas.length > 0){
-        for(var i = 0; i < horas.length; i++){
+      var bloques = document.getElementsByClassName("makeStyles-appointment-447");
+      if(bloques.length > 0){
+        for(var i = 0; i < bloques.length; i++){
           bloques[i].addEventListener("click",function(event){
             var string = event.srcElement.childElementCount;
             if(string === 2){
-              var hora = event.srcElement.childNodes[1].childNodes[0].data;
-              var datoSimple = hora.split(" ");
-              var datoHora = parseInt(datoSimple[0].split(":")[0],10);
-              var datoMinuto = parseInt(datoSimple[0].split(":")[1],10);
-              var tipoDato = datoSimple[1];
-              if(tipoDato === "PM"){
-                if(datoHora !== 12){
-                  datoHora = datoHora + 12;
-                }
-              }
+              var datoHora = parseInt(event.srcElement.childNodes[1].childNodes[0].data.split(":")[0],10);
+              var datoMinuto = parseInt(event.srcElement.childNodes[1].childNodes[0].data.split(":")[1],10);
+              console.log(datoHora+":"+datoMinuto);
               if(dataBlock.length > 0){
                 for(var i = 0; i < dataBlock.length; i++){
                   if(dataBlock[i]['startDate'].getHours() === datoHora && dataBlock[i]['startDate'].getMinutes() === datoMinuto){
@@ -192,7 +185,7 @@ const Schedule = memo(props => {
                 }
               }
             }else{
-              var dato = event.srcElement.childNodes[0].data;
+              var dato = event.srcElement.childNodes[0].textContent;
               if(dato.split(" ")[0] === "Tutoría"){
                 if(dataBlock.length > 0){
                   for(var i = 0; i < dataBlock.length; i++){
@@ -214,7 +207,7 @@ const Schedule = memo(props => {
                           var sessionReserved = response;
                           idSession = sessionReserved.data;
                           console.log(idSession);
-                        });
+                       });
                       }
                     }
                   }
@@ -223,12 +216,6 @@ const Schedule = memo(props => {
                 var datoSimple = dato.split(" ");
                 var datoHora = parseInt(datoSimple[0].split(":")[0],10);
                 var datoMinuto = parseInt(datoSimple[0].split(":")[1],10);
-                var tipoDato = datoSimple[1];
-                if(tipoDato === "PM"){
-                  if(datoHora !== 12){
-                    datoHora = datoHora + 12;
-                  }
-                }
                 if(dataBlock.length > 0){
                   for(var i = 0; i < dataBlock.length; i++){
                     if(dataBlock[i]['startDate'].getHours() === datoHora && dataBlock[i]['startDate'].getMinutes() === datoMinuto){
@@ -249,7 +236,7 @@ const Schedule = memo(props => {
                           var sessionReserved = response;
                           idSession = sessionReserved.data;
                           console.log(idSession);
-                        });
+                       });
                       }
                     }
                   }

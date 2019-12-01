@@ -38,7 +38,6 @@ const DashboardFin = memo(props => {
 
   cargarDatos()
     .then(result => {
-      console.log(result);
       setNombre(result.data[0][0]['name']);
       setCarrera(result.data[0][0]['careerName']);
       setMatricula(result.data[0][0]['studentId']);

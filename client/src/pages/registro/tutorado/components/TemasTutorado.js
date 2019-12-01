@@ -9,7 +9,8 @@ import Input from '@material-ui/core/Input';
 import axios from 'axios';
 
 const TemasTutorado = memo(props => {
-  const idSession = props.idSession;
+  //const idSession = props.idSession;
+  const idSession = 9;
   const useStyles = makeStyles({
     depositContext: {
       flex: 1,
@@ -19,13 +20,13 @@ const TemasTutorado = memo(props => {
     }
   });
 
-  async function cancelarReserva(idSession){
+  async function cancelarReserva(){
     return axios.post('http://localhost:5000/api/db/deleteSession',{
       idSession: idSession
     });
   }
 
-  async function agendarSession(idSession, topics){
+  async function agendarSession(topics){
     return axios.post('http://localhost:5000/api/db/addSession',{
       idSession: idSession,
       topics: topics
@@ -60,7 +61,7 @@ const TemasTutorado = memo(props => {
   );
   function deleteSession(){
     alert("Entra");
-    cancelarReserva(idSession);
+    cancelarReserva();
     window.location="/dashboard-inicio";
   }
 
@@ -72,8 +73,10 @@ const TemasTutorado = memo(props => {
       if(!tema.match(validador)){
         alert("Estás usando caracteres inválidos, revisa tus datos");
       }else{
-        agendarSession(idSession, tema);
+        agendarSession(tema);
+        console.log("Se agendó con éxito");
       }
+      agendarSession(tema);
     }
   }
 });

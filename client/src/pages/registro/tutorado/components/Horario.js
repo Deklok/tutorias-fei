@@ -14,14 +14,14 @@ const Horario = memo (props =>{
 
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/getSession', {
-      idSession: 1
+      idSession: 9
     });
   }
 
   cargarDatos()
     .then(result => {
-      setSessionStart(result.data[0]['sessionStart']);
-      setSessionEnd(result.data[0]['sessionEnd']);
+      setSessionStart(result.data[0]['startTime']);
+      setSessionEnd(result.data[0]['endTime']);
     }).catch(console.log);
 
   function generateTutorias(cubiculo, hora, fecha) {
