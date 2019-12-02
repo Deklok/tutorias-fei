@@ -12,6 +12,7 @@ import axios from 'axios';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
 import Schedule from './components/Scheduler';
+import { notifications } from '../../pushOneSignal';
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
@@ -68,6 +69,7 @@ const DashboardInicio = memo(props => {
       setCarrera(result.data[0][0]['careerName']);
       setMatricula(result.data[0][0]['studentId']);
       setEmail(result.data[0][0]['email']);
+      notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
     }).catch(console.log);
 
   obtenerTutoria()

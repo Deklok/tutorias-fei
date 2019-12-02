@@ -166,7 +166,7 @@ app.post('/api/user/login', function (request, res){
 /*
 *Service to signup professor to email notifications.
 *NOTE: ONLY FOR PROFESSOR
-*Param: user = extenal professor ID (mariogarcia), email = mariogarcia@uv.cmx
+*Param: user = extenal professor ID/personnelNum (12345), email = (mariogarcia@uv.mx)
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available
@@ -225,7 +225,7 @@ app.post('/api/notify/student/youarenext', function (req, res){
 });
 /*
 *Service to notify the professor by email and push that his student canceled.
-*Param: user = professor external ID (mariogarcia).
+*Param: user = extenal professor ID/personnelNum (12345).
 *NOTE: It's possible to get a 500 if the professor is only associated to an email account (it'll try to send a webpush but is a email).
 *However, this doesn't mean email notification didn't work.
 *Responses:
@@ -247,7 +247,7 @@ app.post('/api/notify/tutor/studentcanceled', function (req, res){
 });
 /*
 *Service to notify all the students by email and push related to this professor that tutoring day is available.
-*Param: user = professor external ID (mariogarcia).
+*Param: user = extenal professor ID/personnelNum (12345).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
@@ -267,7 +267,7 @@ app.post('/api/notify/student/publishedday', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day was cancel.
-*Param: user = professor external ID (mariogarcia).
+*Param: user = extenal professor ID/personnelNum (12345).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
@@ -284,7 +284,7 @@ app.post('/api/notify/student/canceledday', function (req, res){
   }
 });
 /*
-*Service to retrieve tutor data by personnelNum.
+*Service to retrieve tutor data by username.
 *Response: [{personnelNum, name, contact, isEmailSuscribed}]
 */
 app.post('/api/db/tutorData', (req,res) => {

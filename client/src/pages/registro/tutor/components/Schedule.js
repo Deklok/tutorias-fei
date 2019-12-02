@@ -15,6 +15,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
+import { notifications } from '../../../pushOneSignal';
 
 const cors = require('cors');
 const cookies = new Cookies();
@@ -111,9 +112,9 @@ export default function Schedule(props) {
   }
 
   async function saveEmail() {
-    var id = utilities.splitCookie(cookies.get('token')).id;
+    //var id = utilities.splitCookie(cookies.get('token')).id;
       return axios.post('http://localhost:5000/api/notify/email/signup', {
-        username: id,
+        user: personnelNum,
         email: email
       }, {
         headers: { Authorization: token + ";" + role }
@@ -140,7 +141,8 @@ export default function Schedule(props) {
 
   getPersonnelNumTutor().then(result =>{
     if(result){
-      personnelNum = result.data[0]['personnelNum']
+      personnelNum = result.data[0]['personnelNum'];
+      notifications(result.data[0]['personnelNum'], "");
       getPupil().then(result => {
         if (result) {
           setSize(result.data[0]['size']);

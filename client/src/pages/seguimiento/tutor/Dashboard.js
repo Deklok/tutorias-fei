@@ -24,6 +24,7 @@ import {
 import Main from './components/Main';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
+import { notifications } from '../../pushOneSignal';
 
 const cookies = new Cookies();
 
@@ -52,6 +53,7 @@ const Dashboard = memo(props => {
       if(result){
         setNombre(result.data[0]['name']);
         setContacto(result.data[0]['contact']);
+        notifications(result.data[0][0]['personnelNum'], "");
       }
     }).then(()=>{
       cargarTutorados()

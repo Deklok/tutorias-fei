@@ -29,6 +29,7 @@ import Box from '@material-ui/core/Box';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import { notifications } from '../../pushOneSignal';
 
 const cookies = new Cookies();
 
@@ -109,9 +110,10 @@ const DashboardTutorado = memo(props => {
       setCarrera(result.data[0][0]['careerName']);
       setMatricula(result.data[0][0]['studentId']);
       setEmail(result.data[0][0]['email']);
+      notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
     }).catch(console.log);
 
-  //notifications();
+  
       
   return (
     <div className={classes.root}>

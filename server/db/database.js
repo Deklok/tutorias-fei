@@ -85,9 +85,9 @@ function saveStudentSuscribedOn(studentId){
 		});
 	});
 }
-function saveTutorSuscribedOn(username){
+function saveTutorSuscribedOn(personnelNum){
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE username = ?',[username],(err, results) => {
+		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE personnelNum = ?',[personnelNum],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
