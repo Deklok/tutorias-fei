@@ -96,8 +96,7 @@ export default class BlocksRegistry extends Component {
 
   render() {
 
-    const classes = this.props.classes;
-    const registryBlockClasses = this.props.registryBlockClasses;
+    const classes = this.props.registryBlockClasses;
 
     return (
       <div>
