@@ -20,17 +20,16 @@ const CustomRoute = ({ ...rest}) => (
     )} />
 )
 
-const tutorAccess = (exist)=>{
+const tutorAccess = ()=>{
     return cookieExist() && utilities.splitCookie(cookies.get('token')).session == 'true';
 }
 
-const pupilAccess = (exist)=> {
+const pupilAccess = ()=> {
     return cookieExist() && utilities.splitCookie(cookies.get('token')).session == 'false';
 }
 
 const cookieExist = ()=> {
     if (cookies.get('token') != undefined) {
-        var cookie = utilities.splitCookie(cookies.get('token'));
         return true;
     } else {
         return false;
@@ -69,26 +68,26 @@ const Home = memo(props => {
                         /> : <Redirect to={'/protected'}/>}
                     </Route>
                     <Route path='/tutor'>
-                        {tutorAccess(guard) ? <Dashboard
+                        {tutorAccess() ? <Dashboard
                         classes={classes}
                         path={props.path}
                         registryBlockClasses={registryBlockClasses}
                         /> : <Redirect to={'/tutorado'}/>}
                     </Route>
                     <Route exact path="/tutorado">
-                        {pupilAccess(guard) ? <DashboardTutorado
+                        {pupilAccess() ? <DashboardTutorado
                         classes={classes}
                         path={props.path}
                         /> : <Redirect to={'/'}/>}
                     </Route>
                     <Route path="/tutorado/dashboard-inicio">
-                        {pupilAccess(guard) ?
+                        {pupilAccess() ?
                              <DashboardInicio classes={classes} />
                              : <Redirect to ={'/'} />
                          }
                     </Route>
                     <Route path="/tutorado/dashboard-fin">
-                        {pupilAccess(guard) ?
+                        {pupilAccess() ?
                         <DashboardFin classes={classes} />
                         : <Redirect to={'/'} />
                     }

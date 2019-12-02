@@ -27,11 +27,15 @@ import utilities from '../../../utilities';
 import { notifications } from '../../pushOneSignal';
 
 const cookies = new Cookies();
-var token = utilities.splitCookie(cookies.get('token')).token;
-var role = utilities.splitCookie(cookies.get('token')).session;
-var username = utilities.splitCookie(cookies.get('token')).id;
-function cargarDatos(connect) {
+var cookie = cookies.get('token');
+var token, role, username;
+if (cookie) {
+  token = utilities.splitCookie(cookie).token;
+  role = utilities.splitCookie(cookie).session;
+  username = utilities.splitCookie(cookie).id;
+}
 
+function cargarDatos(connect) {
   if(connect){
     return axios.post('http://localhost:5000/api/db/tutorData', {
       username: username,
@@ -77,7 +81,7 @@ const Dashboard = memo(props => {
       if(result){
         setNombre(result.data[0]['name']);
         setContacto(result.data[0]['contact']);
-        notifications(result.data[0][0]['personnelNum'], "");
+        notifications(result.data[0]['personnelNum'], "");
       }
     }).then(()=>{
       cargarTutorados(connect)
