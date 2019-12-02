@@ -264,7 +264,7 @@ function getOneBlock(idCareer, idTutorship){
                 return reject(err);
             }else{
                 return resolve(results);
-            } 
+            }
         });
     });
 }
@@ -358,6 +358,30 @@ function deleteSession(idSession){
     });
 }
 
+function updateTutorshipStatus(idTutorship,idTutor, new_status){
+	return new Promise((resolve,reject) => {
+        pool.query('CALL sp_updateTutorshipStatus(?,?,?)',[idTutorship, idTutor, new_status],(err,results) => {
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            }
+        });
+    });
+}
+
+function getNextTutorship(idTutor){
+	return new Promise((resolve,reject) => {
+        pool.query('CALL sp_getNextTutorship(?)',[idTutor],(err,results) => {
+            if(err){
+                return reject(err);
+            }else{
+                return resolve(results);
+            }
+        });
+    });
+}
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -388,5 +412,7 @@ module.exports = {
     deleteTutorship: deleteTutorship,
 	deleteSession: deleteSession,
 	getPersonnelNumTutor: getPersonnelNumTutor,
-	updateSessionStatus: updateSessionStatus
+	updateSessionStatus: updateSessionStatus,
+	updateTutorshipStatus: updateTutorshipStatus,
+	getNextTutorship:getNextTutorship
 }

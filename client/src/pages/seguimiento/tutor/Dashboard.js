@@ -67,6 +67,7 @@ const Dashboard = memo(props => {
   const [tutorados, setTutorados] = React.useState('');
   const [connect, setConnect] = React.useState(true);
   const [comenzado, setComenzado] = React.useState(false);
+  const [personnelNum, setPersonnel] = React.useState(0);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -82,6 +83,7 @@ const Dashboard = memo(props => {
         setNombre(result.data[0]['name']);
         setContacto(result.data[0]['contact']);
         notifications(result.data[0]['personnelNum'], "");
+        setPersonnel(result.data[0]['personnelNum']);
       }
     }).then(()=>{
       cargarTutorados(connect)
@@ -136,6 +138,7 @@ Saludos
             tutorados={tutorados}
             setTutorados={setTutorados}
             comenzado={comenzado}
+            tutor={personnelNum}
             setComenzado = {setComenzado}
           />
         </Route>
