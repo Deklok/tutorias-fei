@@ -222,7 +222,7 @@ function addBlock(idCareer, start, end, idTutorship){
 
 function getAllPupilByTutor(personnelNum){
     return new Promise((resolve, reject) =>{
-        pool.query('SELECT COUNT(*) AS size FROM Pupil WHERE personnelNum = ?', [personnelNum], (err, results) =>{
+        pool.query('SELECT COUNT(*) AS size FROM Pupil WHERE idTutor = ?', [personnelNum], (err, results) =>{
             if(err){
                 return reject(err);
             }else{
