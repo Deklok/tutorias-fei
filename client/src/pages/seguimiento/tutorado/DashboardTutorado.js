@@ -82,6 +82,18 @@ const DashboardTutorado = memo(props => {
       });
   }
 
+  React.useEffect(()=>{
+    cargarDatos()
+    .then(result => {
+      console.log(result);
+      setNombre(result.data[0][0]['name']);
+      setCarrera(result.data[0][0]['careerName']);
+      setMatricula(result.data[0][0]['studentId']);
+      setEmail(result.data[0][0]['email']);
+      notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+    }).catch(console.log);
+  },[]);
+
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
   Estimados tutorados
 
@@ -103,18 +115,6 @@ const DashboardTutorado = memo(props => {
   Saludos
   `
 
-  cargarDatos()
-    .then(result => {
-      console.log(result);
-      setNombre(result.data[0][0]['name']);
-      setCarrera(result.data[0][0]['careerName']);
-      setMatricula(result.data[0][0]['studentId']);
-      setEmail(result.data[0][0]['email']);
-      notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
-    }).catch(console.log);
-
-  
-      
   return (
     <div className={classes.root}>
       <CssBaseline />

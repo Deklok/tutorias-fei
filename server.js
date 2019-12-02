@@ -762,9 +762,33 @@ app.post('/api/db/updateStatus', (req, res)=>{
   }else{
     res.sendStatus(400);
   }
-}
+});
 
-);
+app.post('/api/db/updateTutorshipStatus', (req, res)=>{
+  var idTutorship = req.body['idTutorship'];
+  var idTutor = req.body['idTutor'];
+  var new_status = req.body['new_status'];
+  if(idTutorship!=null && idTutor!=null && new_status!=null){
+    database.updateTutorshipStatus(idTutorship, idTutor, new_status)
+    .then(function(response){
+      res.json(response);
+    });
+  }else{
+    res.sendStatus(400);
+  }
+});
+
+app.post('/api/db/getNextTutorship', (req, res)=>{
+  var idTutor = req.body['idTutor'];
+  if(idTutor!=null){
+    database.getNextTutorship(idTutor)
+    .then(function(response){
+      res.json(response);
+    });
+  }else{
+    res.sendStatus(400);
+  }
+});
 
 const httpServer = http.createServer(app);
 httpServer.listen(5000);

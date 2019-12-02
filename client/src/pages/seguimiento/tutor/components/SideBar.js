@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { Redirect } from 'react-router-dom';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
@@ -32,6 +33,9 @@ const SideBar = memo(props => {
 
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
+	const [feedbackRoute, setFeedbackRoute] = React.useState(false);
+	const [mainRoute, setMainRoute] = React.useState(false);
+	const [adjustRoute, setAdjustRoute] = React.useState(false);
 
 	const [state, setState] = React.useState({
 		terminos: false,
@@ -59,6 +63,24 @@ const SideBar = memo(props => {
 		setLoginDialog(true);
 	};
 
+	const redirectToFeedback = () => {
+		setMainRoute(false);
+		setAdjustRoute(false);
+		setFeedbackRoute(true);
+	}
+
+	const redirectToMain = () => {
+		setFeedbackRoute(false);
+		setAdjustRoute(false);
+		setMainRoute(true);
+	}
+
+	const redirectToAdjust = () => {
+		setMainRoute(false);
+		setFeedbackRoute(false);
+		setAdjustRoute(true);
+	}
+
 	return (
 		<Drawer
 			variant="permanent"
@@ -76,19 +98,15 @@ const SideBar = memo(props => {
 			<List>
 				<div>
 					<ListSubheader inset>Tutoría</ListSubheader>
-					<ListItem button component="a" href="/tutor">
+					<ListItem button component="a" onClick={redirectToMain}>
+						{ mainRoute && <Redirect to='/tutor'/> }
 						<ListItemIcon>
 							<DasboardIcon />
 						</ListItemIcon>
 						<ListItemText primary="Menu" />
 					</ListItem>
-					<ListItem button>
-						<ListItemIcon>
-							<LowPriority />
-						</ListItemIcon>
-						<ListItemText primary="Reasignar Tutorías" />
-					</ListItem>
-					<ListItem button component="a" href="/tutor/registro-bloques">
+					<ListItem button component="a" onClick={redirectToAdjust}>
+						{ adjustRoute && <Redirect to='/tutor/registro-bloques'/> }
 						<ListItemIcon>
 							<UpdateIcon />
 						</ListItemIcon>
@@ -100,7 +118,8 @@ const SideBar = memo(props => {
 						</ListItemIcon>
 						<ListItemText primary="Cancelar Tutoría" />
 					</ListItem>
-					<ListItem button component="a" href="/tutor/feedback">
+					<ListItem button component="a" onClick={redirectToFeedback}>
+						{ feedbackRoute && <Redirect to='/tutor/feedback'/> }
 						<ListItemIcon>
 							<BarChartIcon />
 						</ListItemIcon>

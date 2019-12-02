@@ -10,21 +10,52 @@ import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Tutorados from './Tutorados';
 import TemasTutorado from '../../components/TemasTutorado';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
 
+const cookies = new Cookies();
 const Main = memo(props => {
 	const classes = props.classes;
 	const comenzado = props.comenzado;
 	const setComenzado = props.setComenzado;
 	const tutorados = props.tutorados;
 	const setTutorados = props.setTutorados;
+	const tutor = props.tutor;
 	const test = props.test;
+	const [status, setStatus] = React.useState(0);
+	const [connect, setConnect]=React.useState(true);
 	const [currentPupil,setCurrentPupil] = React.useState([]);
 	const [atendiendo,setAtendiendo] = React.useState(false);
 	const [nextPupil, setPupil] = React.useState([]);
 	const [verify, setVerify] = React.useState(true);
+	const [idTutorship, setTutorship] = React.useState(0);
+	var token = utilities.splitCookie(cookies.get('token')).token;
+  	var role = utilities.splitCookie(cookies.get('token')).session;
 
 	const comenzarTutoria = () =>{
+		axios.post('http://localhost:5000/api/db/updateTutorshipStatus', {
+	      idTutorship: idTutorship,
+	      idTutor: tutor,
+	      new_status: 1
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
 		setPupil(tutorados[0]);
+		setStatus(1);
+		setComenzado(true);
+	}
+
+	const finalizarTutoria = () =>{
+		axios.post('http://localhost:5000/api/db/updateTutorshipStatus', {
+	      idTutorship: idTutorship,
+	      idTutor: tutor,
+	      new_status: 2
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+		setPupil(tutorados[0]);
+		setStatus(2);
 		setComenzado(true);
 	}
 
@@ -37,6 +68,34 @@ const Main = memo(props => {
 	    setVerify(true);
 	    setPupil(tutorados_aux[0]);
 	}
+
+	async function getNextTutorship(){
+		if(connect){
+			return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+		      idTutor: tutor
+		    },{
+		      headers: { Authorization: token + ";" + role }
+		    });
+		}
+	}
+
+	React.useEffect(()=>{
+		if(tutor != 0){
+			getNextTutorship()
+			.then(result=>{
+				if(result){
+					var tutorship_aux = result.data[0][0].idTutorship;
+					setTutorship(tutorship_aux);
+					setStatus(result.data[0][0].status);
+					if(status == 1){
+						setComenzado(true);
+					}else{
+						setComenzado(false);
+					}
+				}
+			});
+		}
+	},[tutor, status]);
 
 	return (
 		<main className={classes.content}>
@@ -51,7 +110,12 @@ const Main = memo(props => {
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
 		          	>Comenzar Tutoría</Button>
-		          	:[atendiendo ? <CurrentTutorado currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : null]
+		          	:[atendiendo ? <CurrentTutorado currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : <Button
+		          	variant="contained"
+		          	color="primary"
+		          	className={classes.button}
+		          	onClick={finalizarTutoria}
+		          	>Finalizar Tutoría</Button>]
 		          	}
 		        </Grid>
 		        <Grid item xs={12} md={5} lg={5}>

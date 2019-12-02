@@ -27,6 +27,37 @@ import utilities from '../../../utilities';
 import { notifications } from '../../pushOneSignal';
 
 const cookies = new Cookies();
+var cookie = cookies.get('token');
+var token, role, username;
+if (cookie) {
+  token = utilities.splitCookie(cookie).token;
+  role = utilities.splitCookie(cookie).session;
+  username = utilities.splitCookie(cookie).id;
+}
+
+function cargarDatos(connect) {
+  if(connect){
+    return axios.post('http://localhost:5000/api/db/tutorData', {
+      username: username,
+    },{
+      headers: { Authorization: token + ";" + role }
+    });
+  }else{
+    return null;
+  }
+}
+
+function cargarTutorados(connect) {
+  if (connect){
+    return axios.post('http://localhost:5000/api/db/sessions', {
+      idTutorship: 1,
+    },{
+      headers: { Authorization: token + ";" + role }
+    });
+  }else{
+    return null;
+  }
+}
 
 const Dashboard = memo(props => {
   const classes = props.classes;
@@ -36,6 +67,7 @@ const Dashboard = memo(props => {
   const [tutorados, setTutorados] = React.useState('');
   const [connect, setConnect] = React.useState(true);
   const [comenzado, setComenzado] = React.useState(false);
+  const [personnelNum, setPersonnel] = React.useState(0);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -43,20 +75,18 @@ const Dashboard = memo(props => {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  var token = utilities.splitCookie(cookies.get('token')).token;
-  var role = utilities.splitCookie(cookies.get('token')).session;
-  var username = utilities.splitCookie(cookies.get('token')).id;
 
   React.useEffect(()=>{
-    cargarDatos()
+    cargarDatos(connect)
     .then(result => {
       if(result){
         setNombre(result.data[0]['name']);
         setContacto(result.data[0]['contact']);
-        notifications(result.data[0][0]['personnelNum'], "");
+        notifications(result.data[0]['personnelNum'], "");
+        setPersonnel(result.data[0]['personnelNum']);
       }
     }).then(()=>{
-      cargarTutorados()
+      cargarTutorados(connect)
         .then(result=>{
           if(result){
             setTutorados(result.data[0]);
@@ -64,33 +94,7 @@ const Dashboard = memo(props => {
           }
         })
     }).catch(console.log);
-  });
-
-  async function cargarDatos() {
-    
-    if(connect){
-      return axios.post('http://localhost:5000/api/db/tutorData', {
-        username: username,
-      },{
-        headers: { Authorization: token + ";" + role }
-      });
-    }else{
-      return null;
-    }
-  }
-
-  async function cargarTutorados() {
-    if (connect){
-      return axios.post('http://localhost:5000/api/db/sessions', {
-        idTutorship: 1,
-      },{
-        headers: { Authorization: token + ";" + role }
-      });
-    }else{
-      return null;
-    }
-  }
-
+  },[]);
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
 Estimados tutorados
 
@@ -134,6 +138,7 @@ Saludos
             tutorados={tutorados}
             setTutorados={setTutorados}
             comenzado={comenzado}
+            tutor={personnelNum}
             setComenzado = {setComenzado}
           />
         </Route>
