@@ -520,7 +520,7 @@ app.post('/api/db/addBlock', (req, res) =>{
 */
 app.post('/api/db/getAllPupilByTutor', (req, res) =>{
   var personnelNum = req.body.personnelNum;
-  if(idTutor){
+  if(personnelNum){
     database.getAllPupilByTutor(personnelNum).then(function (response){
       res.json(response);
     });
