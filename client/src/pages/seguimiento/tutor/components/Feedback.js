@@ -101,15 +101,12 @@ const Feedback = memo(props => {
         setAbsent(result.data.absent);
         setComplete(result.data.complete);
         setTotal(result.data.total);
-        if(coment.length != 0){
-          setMissing(total - (absent + complete));
-          console.log(total, absent, complete, missing);
-          setConnect(false);
-        }
+        setMissing(result.data.total - (result.data.absent + result.data.complete));
+        setConnect(false);
       }
     })
     .catch(console.log);
-  });
+  },[]);
 
   return (
     <main className={classes_aux.content}>
