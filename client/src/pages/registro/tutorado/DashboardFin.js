@@ -20,7 +20,7 @@ import TemasTutorado from './components/TemasTutorado';
 
 const DashboardFin = memo(props => {
   const classes = props.classes;
-  const idSession = 16;
+  const idPupil = 'S16011721';
   const [open, setOpen] = React.useState(true);
   const [matricula, setMatricula] = React.useState('');
   const [nombre, setNombre] = React.useState('');
@@ -68,7 +68,7 @@ const DashboardFin = memo(props => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Indicacion classes={classes} idSession={idSession}/>
+          <Indicacion classes={classes} idPupil={idPupil}/>
           <Grid container spacing={3}>
             {/* Agenda */}
             <Grid item xs={12} sm={8} lg={7} id="horario">
@@ -77,15 +77,13 @@ const DashboardFin = memo(props => {
 		            </Typography>
               <Divider />
               <Horario className={classes.markdown}
-                idSession = {idSession}
+                idPupil = {idPupil}
               />
             </Grid>
             {/* Temas Tutorado */}
             <Grid item xs={12} sm={4} lg={5}>
               <Paper elevation={0} className={classes.sidebarAboutBox}>
-                <TemasTutorado
-                  idSession = {idSession}
-                />
+                <TemasTutorado/>
               </Paper>
             </Grid>
           </Grid>

@@ -26,7 +26,8 @@ const DashboardInicio = memo(props => {
   const [finBloque, setFinBloque] = React.useState('');
   const [lugar, setLugar] = React.useState('');
   const [fecha, setFecha] = React.useState('');
-  const [indicacion, setIndicacion] = React.useState('');
+  const [career, setIdCareer] = React.useState('');
+  const [tutorship, setIdTutorship] = React.useState('');
 
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/pupilData', {
@@ -39,11 +40,22 @@ const DashboardInicio = memo(props => {
       idTutorship: 8
     });
   }
+  async function obtenerIDs() {
+    return axios.post('http://localhost:5000/api/db/getcareerBlock', {
+      idPupil: 'S16011721',
+    });
+  }
+  
+  obtenerIDs()
+  .then(result => {
+    setIdCareer(result.data[0][0]['idCareer']);
+    setIdTutorship(result.data[0][0]['idTutorship']);
+  }).catch(console.log);
 
-  const test = "## Primera Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)\n\nWhy do we use it? **esto está en negritas** It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English...\n\n![image](https://images.unsplash.com/photo-1502759683299-cdcd6974244f?auto=format&fit=crop&w=440&h=220&q=60)"
+  console.log(tutorship);
 
-  const idCareer = 1;
-  const idTutorship = 8;
+  var idCareer = 1;
+  var idTutorship = 8;
   
   async function obtenerBloque(){
     return axios.post('http://localhost:5000/api/db/getOneBlock',{
@@ -77,7 +89,6 @@ const DashboardInicio = memo(props => {
         if(result.status === 200){
           setFecha(result.data[0]['date']);
           setLugar(result.data[0]['place']);
-          setIndicacion(result.data[0]['indications']);
         }
       }).catch(console.log);
 
@@ -114,7 +125,6 @@ const DashboardInicio = memo(props => {
                     bloque = {bloque}
                     lugar = {lugar}
                     fecha = {fecha}
-                    indicacion = {indicacion}
                     matricula = {matricula}
                   />
                 </div>

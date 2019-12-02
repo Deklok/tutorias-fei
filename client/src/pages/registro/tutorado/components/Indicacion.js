@@ -10,12 +10,12 @@ import 'simple-react-notifications/dist/index.css';
 
 const Indicacion = memo(props => {
     const classes = props.classes;
-    const idSession = props.idSession;
+    const idPupil = props.idPupil;
     const [indicaciones, setIndications] = React.useState('');
 
     async function cargarDatos() {
         return axios.post('http://localhost:5000/api/db/getSession', {
-          idSession: idSession
+          idPupil: idPupil
         });
       }
     

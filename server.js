@@ -661,15 +661,15 @@ app.post('/api/db/addSession', (req, res) => {
 /*
 *Service to get a session
 *Params:
-*   idSession = session identifier number
+*   idPupil = pupil identifier string
 *Returns:
 *   200: confirmation update
 *   400: Param expected
 */
 app.post('/api/db/getSession', (req, res) => {
-  var idSession = req.body["idSession"];
-  if (idSession) {
-    database.getSession(idSession).then(function (response) {
+  var idPupil = req.body["idPupil"];
+  if (idPupil) {
+    database.getSession(idPupil).then(function (response) {
       res.json(response);
     });
   } else {
@@ -707,6 +707,42 @@ app.post('/api/db/deleteSession', (req, res) => {
   var idSession = req.body["idSession"];
   if (idSession) {
     database.deleteSession(idSession).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to get important data like id session
+*Params:
+*   idSession = session identifier number
+*Returns:
+*   200: confirmation update
+*   400: Param expected
+*/
+app.post('/api/db/getSpecificSessionData', (req, res) => {
+  var idPupil = req.body["idPupil"];
+  if (idPupil) {
+    database.getSpecificSessionData(idPupil).then(function (response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to get important data like id session
+*Params:
+*   idSession = session identifier number
+*Returns:
+*   200: confirmation update
+*   400: Param expected
+*/
+app.post('/api/db/getcareerBlock', (req, res) => {
+  var idPupil = req.body["idPupil"];
+  if (idPupil) {
+    database.getcareerBlock(idPupil).then(function (response) {
       res.json(response);
     });
   } else {

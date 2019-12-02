@@ -358,6 +358,30 @@ function deleteSession(idSession){
     });
 }
 
+function getSpecificSessionData(idPupil){
+	return new Promise((resolve,reject) => {
+		pool.query('call sp_get_specificSessionData(?)', [idPupil],(err,results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
+function getcareerBlock(idPupil){
+	return new Promise((resolve,reject) => {
+		pool.query('call sp_get_careerBlock(?)', [idPupil],(err,results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -388,5 +412,7 @@ module.exports = {
     deleteTutorship: deleteTutorship,
 	deleteSession: deleteSession,
 	getPersonnelNumTutor: getPersonnelNumTutor,
-	updateSessionStatus: updateSessionStatus
+	updateSessionStatus: updateSessionStatus,
+	getSpecificSessionData: getSpecificSessionData,
+	getcareerBlock: getcareerBlock
 }

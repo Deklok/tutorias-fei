@@ -5,15 +5,16 @@ import axios from 'axios';
 const Horario = memo (props =>{
 
   const classes = props.classes;
-  const idSession = props.idSession;
+  const idPupil = props.idPupil;
   const [open, setOpen] = React.useState(true);
   const [sessionStart, setSessionStart] = React.useState('');
   const [place, setPlace] = React.useState('');
   const [date, setDate] = React.useState('');
+  const [contact, setContact] = React.useState('');
 
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/getSession', {
-      idSession: idSession
+      idPupil: idPupil
     });
   }
 
@@ -22,6 +23,7 @@ const Horario = memo (props =>{
       setSessionStart(result.data[0][0]['startTime']);
       setPlace(result.data[0][0]['place']);
       setDate(result.data[0][0]['date']);
+      setContact(result.data[0][0]['contact']);
     }).catch(console.log);
 
   var fechaInicio = new Date(sessionStart);
@@ -34,6 +36,7 @@ const Horario = memo (props =>{
           <p>{place}</p>
           <p>{fechaInicio.getHours()+":"+fechaInicio.getMinutes()}</p>
           <p>{date.split("T")[0]}</p>
+          <p>{contact}</p>
         </div>
     </React.Fragment>
   );
