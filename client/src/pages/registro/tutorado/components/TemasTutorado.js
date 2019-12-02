@@ -59,9 +59,8 @@ const TemasTutorado = memo(props => {
     </React.Fragment>
   );
   function deleteSession(){
-    alert("Entra");
     cancelarReserva();
-    window.location="/dashboard-inicio";
+    window.location="/tutorado/dashboard-inicio";
   }
 
   function validate(){
@@ -73,9 +72,12 @@ const TemasTutorado = memo(props => {
         alert("Estás usando caracteres inválidos, revisa tus datos");
       }else{
         agendarSession(tema);
-        console.log("Se agendó con éxito");
+        window.location="/tutorado";
       }
+    } else {
+      tema = " ";
       agendarSession(tema);
+      window.location="/tutorado";
     }
   }
 });

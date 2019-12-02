@@ -15,7 +15,6 @@ const Schedule = memo(props => {
   const bloque = props.bloque;
   const lugar = props.lugar;
   const fecha = props.fecha;
-  const indicacion = props.indicacion;
   const matricula = props.matricula;
   const [open, setOpen] = React.useState(true);
   const [sessions, setSessions] = React.useState('');
@@ -158,7 +157,6 @@ const Schedule = memo(props => {
             if(string === 2){
               var datoHora = parseInt(event.srcElement.childNodes[1].childNodes[0].data.split(":")[0],10);
               var datoMinuto = parseInt(event.srcElement.childNodes[1].childNodes[0].data.split(":")[1],10);
-              console.log(datoHora+":"+datoMinuto);
               if(dataBlock.length > 0){
                 for(var i = 0; i < dataBlock.length; i++){
                   if(dataBlock[i]['startDate'].getHours() === datoHora && dataBlock[i]['startDate'].getMinutes() === datoMinuto){
@@ -179,7 +177,8 @@ const Schedule = memo(props => {
                         var sessionReserved = response;
                         idSession = sessionReserved.data;
                         console.log(idSession);
-                     });
+                      });
+                      window.location = "/tutorado/dashboard-fin";
                     }
                   }
                 }
@@ -207,7 +206,8 @@ const Schedule = memo(props => {
                           var sessionReserved = response;
                           idSession = sessionReserved.data;
                           console.log(idSession);
-                       });
+                        });
+                        window.location = "/tutorado/dashboard-fin";
                       }
                     }
                   }
@@ -236,7 +236,8 @@ const Schedule = memo(props => {
                           var sessionReserved = response;
                           idSession = sessionReserved.data;
                           console.log(idSession);
-                       });
+                        });
+                        window.location = "/tutorado/dashboard-fin";
                       }
                     }
                   }
@@ -247,7 +248,7 @@ const Schedule = memo(props => {
         }
       }
     }
-    window.addEventListener("load", loadPage());
+    window.onload = loadPage();
 
     return (
           <Paper>

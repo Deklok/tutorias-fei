@@ -8,7 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Banner from '../../seguimiento/tutorado/components/Banner'
+import Indicacion from './components/Indicacion'
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -20,7 +20,7 @@ import TemasTutorado from './components/TemasTutorado';
 
 const DashboardFin = memo(props => {
   const classes = props.classes;
-  const idSession = props.idSession;
+  const idSession = 16;
   const [open, setOpen] = React.useState(true);
   const [matricula, setMatricula] = React.useState('');
   const [nombre, setNombre] = React.useState('');
@@ -35,7 +35,7 @@ const DashboardFin = memo(props => {
     });
   }
 
-  const test = "## Primera Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)\n\nWhy do we use it? **esto está en negritas** It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English...\n\n![image](https://images.unsplash.com/photo-1502759683299-cdcd6974244f?auto=format&fit=crop&w=440&h=220&q=60)"
+  const indicaciones = "## Primera Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)\n\nWhy do we use it? **esto está en negritas** It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English...\n\n![image](https://images.unsplash.com/photo-1502759683299-cdcd6974244f?auto=format&fit=crop&w=440&h=220&q=60)"
 
   cargarDatos()
     .then(result => {
@@ -68,7 +68,7 @@ const DashboardFin = memo(props => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Banner classes={classes} />
+          <Indicacion classes={classes} idSession={idSession}/>
           <Grid container spacing={3}>
             {/* Agenda */}
             <Grid item xs={12} sm={8} lg={7} id="horario">
