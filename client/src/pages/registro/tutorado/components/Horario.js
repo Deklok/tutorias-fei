@@ -13,35 +13,28 @@ const Horario = memo (props =>{
 
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/getSession', {
-      idSession: 9
+      idSession: idSession
     });
   }
 
   cargarDatos()
     .then(result => {
-      setSessionStart(result.data[0]['startTime']);
-      setPlace(result.data[0]['place']);
-      setDate(result.data[0]['date']);
+      setSessionStart(result.data[0][0]['startTime']);
+      setPlace(result.data[0][0]['place']);
+      setDate(result.data[0][0]['date']);
     }).catch(console.log);
 
-  function generateTutorias(cubiculo, hora, fecha) {
-    return { cubiculo, hora, fecha };
-  }
-
-  const tutorias = [
-    generateTutorias(place, sessionStart, date)
-  ];
+  var fechaInicio = new Date(sessionStart);
+  var fechaMuestra = fechaInicio.getHours()+":"+fechaInicio.getMinutes();
   
   return (
     <React.Fragment>
       <Title>Datos Generales</Title>
-      {tutorias.map(tutoria => (
         <div background-image="url(https://images.unsplash.com/photo-1527187162622-535b785f65f5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1394&q=80)">
-          <p>{tutoria.cubiculo}</p>
-          <p>{tutoria.hora}</p>
-          <p>{tutoria.fecha}</p>
+          <p>{place}</p>
+          <p>{fechaInicio.getHours()+":"+fechaInicio.getMinutes()}</p>
+          <p>{date.split("T")[0]}</p>
         </div>
-      ))}
     </React.Fragment>
   );
 });
