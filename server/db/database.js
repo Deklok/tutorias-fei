@@ -358,7 +358,6 @@ function deleteSession(idSession){
     });
 }
 
-<<<<<<< HEAD
 function getSpecificSessionData(idPupil){
 	return new Promise((resolve,reject) => {
 		pool.query('call sp_get_specificSessionData(?)', [idPupil],(err,results) => {
@@ -381,7 +380,8 @@ function getcareerBlock(idPupil){
 			}
 		});
 	});
-=======
+}
+
 function updateTutorshipStatus(idTutorship,idTutor, new_status){
 	return new Promise((resolve,reject) => {
         pool.query('CALL sp_updateTutorshipStatus(?,?,?)',[idTutorship, idTutor, new_status],(err,results) => {
@@ -404,7 +404,6 @@ function getNextTutorship(idTutor){
             }
         });
     });
->>>>>>> 340c68efb454860957637163df3f7446eec4d131
 }
 
 module.exports = {
@@ -438,11 +437,8 @@ module.exports = {
 	deleteSession: deleteSession,
 	getPersonnelNumTutor: getPersonnelNumTutor,
 	updateSessionStatus: updateSessionStatus,
-<<<<<<< HEAD
 	getSpecificSessionData: getSpecificSessionData,
-	getcareerBlock: getcareerBlock
-=======
+	getcareerBlock: getcareerBlock,
 	updateTutorshipStatus: updateTutorshipStatus,
 	getNextTutorship:getNextTutorship
->>>>>>> 340c68efb454860957637163df3f7446eec4d131
 }
