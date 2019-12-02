@@ -4,7 +4,8 @@ import Dashboard from './seguimiento/tutor/Dashboard';
 import DashboardTutorado from './seguimiento/tutorado/DashboardTutorado';
 import DashboardInicio from './registro/tutorado/DashboardInicio';
 import DashboardFin from './registro/tutorado/DashboardFin';
-import { useStyles, registryBlockStyles} from './Styles';
+import { useStyles} from './Styles';
+import {registryBlockStyles} from './RegistryStyles'
 import { Route, Switch, Redirect } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import utilities from '../utilities';
