@@ -17,10 +17,11 @@ import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import Horario from './components/Horario';
 import TemasTutorado from './components/TemasTutorado';
+import Cookies from 'universal-cookie';
+import utilities from '../../../utilities';
 
 const DashboardFin = memo(props => {
   const classes = props.classes;
-  const idPupil = 'S16011721';
   const [open, setOpen] = React.useState(true);
   const [matricula, setMatricula] = React.useState('');
   const [nombre, setNombre] = React.useState('');
@@ -29,9 +30,16 @@ const DashboardFin = memo(props => {
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const cookies = new Cookies();
+  var cookie = cookies.get('token');
+  var username;
+  if (cookie) {
+    username = utilities.splitCookie(cookie).id;
+  }
+
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/pupilData', {
-      studentId: 'S16011721',
+      studentId: username,
     });
   }
 
@@ -68,7 +76,7 @@ const DashboardFin = memo(props => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Indicacion classes={classes} idPupil={idPupil}/>
+          <Indicacion classes={classes} idPupil={username}/>
           <Grid container spacing={3}>
             {/* Agenda */}
             <Grid item xs={12} sm={8} lg={7} id="horario">
@@ -77,7 +85,7 @@ const DashboardFin = memo(props => {
 		            </Typography>
               <Divider />
               <Horario className={classes.markdown}
-                idPupil = {idPupil}
+                idPupil = {username}
               />
             </Grid>
             {/* Temas Tutorado */}
