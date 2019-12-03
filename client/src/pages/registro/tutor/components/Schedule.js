@@ -173,7 +173,6 @@ export default function Schedule(props) {
   }).catch(console.log);
 
   const save = () => {
-    if(idTutorship == 0){
       var dateActual = new Date();
       var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
       var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
@@ -224,9 +223,6 @@ export default function Schedule(props) {
         openDialogError();
       }
       setOpenDialogMain(false);
-    }else{
-      console.log(idTutorship);
-    }
   }
 
   return (

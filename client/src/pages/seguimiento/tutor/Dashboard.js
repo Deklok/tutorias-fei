@@ -68,6 +68,7 @@ const Dashboard = memo(props => {
   const [connect, setConnect] = React.useState(true);
   const [comenzado, setComenzado] = React.useState(false);
   const [personnelNum, setPersonnel] = React.useState(0);
+  const [idTutorship, setTutorship]=React.useState(0);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -75,6 +76,14 @@ const Dashboard = memo(props => {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  async function getNextTutorship(){
+    return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+      idTutor: personnelNum
+    },{
+      headers: { Authorization: token + ";" + role }
+    });
+  }
 
   React.useEffect(()=>{
     cargarDatos(connect)
@@ -86,6 +95,13 @@ const Dashboard = memo(props => {
         setPersonnel(result.data[0]['personnelNum']);
       }
     }).then(()=>{
+      getNextTutorship()
+      .then((result)=>{
+        if(result.data[0].length){
+          var tutorship_aux = result.data[0][0].idTutorship;
+          setTutorship(tutorship_aux);
+        }
+      });
       cargarTutorados(connect)
         .then(result=>{
           if(result){
@@ -94,7 +110,7 @@ const Dashboard = memo(props => {
           }
         })
     }).catch(console.log);
-  },[]);
+  },[idTutorship]);
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
 Estimados tutorados
 
@@ -129,6 +145,8 @@ Saludos
           open = {open}
           handleDrawerClose = {handleDrawerClose}
           classes = {classes}
+          idTutor = {personnelNum}
+          idTutorship = {idTutorship}
       />
       <Switch>
         <Route exact path="/tutor">

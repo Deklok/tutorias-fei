@@ -26,17 +26,24 @@ import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
 
+const cookies = new Cookies();
 const SideBar = memo(props => {
 	const open = props.open;
 	const classes = props.classes;
-
+	const tutor = props.idTutor;
+	const idTutorship = props.idTutorship;
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
 	const [cancelarTutoriaDialog, setCancelarTutoriaDialog] = React.useState(false);
 	const [feedbackRoute, setFeedbackRoute] = React.useState(false);
 	const [mainRoute, setMainRoute] = React.useState(false);
 	const [adjustRoute, setAdjustRoute] = React.useState(false);
+	var token = utilities.splitCookie(cookies.get('token')).token;
+  	var role = utilities.splitCookie(cookies.get('token')).session;
 
 	const [state, setState] = React.useState({
 		terminos: false,
@@ -61,6 +68,10 @@ const SideBar = memo(props => {
 
 	const handleConfirmarCancelarTutoria = () => {
 		setCancelarTutoriaDialog(false);
+		cancelarTutoria()
+		.then(()=>{
+			window.location.reload();
+		});
 	}
 
 	const handleCerrarCancelarTutoria = () => {
@@ -92,6 +103,16 @@ const SideBar = memo(props => {
 		setMainRoute(false);
 		setFeedbackRoute(false);
 		setAdjustRoute(true);
+	}
+
+	async function cancelarTutoria(){
+		axios.post('http://localhost:5000/api/db/updateTutorshipStatus', {
+	      idTutorship: idTutorship,
+	      idTutor: tutor,
+	      new_status: 3
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
 	}
 
 	return (
@@ -168,7 +189,7 @@ const SideBar = memo(props => {
 					<DialogContentText>
 						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcionen.\n
 Sus datos personales serán utilizados para le proporcionar los correspondientes registros de sus tutorados.Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.\n
-Se informa que no realizarán transferencias que requieren su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados. 
+Se informa que no realizarán transferencias que requieren su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados.
 					</DialogContentText>
 					<FormControlLabel
 						control={
