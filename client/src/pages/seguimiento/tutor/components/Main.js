@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { Redirect } from 'react-router-dom';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import CurrentTutorado from './CurrentTutorado';
@@ -33,6 +34,7 @@ const Main = memo(props => {
 	const [idTutorship, setTutorship] = React.useState(0);
 	const [temas, setTemas]=React.useState('');
 	const [finalizar, setFinalizar]=React.useState(false);
+	const [redirect, setRedirect] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -71,6 +73,10 @@ const Main = memo(props => {
 	    }
 	    setVerify(true);
 	    setPupil(tutorados_aux[0]);
+	}
+
+	const redirectToCreation = () => {
+		setRedirect(true);
 	}
 
 	async function getNextTutorship(){
@@ -182,7 +188,8 @@ const Main = memo(props => {
 		      :
 		      <div>
 		      	<label>No hay tutorias proximas, favor de crear una </label>
-		      	<Button>Crear tutoría</Button>
+		      	<Button onClick={redirectToCreation}>Crear tutoría</Button>
+				{ redirect && <Redirect to='/tutor/registro-bloques'/> }
 		      </div>
 		      }
 		    </Container>
