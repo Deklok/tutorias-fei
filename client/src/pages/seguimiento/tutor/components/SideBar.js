@@ -31,6 +31,8 @@ import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
 
 const cookies = new Cookies();
+const route = process.env.REACT_APP_API_SERVER;
+
 const SideBar = memo(props => {
 	const open = props.open;
 	const classes = props.classes;
@@ -68,6 +70,7 @@ const SideBar = memo(props => {
 
 	const handleConfirmarCancelarTutoria = () => {
 		setCancelarTutoriaDialog(false);
+		notifyAllCanceledDay();
 		cancelarTutoria()
 		.then(()=>{
 			window.location.reload();
@@ -106,10 +109,17 @@ const SideBar = memo(props => {
 	}
 
 	async function cancelarTutoria(){
-		axios.post('http://localhost:5000/api/db/updateTutorshipStatus', {
+		axios.post(route+'api/db/updateTutorshipStatus', {
 	      idTutorship: idTutorship,
 	      idTutor: tutor,
 	      new_status: 3
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
+	async function notifyAllCanceledDay(){
+		axios.post(route+'api/notify/student/canceledday', {
+	      user: tutor
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });

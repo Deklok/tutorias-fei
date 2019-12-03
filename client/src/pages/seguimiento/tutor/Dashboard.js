@@ -35,16 +35,12 @@ if (cookie) {
   username = utilities.splitCookie(cookie).id;
 }
 
-function cargarDatos(connect) {
-  if(connect){
-    return axios.post('http://localhost:5000/api/db/tutorData', {
+function cargarDatos() {
+  return axios.post('http://localhost:5000/api/db/tutorData', {
       username: username,
     },{
       headers: { Authorization: token + ";" + role }
     });
-  }else{
-    return null;
-  }
 }
 
 function cargarTutorados(connect) {
@@ -86,12 +82,12 @@ const Dashboard = memo(props => {
   }
 
   React.useEffect(()=>{
-    cargarDatos(connect)
+    cargarDatos()
     .then(result => {
       if(result){
         setNombre(result.data[0]['name']);
         setContacto(result.data[0]['contact']);
-        notifications(result.data[0]['personnelNum'], "");
+        notifications(result.data[0]['username'], "");
         setPersonnel(result.data[0]['personnelNum']);
       }
     }).then(()=>{

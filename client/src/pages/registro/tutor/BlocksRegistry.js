@@ -34,11 +34,12 @@ export default class BlocksRegistry extends Component {
   cookies = new Cookies();
   token = utilities.splitCookie(this.cookies.get('token')).token;
   role = utilities.splitCookie(this.cookies.get('token')).session;
-
+  username = utilities.splitCookie(this.cookies.get('token')).id;
+  route = process.env.REACT_APP_API_SERVER;
+  
   getPersonnelNumTutor(){
-    var id = utilities.splitCookie(this.cookies.get('token')).id;
     return axios.post('http://localhost:5000/api/db/getpersonnelNumTutor',{
-      username: id
+      username: this.username
     },{
       headers: { Authorization: this.token + ";" + this.role }
     });
@@ -98,6 +99,14 @@ export default class BlocksRegistry extends Component {
       } else {
         this.saveBlock(block)
       }
+    });
+    this.notifyPublishedDay();
+  }
+  notifyPublishedDay = () => {
+    axios.post(this.route+'api/notify/student/publishedday', {
+        user: this.username
+      },{
+        headers: { Authorization: this.token + ";" + this.role }
     });
   }
 

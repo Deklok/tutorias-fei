@@ -2,7 +2,7 @@ const database = require('./server/db/database.js');
 const emailpush = require('./server/webpush/emailIntegration.js');
 
 async function setupStudentData (studentData){
-	database.getTutorIdFromPupil(studentData.studentId).then(function(responseTutor){
+	database.getTutorUsernameFromPupil(studentData.studentId).then(function(responseTutor){
 		if (responseTutor) {
 			try{
 				var emailToPushRecord = {emailAddress: studentData.mail, 

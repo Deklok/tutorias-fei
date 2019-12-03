@@ -70,10 +70,6 @@ function hasSession(req,res,next) {
 }
 app.all('/api',hasSession);
 
-app.get('/api/miuv/test', (req,res) => {
-  res.send("Hello world, this is a test");
-});
-
 app.post('/api/test/session', (request,res) => {
   var userId = request.body.user;
   if (userId.charAt(2) >= '0' && userId.charAt(2) <= '9') {
@@ -214,9 +210,9 @@ app.post('/api/notify/student/youwerecanceled', function (req, res){
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/notify/student/youarenext', function (req, res){
-  var userId = req.body.user;
-  if (userId) {
-    webpush.youAreNext(userId).then(function(response){
+  var studentId = req.body.user;
+  if (studentId) {
+    webpush.youAreNext(studentId).then(function(response){
       res.sendStatus(response);
     });
   } else {
@@ -225,8 +221,8 @@ app.post('/api/notify/student/youarenext', function (req, res){
 });
 /*
 *Service to notify the professor by email and push that his student canceled.
-*Param: user = extenal professor ID/personnelNum (12345).
-*NOTE: It's possible to get a 500 if the professor is only associated to an email account (it'll try to send a webpush but is a email).
+*Param: user = external student ID (s16012345).
+*NOTE: It's possible to get a 500 if the professor is only associated to an email account (it'll try to send a webpush but is a email notification).
 *However, this doesn't mean email notification didn't work.
 *Responses:
 *   400: Param expected
@@ -234,30 +230,32 @@ app.post('/api/notify/student/youarenext', function (req, res){
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/notify/tutor/studentcanceled', function (req, res){
-  var userId = req.body.user;
-  if (userId) {
-    webpush.studentCanceledEmail(userId).then(function(responseEmail){
-        webpush.studentCanceled(userId).then(function(response){
+  var studentId = req.body.user;
+  if (studentId) {
+    database.getTutorUsernameFromPupil(studentId).then(function(tutorId){
+      webpush.studentCanceledEmail(tutorId).then(function(responseEmail){
+        webpush.studentCanceled(tutorId).then(function(response){
           res.sendStatus(response);
         });
-    });
+      });
+    }); 
   } else {
     res.sendStatus(400);
   }
 });
 /*
 *Service to notify all the students by email and push related to this professor that tutoring day is available.
-*Param: user = extenal professor ID/personnelNum (12345).
+*Param: user = extenal professor ID/username (jucortes).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/notify/student/publishedday', function (req, res){
-  var userId = req.body.user;
-  if (userId) {
-    webpush.publishedDay(userId).then(function(response){
-        webpush.publishedDayEmail(userId).then(function(responseEmail){
+  var userName = req.body.user;
+  if (userName) {
+    webpush.publishedDay(userName).then(function(response){
+        webpush.publishedDayEmail(userName).then(function(responseEmail){
           res.sendStatus(responseEmail);
         });
     });
@@ -267,16 +265,16 @@ app.post('/api/notify/student/publishedday', function (req, res){
 });
 /*
 *Service to notify all the students related to this professor that tutoring day was cancel.
-*Param: user = extenal professor ID/personnelNum (12345).
+*Param: user = extenal professor ID/username (margarcia).
 *Responses:
 *   400: Param expected
 *   500: Onesingnal service not available
 *   200: Request OK. However this does not guarantee the behavior you expect.
 */
 app.post('/api/notify/student/canceledday', function (req, res){
-  var userId = req.body.user;
-  if (userId) {
-    webpush.canceledDay(userId).then(function(response){
+  var username = req.body.user;
+  if (username) {
+    webpush.canceledDay(username).then(function(response){
       res.sendStatus(response);
     });
   } else {

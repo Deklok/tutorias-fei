@@ -26,9 +26,9 @@ function getDataTutor(username){
 		});
 	});
 }
-function getTutorIdFromPupil(studentId){
+function getTutorUsernameFromPupil(studentId){
 	return new Promise((resolve, reject) => {
-		pool.query('SELECT idTutor FROM Pupil WHERE studentId = ?',[studentId],(err, results) => {
+		pool.query('SELECT t.username FROM Tutor t INNER JOIN Pupil p ON t.personnelNum = p.idTutor WHERE p.studentId = ?',[studentId],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -451,7 +451,7 @@ module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
 	getAllSessions: getAllSessions,
-	getTutorIdFromPupil: getTutorIdFromPupil,
+	getTutorUsernameFromPupil: getTutorUsernameFromPupil,
 	saveStudentSuscribedOn: saveStudentSuscribedOn,
 	updateStudentData: updateStudentData,
 	getIdCareer: getIdCareer,
