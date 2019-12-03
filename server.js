@@ -435,6 +435,7 @@ app.post('/api/db/feedback/add', (req,res) => {
  */
 app.post('/api/db/feedback/get',(req,res) => {
   var idTutorship = req.body.idTutorship;
+  console.log(idTutorship);
   if (idTutorship) {
     database.getFeedbackData(idTutorship).then(function (response) {
       res.json(response[0][0]);

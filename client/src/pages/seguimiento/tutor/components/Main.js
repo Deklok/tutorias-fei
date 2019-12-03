@@ -23,6 +23,7 @@ const Main = memo(props => {
 	const setTutorados = props.setTutorados;
 	const tutor = props.tutor;
 	const test = props.test;
+	const [tutorshipExists, setExists] = React.useState(true);
 	const [status, setStatus] = React.useState(0);
 	const [connect, setConnect]=React.useState(true);
 	const [currentPupil,setCurrentPupil] = React.useState([]);
@@ -30,6 +31,7 @@ const Main = memo(props => {
 	const [nextPupil, setPupil] = React.useState([]);
 	const [verify, setVerify] = React.useState(true);
 	const [idTutorship, setTutorship] = React.useState(0);
+	const [temas, setTemas]=React.useState('');
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -80,10 +82,12 @@ const Main = memo(props => {
 	}
 
 	React.useEffect(()=>{
+		setTemas('¿Quería comentar una situación que me está pasando con mi maestro de Estructuras de Datos, porque ya van dos semanas y aún no entrega los resultados de los exámenes parciales');
 		if(tutor != 0){
 			getNextTutorship()
 			.then(result=>{
-				if(result){
+				console.log(result);
+				if(result.data[0].length){
 					var tutorship_aux = result.data[0][0].idTutorship;
 					setTutorship(tutorship_aux);
 					setStatus(result.data[0][0].status);
@@ -92,19 +96,23 @@ const Main = memo(props => {
 					}else{
 						setComenzado(false);
 					}
+					setExists(true);
+				}else{
+					setExists(false);
 				}
 			});
 		}
-	},[tutor, status]);
+	},[status, tutorshipExists]);
 
 	return (
 		<main className={classes.content}>
 		    <div className={classes.appBarSpacer} />
 		    <Container maxWidth="lg" className={classes.container}>
-		      <Grid container spacing={3} justify="flex-end">
-		        {/* Tutoria Controles */}
+		      {tutorshipExists ?
+		      	<div>
+		      	<Grid container spacing={3} justify="flex-end">
 		        <Grid item xs={12} md={7} lg={7}>
-		          {!comenzado ? <Button
+		        {!comenzado ? <Button
 		          	variant="contained"
 		          	color="primary"
 		          	className={classes.button}
@@ -142,13 +150,13 @@ const Main = memo(props => {
 		            {test}
 		          </Agenda>
 		        </Grid>
-		        {/* Temas Tutorado */}
 		        <Grid item xs={12} md={3} lg={3}>
 		          <Paper elevation={0} className={classes.sidebarAboutBox}>
-		            <TemasTutorado />
+		            <TemasTutorado
+		            	temasTutorado={temas}
+		            />
 		          </Paper>
 		        </Grid>
-		        {/* Recent Tutorados */}
 		        <Grid item xs={12} md={5} lg={5}>
 		          <Paper className={classes.paper}>
 		            <Tutorados
@@ -159,6 +167,11 @@ const Main = memo(props => {
 		          </Paper>
 		        </Grid>
 		      </Grid>
+
+		      	</div>
+		      :
+		      <label>No hay tutorias proximas, favor de crear una </label>
+		      }
 		    </Container>
 	  	</main>
 	);

@@ -46,6 +46,7 @@ const PieChart = (props) => {
 const Feedback = memo(props => {
   const classes = useStyles();
   const classes_aux = props.classes;
+  const tutor = props.tutor;
   const [connect, setConnect] = React.useState(true);
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
@@ -57,16 +58,27 @@ const Feedback = memo(props => {
   const [missing, setMissing] = React.useState(0);
   const [total_real, setTotalReal] = React.useState(0);
   const[total, setTotal] = React.useState(0);
+  const [idTutorship, setTutorship]=React.useState(0);
+  const [status, setStatus] = React.useState(0);
+  const[exists, setExists] = React.useState(true);
   async function cargarFeedback() {
     if(connect){
       return axios.post('http://localhost:5000/api/db/feedback/get', {
-        idTutorship: 1,
+        idTutorship: idTutorship,
       },{
         headers: { Authorization: token + ";" + role }
       });
     }else{
       return null;
     }
+  }
+
+  function getCurrentTutorship(){
+    return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+        idTutor: tutor
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
   function createData(c1) {
@@ -80,39 +92,52 @@ const Feedback = memo(props => {
   }
 
   async function actualizar(result){
-    if(result && result.length !== 0){
+    if(result && result.length){
+      if(result.data.average){
         setEstrellas(result.data.average);
-        clrtb();
-        coment_aux.push(result.data.c1);
-        coment_aux.push(result.data.c2);
-        coment_aux.push(result.data.c3);
-        coment_aux.push(result.data.c4);
-        coment_aux.push(result.data.c5);
       }
+      clrtb();
+      coment_aux.push(result.data.c1);
+      coment_aux.push(result.data.c2);
+      coment_aux.push(result.data.c3);
+      coment_aux.push(result.data.c4);
+      coment_aux.push(result.data.c5);
+    }
   }
 
   React.useEffect(()=>{
-    cargarFeedback()
-    .then(result=>{
-      if(connect){
-        console.log(result)
-        actualizar(result);
-        setComm(coment_aux);
-        setAbsent(result.data.absent);
-        setComplete(result.data.complete);
-        setTotal(result.data.total);
-        setMissing(result.data.total - (result.data.absent + result.data.complete));
-        setConnect(false);
+    getCurrentTutorship()
+    .then((result)=>{
+      console.log(result);
+      if(result.data[0].length){
+        var tutorship_aux = result.data[0][0].idTutorship;
+        setTutorship(tutorship_aux);
+        setStatus(result.data[0][0].status);
+        if(status == 1){
+          setExists(true);
+          cargarFeedback()
+          .then(result=>{
+              console.log(result)
+              actualizar(result);
+              setComm(coment_aux);
+              setAbsent(result.data.absent);
+              setComplete(result.data.complete);
+              setTotal(result.data.total);
+              setMissing(result.data.total - (result.data.absent + result.data.complete));
+            })
+          .catch(console.log);
+        }
       }
-    })
-    .catch(console.log);
-  },[]);
+    });
+  },[status, tutor]);
 
   return (
     <main className={classes_aux.content}>
       <div className={classes_aux.appBarSpacer} />
       <Container maxWidth="lg" className={classes_aux.container}>
-        <Grid container direction="row" spacing={3}>
+        {status == 1 ?
+          <div>
+          <Grid container direction="row" spacing={3}>
           <Grid item xs={12} md={4} lg={4}>
             <Grid container direction="column" spacing={3}>
               <Grid item>
@@ -174,6 +199,11 @@ const Feedback = memo(props => {
           </Grid>
           {/* Recent Tutorados */}
         </Grid>
+        </div>
+        :
+        [status == 0 ? <label> La tutoria aun no comienza </label>
+        : <label>No hay tutorias proximas, favor de crear una </label>]
+      }
       </Container>
     </main>
   );

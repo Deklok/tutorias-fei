@@ -1,6 +1,6 @@
 /* eslint-disable no-script-url */
 
-import React from 'react';
+import React,{memo} from 'react';
 import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -20,16 +20,20 @@ const temas = [
   generateTemas('Ver formas de titulación'),
 ];
 
-export default function TemasTutorado() {
+const TemasTutorado = memo(props=>{
+  const temas = props.temasTutorado;
   const classes = useStyles();
+  React.useEffect(()=>{},[temas]);
   return (
     <React.Fragment>
       <Typography component="h2" variant="h6" gutterBottom>
         Intereses del Tutorado
       </Typography>
       <Typography>
-        Quería comentar una situación que me está pasando con mi maestro de Estructuras de Datos, porque ya van dos semanas y aún no entrega los resultados de los exámenes parciales
+      {temas}
       </Typography>
     </React.Fragment>
   );
-}
+});
+
+export default TemasTutorado;

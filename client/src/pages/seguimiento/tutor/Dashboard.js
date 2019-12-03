@@ -145,6 +145,7 @@ Saludos
         <Route path="/tutor/feedback">
           <Feedback
           classes={classes}
+          tutor={personnelNum}
           />
         </Route>
         <Route path="/tutor/registro-bloques">
