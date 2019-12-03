@@ -35,19 +35,26 @@ export default class BlocksRegistry extends Component {
   token = utilities.splitCookie(this.cookies.get('token')).token;
   role = utilities.splitCookie(this.cookies.get('token')).session;
 
-  getLastTutorship() {
+  getPersonnelNumTutor(){
+    var id = utilities.splitCookie(this.cookies.get('token')).id;
+    return axios.post('http://localhost:5000/api/db/getpersonnelNumTutor',{
+      username: id
+    },{
+      headers: { Authorization: this.token + ";" + this.role }
+    });
+  }
 
-    const id = utilities.splitCookie(this.cookies.get('token')).id;
+  getLastTutorship(personnelNum) {
     return axios.post('http://localhost:5000/api/db/lastTutorship', {
-      idTutor: id
+      idTutor: personnelNum
     }, {
       headers: {Authorization: this.token + ";" + this.role}
     });
-
   }
 
-  getBlocks(idTutorship) {
-    return axios.post('http://localhost:5000/api/db/blocks', {
+  getBlocks(idTutorship, idCareer) {
+    return axios.post('http://localhost:5000/api/db/getBlock', {
+      idCareer: idCareer,
       idTutorship: idTutorship
     });
   }
@@ -65,7 +72,7 @@ export default class BlocksRegistry extends Component {
   }
 
   editBlock = (block) => {
-    return axios.post('http://localhost:5000/api/db/editBlock', {
+    return axios.post('http://localhost:5000/api/db/updateBlock', {
       idBlock: block.idBlock,
       idCareer: block.idCareer,
       start: block.start,
@@ -87,7 +94,7 @@ export default class BlocksRegistry extends Component {
       })
 
       if (isRegistered) {
-
+        this.editBlock(block)
       } else {
         this.saveBlock(block)
       }
@@ -96,18 +103,19 @@ export default class BlocksRegistry extends Component {
 
   render() {
 
+    const globalClasses = this.props.classes
     const classes = this.props.registryBlockClasses;
 
     return (
       <div>
         <Schedule open={this.state.openDialog} closeAction={this.closeSchedule} />
-        <AppBar position="static" className={clsx(classes.appBar, classes.appBarShift)}>
-          <Toolbar className={classes.toolbar}>
+        <AppBar position="static" className={clsx(globalClasses.appBar, globalClasses.appBarShift)}>
+          <Toolbar className={globalClasses.toolbar}>
             <IconButton
               edge="start"
               color="inherit"
               aria-label="open drawer"
-              className={classes.menuButton}
+              className={globalClasses.menuButton}
             >
               <ArrowBackIosIcon />
             </IconButton>
@@ -136,14 +144,17 @@ export default class BlocksRegistry extends Component {
   }
 
   closeSchedule = (e) => {
-    this.getLastTutorship().then(result => {
-      console.log(result)
-      var idTutorship = result.data[0].idTutorship;
-      this.getBlocks(idTutorship).then(result2 => {
-        console.log(result2)
-        const blocks = result2.data;
-        console.log(blocks);
-        this.setState({ blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks });
+    this.getPersonnelNumTutor().then(result => {
+      var personnelNum = result.data[0]['personnelNum'];
+      this.getLastTutorship(personnelNum).then(tutorship => {
+        console.log(tutorship)
+        var idTutorship = tutorship.data[0].idTutorship;
+        this.getBlocks(idTutorship, 5).then(result2 => {
+          console.log(result2)
+          const blocks = result2.data;
+          console.log(blocks);
+          this.setState({ blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks });
+        });
       });
     });
     this.setState({ openDialog: false });

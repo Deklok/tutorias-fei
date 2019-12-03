@@ -246,7 +246,7 @@ function getPersonnelNumTutor(username){
 
 function getBlock(idTutorship){
 	return new Promise((resolve,reject) =>{
-		pool.query('SELECT * FROM Block WHERE idTutorship = ?',[idTutorship],(er,results) => {
+		pool.query('SELECT * FROM Block WHERE idTutorship = ?',[idTutorship],(err,results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -407,6 +407,33 @@ function getNextTutorship(idTutor){
     });
 }
 
+function getLastTutorship(idTutor) {
+
+    return new Promise((resolve, reject) => {
+
+        pool.query('SELECT * FROM Tutorship WHERE idTutor = ? ORDER BY idTutorship DESC LIMIT 1', [idTutor], (err, results) => {
+            if (err) {
+                return reject(err);
+            } else {
+                return resolve(results);
+            }
+        });
+    });
+
+}
+
+function updateBlock(idBlock, idCareer, start, end){
+	return new Promise((resolve, reject) => {
+		pool.query('UPDATE Block SET idCareer = ?, start = ?, end = ? WHERE idBlock = ?', [idCareer, start, end, idBlock], (err, res)=> {
+			if(err){
+				return reject(err);
+			} else {
+				return resolve(res)
+			}
+		});
+	});
+}
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -441,5 +468,7 @@ module.exports = {
 	getSpecificSessionData: getSpecificSessionData,
 	getcareerBlock: getcareerBlock,
 	updateTutorshipStatus: updateTutorshipStatus,
-	getNextTutorship:getNextTutorship
+	getNextTutorship:getNextTutorship,
+	getLastTutorship: getLastTutorship,
+	updateBlock: updateBlock
 }

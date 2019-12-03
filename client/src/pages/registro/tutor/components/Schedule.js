@@ -30,21 +30,12 @@ export default function Schedule(props) {
   const [title, setTitle] = React.useState("Error");
   const [message, setMessage] = React.useState("");
   const [openDialog, setOpenDialog] = React.useState(false);
-  const [openDialogMain, setOpenDialogMain] = React.useState(true);
 
   var idTutorship = 0;
   var personnelNum = 0;
   var startDate = new Date('December 1, 2019 07:00:00');
   var endDate = new Date('December 1, 2019 07:00:00');
   var period = '';
-
-  const openDialogMainChange = () =>{
-    setOpenDialogMain(true)
-  }
-
-  const closeDialogMainChange = () =>{
-    setOpenDialogMain(false)
-  }
 
   const openDialogError = () => {
     setOpenDialog(true);
@@ -213,7 +204,7 @@ export default function Schedule(props) {
   }
 
   return (
-    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={openDialogMain} onClose={openDialogMain}>
+    <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={props.open}>
       <div className="dialog">
         <h3>Calendarizar tutoria:</h3>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
@@ -277,7 +268,6 @@ export default function Schedule(props) {
             onChange={event => indicationsChange(event)} />
         </div>
         <div>
-        <Button id="cancelBtn" variant="contained" onClick={closeDialogMainChange}>Cancelar</Button>
           <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
         </div>
       </div>

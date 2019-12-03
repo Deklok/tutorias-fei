@@ -791,6 +791,31 @@ app.post('/api/db/getNextTutorship', (req, res)=>{
   }
 });
 
+app.post('/api/db/lastTutorship', (req, res) => {
+  const idTutor = req.body["idTutor"];
+  if(idTutor){
+    database.getLastTutorship(idTutor).then(function(response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+
+app.post('/api/db/updateBlock', (req, res) => {
+  const idBlock = req.body["idBlock"];
+  const idCareer = req.body["idCareer"];
+  const start = req.body["start"];
+  const end = req.body["end"];
+  if(idBlock){
+    database.updateBlock(idBlock, idCareer, start, end).then(function(response) {
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+
 const httpServer = http.createServer(app);
 httpServer.listen(5000);
 console.log('App listening on port 5000');
