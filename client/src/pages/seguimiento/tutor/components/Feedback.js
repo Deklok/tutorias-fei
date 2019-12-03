@@ -92,17 +92,15 @@ const Feedback = memo(props => {
   }
 
   async function actualizar(result){
-    if(result && result.length){
-      if(result.data.average){
+    if(result && result.length !== 0){
         setEstrellas(result.data.average);
+        clrtb();
+        coment_aux.push(result.data.c1);
+        coment_aux.push(result.data.c2);
+        coment_aux.push(result.data.c3);
+        coment_aux.push(result.data.c4);
+        coment_aux.push(result.data.c5);
       }
-      clrtb();
-      coment_aux.push(result.data.c1);
-      coment_aux.push(result.data.c2);
-      coment_aux.push(result.data.c3);
-      coment_aux.push(result.data.c4);
-      coment_aux.push(result.data.c5);
-    }
   }
 
   React.useEffect(()=>{

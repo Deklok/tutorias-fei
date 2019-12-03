@@ -32,6 +32,7 @@ const Main = memo(props => {
 	const [verify, setVerify] = React.useState(true);
 	const [idTutorship, setTutorship] = React.useState(0);
 	const [temas, setTemas]=React.useState('');
+	const [finalizar, setFinalizar]=React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -66,6 +67,7 @@ const Main = memo(props => {
 	    tutorados_aux.splice(0,1);
 	    if(tutorados_aux.length == 0){
 	    	tutorados_aux.push([]);
+	    	setFinalizar(true);
 	    }
 	    setVerify(true);
 	    setPupil(tutorados_aux[0]);
@@ -86,13 +88,19 @@ const Main = memo(props => {
 		if(tutor != 0){
 			getNextTutorship()
 			.then(result=>{
-				console.log(result);
 				if(result.data[0].length){
 					var tutorship_aux = result.data[0][0].idTutorship;
 					setTutorship(tutorship_aux);
 					setStatus(result.data[0][0].status);
 					if(status == 1){
 						setComenzado(true);
+						if(tutorados.length){
+							setPupil(tutorados[0]);
+							setFinalizar(false);
+						}else{
+							setFinalizar(true);
+						}
+						setVerify(true);
 					}else{
 						setComenzado(false);
 					}
@@ -102,7 +110,7 @@ const Main = memo(props => {
 				}
 			});
 		}
-	},[status, tutorshipExists]);
+	},[tutor, status, tutorshipExists]);
 
 	return (
 		<main className={classes.content}>
@@ -117,13 +125,15 @@ const Main = memo(props => {
 		          	color="primary"
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
-		          	>Comenzar Tutoría</Button>
-		          	:[atendiendo ? <CurrentTutorado currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : <Button
+		          	>Comenzar</Button>
+		          	:[atendiendo ? <CurrentTutorado currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
+		          		finalizar ? <Button
 		          	variant="contained"
 		          	color="primary"
 		          	className={classes.button}
 		          	onClick={finalizarTutoria}
-		          	>Finalizar Tutoría</Button>]
+		          	>Finalizar Tutoría</Button> : null
+		          	]]
 		          	}
 		        </Grid>
 		        <Grid item xs={12} md={5} lg={5}>

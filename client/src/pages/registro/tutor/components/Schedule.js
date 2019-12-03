@@ -31,8 +31,9 @@ export default function Schedule(props) {
   const [message, setMessage] = React.useState("");
   const [openDialog, setOpenDialog] = React.useState(false);
   const [openDialogMain, setOpenDialogMain] = React.useState(true);
-
-  var idTutorship = 0;
+  const [idTutorship, setIdTutorship] = React.useState(0);
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
   var personnelNum = 0;
   var startDate = new Date('December 1, 2019 07:00:00');
   var endDate = new Date('December 1, 2019 07:00:00');
@@ -148,6 +149,25 @@ export default function Schedule(props) {
       });
   }
 
+  async function getNextTutorship(){
+    return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+        idTutor: personnelNum
+      },{
+        headers: { Authorization: token + ";" + role }
+    });
+  }
+
+  React.useEffect(()=>{
+    getNextTutorship()
+    .then(result=>{
+      if(result.data[0].length){
+        setIdTutorship(result.data[0][0].idTutorship);
+        setOpenDialogMain(false);
+      }
+      console.log(idTutorship);
+    });
+  },[idTutorship]);
+
   getPersonnelNumTutor().then(result =>{
     if(result){
       personnelNum = result.data[0]['personnelNum'];
@@ -161,54 +181,59 @@ export default function Schedule(props) {
   }).catch(console.log);
 
   const save = () => {
-    var dateActual = new Date();
-    var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
-    var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
-    if (date != "" && indications != "" && place != "" && email != "") {
-      if (date.getFullYear() == dateActual.getFullYear()) {
-        if (!regExp.test(indications) && !regExp.test(place)) {
-          if (regExpEmail.test(email)) {
-            calculatePeriod();
-            calculateTime();
+    if(idTutorship == 0){
+      var dateActual = new Date();
+      var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
+      var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
+      if (date != "" && indications != "" && place != "" && email != "") {
+        if (date.getFullYear() == dateActual.getFullYear()) {
+          if (!regExp.test(indications) && !regExp.test(place)) {
+            if (regExpEmail.test(email)) {
+              calculatePeriod();
+              calculateTime();
 
-            saveTutorialship().then(result => {
-              if (result) {
-                idTutorship = result.data['insertId'];
+              saveTutorialship().then(result => {
+                if (result) {
+                  setIdTutorship(result.data['insertId']);
 
-                saveEmail().then(result => {
-                }).catch(console.log);
+                  saveEmail().then(result => {
+                  }).catch(console.log);
 
-                saveBlock().then(result => {
-                  if (result) {
-                    props.closeAction();
-                    setTitle("Éxito");
-                    setMessage("La tutoria se ha calendarizado exitosamente.");
-                    openDialogError();
-                  }
-                }).catch(console.log);
+                  saveBlock().then(result => {
+                    if (result) {
+                      props.closeAction();
+                      setTitle("Éxito");
+                      setMessage("La tutoria se ha calendarizado exitosamente.");
+                      openDialogError();
+                    }
+                  }).catch(console.log);
 
-              }
-            }).catch(console.log);
+                }
+              }).catch(console.log);
 
+            } else {
+              setTitle("Error en el correo.");
+              setMessage("Correo electronico con formato invalido.");
+              openDialogError();
+            }
           } else {
-            setTitle("Error en el correo.");
-            setMessage("Correo electronico con formato invalido.");
+            setTitle("Error en las indicaciones.");
+            setMessage("Hubo un error al redactar las indicaciones.");
             openDialogError();
           }
         } else {
-          setTitle("Error en las indicaciones.");
-          setMessage("Hubo un error al redactar las indicaciones.");
+          setTitle("Error en el año.");
+          setMessage("El año no puede ser mayor al año actual.");
           openDialogError();
         }
       } else {
-        setTitle("Error en el año.");
-        setMessage("El año no puede ser mayor al año actual.");
+        setTitle("Error.");
+        setMessage("No puede haber campos vacios.");
         openDialogError();
       }
-    } else {
-      setTitle("Error.");
-      setMessage("No puede haber campos vacios.");
-      openDialogError();
+      setOpenDialogMain(false);
+    }else{
+      console.log(idTutorship);
     }
   }
 
