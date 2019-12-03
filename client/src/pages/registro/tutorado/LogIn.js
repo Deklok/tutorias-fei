@@ -132,6 +132,8 @@ const Inicio = memo(props =>  {
   const classes = useStyles();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [errors, setErrors] = React.useState(false);
+  const [accountError, setAccountError] = React.useState(false);
   //const [loginState, setLogin] = React.useState(false);
   var token = sessionStorage.getItem("token");
   var content;
@@ -139,36 +141,52 @@ const Inicio = memo(props =>  {
   function login(){
     console.log('enviando...');
     if(token == undefined){
-      // http://localhost:5000/api/user/login
-      axios.post('http://localhost:5000/api/test/session',{
+      if (username.length < 2 || password.length < 2) {
+        setErrors(true);
+      } else {
+        setErrors(false);
+        setAccountError(false);
+        // http://localhost:5000/api/user/login
+        // http://localhost:5000/api/test/session
+        axios.post('http://localhost:5000/api/test/session', {
           user: username,
           pass: password,
           withCredentials: true,
         })
-        .then((result)=>{
-          if(result){
-            console.log(result);
-            cookies.set('token','id=' + username + ';token=' + result.data);
-            axios({
-              method: 'post',
-              url: 'http://localhost:5000/api/auth',
-              headers: { Authorization: result.data }
-            })
-            .then((result)=>{
-              cookies.set('token',cookies.get('token') + ';session=' + result.data, { maxAge: 3600 });
-              window.location.reload();
-            })
-            .catch((err)=>{
-              console.log(err);
-            });
+          .then((result) => {
+            if (result) {
+              console.log(result);
+              cookies.set('token', 'id=' + username + ';token=' + result.data);
+              axios({
+                method: 'post',
+                url: 'http://localhost:5000/api/auth',
+                headers: { Authorization: result.data }
+              })
+                .then((result) => {
+                  cookies.set('token', cookies.get('token') + ';session=' + result.data, { maxAge: 3600 });
+                  window.location.reload();
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
 
-          }
-        })
-        .catch((err)=>{
-          console.log(err);
-        });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            if (err.response.status == 404) {
+              setAccountError(true);
+            }
+          });
+      }
     }
     console.log('enviado');
+  }
+
+  const enter = (event) => {
+    if(event.key == "Enter") {
+      login();
+    }
   }
 
   if (token != undefined) {
@@ -184,11 +202,13 @@ const Inicio = memo(props =>  {
           <Typography component="h1" variant="h5">
             Iniciar Sesion
           </Typography>
-          <form className={classes.form}>
+          { accountError && <Typography color="error" variant="caption"> Cuenta no existente o contraseña incorrecta. Porfavor compruebe sus datos </Typography> }
+          <form className={classes.form} onKeyPress={e=> enter(e)}>
             <TextField
               variant="outlined"
               margin="normal"
               required
+              error={errors}
               fullWidth
               id="matricula"
               label="Matrícula"
@@ -202,6 +222,7 @@ const Inicio = memo(props =>  {
               variant="outlined"
               margin="normal"
               required
+              error={errors}
               fullWidth
               className={classes.textField}
               type="password"

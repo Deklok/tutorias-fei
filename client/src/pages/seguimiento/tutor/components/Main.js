@@ -84,13 +84,15 @@ const Main = memo(props => {
 			getNextTutorship()
 			.then(result=>{
 				if(result){
-					var tutorship_aux = result.data[0][0].idTutorship;
-					setTutorship(tutorship_aux);
-					setStatus(result.data[0][0].status);
-					if(status == 1){
-						setComenzado(true);
-					}else{
-						setComenzado(false);
+					if (result.data[0].length != 0) {
+						var tutorship_aux = result.data[0][0].idTutorship;
+						setTutorship(tutorship_aux);
+						setStatus(result.data[0][0].status);
+						if (status == 1) {
+							setComenzado(true);
+						} else {
+							setComenzado(false);
+						}
 					}
 				}
 			});
