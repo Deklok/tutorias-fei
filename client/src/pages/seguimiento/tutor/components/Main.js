@@ -180,7 +180,10 @@ const Main = memo(props => {
 
 		      	</div>
 		      :
-		      <label>No hay tutorias proximas, favor de crear una </label>
+		      <div>
+		      	<label>No hay tutorias proximas, favor de crear una </label>
+		      	<Button>Crear tutoría</Button>
+		      </div>
 		      }
 		    </Container>
 	  	</main>

@@ -45,8 +45,8 @@ const Home = memo(props => {
         var guard_aux = cookieExist();
         console.log(guard_aux);
         if(guard_aux != null){
-            setGuard(guard_aux);     
-        } 
+            setGuard(guard_aux);
+        }
     }, []);
 
     const Logout = () =>{

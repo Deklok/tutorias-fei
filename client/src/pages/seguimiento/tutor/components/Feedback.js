@@ -93,7 +93,9 @@ const Feedback = memo(props => {
 
   async function actualizar(result){
     if(result && result.length !== 0){
-        setEstrellas(result.data.average);
+        if(result.data.average){
+          setEstrellas(result.data.average);
+        }
         clrtb();
         coment_aux.push(result.data.c1);
         coment_aux.push(result.data.c2);
