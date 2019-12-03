@@ -13,8 +13,8 @@ import Title from '../../components/Title';
 
 const Tutorados = memo(props => {
   // Generate Order Data
-  function createData(id, matricula, nombre, horario) {
-    return { id, matricula, nombre, horario };
+  function createData(id, matricula, nombre, inicio, fin) {
+    return { id, matricula, nombre, inicio, fin };
   }
   var tutorados = props.tutorados;
   const rows = [];
@@ -25,7 +25,7 @@ const Tutorados = memo(props => {
     console.log('actualizando');
     clrtb();
     for (var i = 0; i < tutorados.length; i++) {
-      rows.push(createData(i,tutorados[i]['studentId'],tutorados[i]['name'], tutorados[i]['start']));
+      rows.push(createData(i,tutorados[i]['studentId'],tutorados[i]['name'], tutorados[i]['start'], tutorados[i]['end']));
     }
   }
 
@@ -58,7 +58,8 @@ const Tutorados = memo(props => {
           <TableRow>
             <TableCell>Matrícula</TableCell>
             <TableCell>Nombre</TableCell>
-            <TableCell>Horario</TableCell>
+            <TableCell>Inicio</TableCell>
+            <TableCell>Fin</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -66,7 +67,8 @@ const Tutorados = memo(props => {
             <TableRow key={row.id}>
               <TableCell>{row.matricula}</TableCell>
               <TableCell>{row.nombre}</TableCell>
-              <TableCell>{row.horario}</TableCell>
+              <TableCell>{row.inicio}</TableCell>
+              <TableCell>{row.fin}</TableCell>
             </TableRow>
           ))}
         </TableBody>

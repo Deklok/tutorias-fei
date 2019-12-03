@@ -13,6 +13,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Tooltip from '@material-ui/core/Tooltip';
 import Schedule from './components/Scheduler';
 import { notifications } from '../../pushOneSignal';
+import Cookies from 'universal-cookie';
+import utilities from '../../../utilities';
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
@@ -28,10 +30,17 @@ const DashboardInicio = memo(props => {
   const [fecha, setFecha] = React.useState('');
   const [career, setIdCareer] = React.useState('');
   const [tutorship, setIdTutorship] = React.useState('');
+  
+  const cookies = new Cookies();
+  var cookie = cookies.get('token');
+  var username;
+  if (cookie) {
+    username = utilities.splitCookie(cookie).id;
+  }
 
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/pupilData', {
-      studentId: 'S16011721',
+      studentId: username,
     });
   }
 
@@ -42,7 +51,7 @@ const DashboardInicio = memo(props => {
   }
   async function obtenerIDs() {
     return axios.post('http://localhost:5000/api/db/getcareerBlock', {
-      idPupil: 'S16011721',
+      idPupil: username,
     });
   }
   

@@ -3,6 +3,9 @@ import Paper from "@material-ui/core/Paper";
 import { ViewState } from "@devexpress/dx-react-scheduler";
 import Title from '../../../seguimiento/components/Title';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
+import { Redirect } from 'react-router-dom';
 import {
     Scheduler,
     DayView,
@@ -18,6 +21,18 @@ const Schedule = memo(props => {
   const matricula = props.matricula;
   const [open, setOpen] = React.useState(true);
   const [sessions, setSessions] = React.useState('');
+  const [agendarRoute, setAgendarRoute] = React.useState(false);
+  
+  const redirectToAgendar = () => {
+    setAgendarRoute(true);
+  }
+
+  const cookies = new Cookies();
+  var cookie = cookies.get('token');
+  var username;
+  if (cookie) {
+    username = utilities.splitCookie(cookie).id;
+  }
 
   async function getSessions() {
     return axios.post('http://localhost:5000/api/db/getBlockSessions', {
@@ -50,7 +65,6 @@ const Schedule = memo(props => {
   if(sessions.length > 0){
     for(var i = 0; i < sessions.length; i++){
       var da = new Date(sessions[i]['startTime']);
-      console.log(da);
       if(da > 0){
         dataSession.push(createSession(da.getHours(),da.getMinutes()));
       }
@@ -145,9 +159,9 @@ const Schedule = memo(props => {
         count = count + 1;
       }
     }
-
-    var idSession;
     
+    var idSession;
+
     function loadPage(){
       var bloques = document.getElementsByClassName("makeStyles-appointment-447");
       if(bloques.length > 0){
@@ -176,9 +190,8 @@ const Schedule = memo(props => {
                       reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
                         var sessionReserved = response;
                         idSession = sessionReserved.data;
-                        console.log(idSession);
                       });
-                      window.location = "/tutorado/dashboard-fin";
+                      redirectToAgendar();
                     }
                   }
                 }
@@ -205,9 +218,8 @@ const Schedule = memo(props => {
                         reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
                           var sessionReserved = response;
                           idSession = sessionReserved.data;
-                          console.log(idSession);
                         });
-                        window.location = "/tutorado/dashboard-fin";
+                        redirectToAgendar();
                       }
                     }
                   }
@@ -235,9 +247,8 @@ const Schedule = memo(props => {
                         reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
                           var sessionReserved = response;
                           idSession = sessionReserved.data;
-                          console.log(idSession);
                         });
-                        window.location = "/tutorado/dashboard-fin";
+                        redirectToAgendar();
                       }
                     }
                   }
@@ -252,6 +263,7 @@ const Schedule = memo(props => {
 
     return (
           <Paper>
+            {agendarRoute && <Redirect to="/tutorado/agendar"/>}
               <Title>Bloques de tutoría</Title>
               <Scheduler data={dataBlock} locale="es-MX">
                   <ViewState currentDate={fechaDate} />

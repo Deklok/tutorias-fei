@@ -395,6 +395,7 @@ function updateTutorshipStatus(idTutorship,idTutor, new_status){
 }
 
 function getNextTutorship(idTutor){
+	console.log(idTutor)
 	return new Promise((resolve,reject) => {
         pool.query('CALL sp_getNextTutorship(?)',[idTutor],(err,results) => {
             if(err){

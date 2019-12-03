@@ -6,13 +6,35 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
 
 const TemasTutorado = memo(props => {
   const [idSession, setIdSession] = React.useState('');
+  const [mainTutorado, setRouteMainTutorado] = React.useState(false);
+  const [sessionsTutorado, setRouteSessionsTutorado] = React.useState(false);
+
+  const redirectToMainTutorado = () => {
+    setRouteMainTutorado(true);
+    setRouteSessionsTutorado(false);
+  }
+  
+  const redirectToSessionsTutorado = () => {
+    setRouteMainTutorado(false);
+    setRouteSessionsTutorado(true);
+  }
+
+  const cookies = new Cookies();
+  var cookie = cookies.get('token');
+  var username;
+  if (cookie) {
+    username = utilities.splitCookie(cookie).id;
+  }
 
   async function obtenerSesion(){
     return axios.post('http://localhost:5000/api/db/getSpecificSessionData',{
-      idPupil: 'S16011721'
+      idPupil: username
     });
   }
 
@@ -36,6 +58,8 @@ const TemasTutorado = memo(props => {
 
   return (
     <React.Fragment>
+      {mainTutorado && <Redirect to="/tutorado"/>}
+      {sessionsTutorado && <Redirect to="/tutorado/sesiones"/>}
       <Typography variant="h6" gutterBottom>
         Intereses del Tutorado
       </Typography>
@@ -53,7 +77,7 @@ const TemasTutorado = memo(props => {
   );
   function deleteSession(){
     cancelarReserva();
-    window.location="/tutorado/dashboard-inicio";
+    window.location="/tutorado/sesiones";
   }
 
   function validate(){
@@ -66,12 +90,13 @@ const TemasTutorado = memo(props => {
         alert("Estás usando caracteres inválidos, revisa tus datos");
       }else{
         agendarSession(tema.trim());
-        window.location="/tutorado";
+        console.log(username);
+        redirectToMainTutorado();
       }
     } else {
       tema = " ";
       agendarSession(tema);
-      window.location="/tutorado";
+      redirectToSessionsTutorado();
     }
   }
 });

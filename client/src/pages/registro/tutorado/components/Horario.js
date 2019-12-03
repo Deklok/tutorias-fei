@@ -1,20 +1,28 @@
 import React, {memo} from 'react';
 import Title from '../../../seguimiento/components/Title';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
 
 const Horario = memo (props =>{
 
   const classes = props.classes;
-  const idPupil = props.idPupil;
   const [open, setOpen] = React.useState(true);
   const [sessionStart, setSessionStart] = React.useState('');
   const [place, setPlace] = React.useState('');
   const [date, setDate] = React.useState('');
   const [contact, setContact] = React.useState('');
 
+  const cookies = new Cookies();
+  var cookie = cookies.get('token');
+  var username;
+  if (cookie) {
+    username = utilities.splitCookie(cookie).id;
+  }
+
   async function cargarDatos() {
     return axios.post('http://localhost:5000/api/db/getSession', {
-      idPupil: idPupil
+      idPupil: username
     });
   }
 
@@ -27,7 +35,6 @@ const Horario = memo (props =>{
     }).catch(console.log);
 
   var fechaInicio = new Date(sessionStart);
-  var fechaMuestra = fechaInicio.getHours()+":"+fechaInicio.getMinutes();
   
   return (
     <React.Fragment>

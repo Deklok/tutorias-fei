@@ -5,17 +5,25 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
+import utilities from '../../../../utilities';
 import 'simple-react-notifications/dist/index.css';
 
 
 const Indicacion = memo(props => {
     const classes = props.classes;
-    const idPupil = props.idPupil;
     const [indicaciones, setIndications] = React.useState('');
+
+    const cookies = new Cookies();
+    var cookie = cookies.get('token');
+    var username;
+    if (cookie) {
+      username = utilities.splitCookie(cookie).id;
+    }
 
     async function cargarDatos() {
         return axios.post('http://localhost:5000/api/db/getSession', {
-          idPupil: idPupil
+          idPupil: username
         });
       }
     
