@@ -55,7 +55,7 @@ const TemasTutorado = memo(props => {
       topics: topics
     });
   }
-
+console.log(idSession);
   return (
     <React.Fragment>
       {mainTutorado && <Redirect to="/tutorado"/>}
@@ -77,7 +77,7 @@ const TemasTutorado = memo(props => {
   );
   function deleteSession(){
     cancelarReserva();
-    window.location="/tutorado/sesiones";
+    redirectToSessionsTutorado();
   }
 
   function validate(){
@@ -96,7 +96,7 @@ const TemasTutorado = memo(props => {
     } else {
       tema = " ";
       agendarSession(tema);
-      redirectToSessionsTutorado();
+      redirectToMainTutorado();
     }
   }
 });

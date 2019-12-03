@@ -46,7 +46,7 @@ const DashboardInicio = memo(props => {
 
   async function obtenerTutoria(){
     return axios.post('http://localhost:5000/api/db/getTutorship',{
-      idTutorship: 8
+      idTutorship: 28
     });
   }
   async function obtenerIDs() {
@@ -63,8 +63,8 @@ const DashboardInicio = memo(props => {
 
   console.log(tutorship);
 
-  var idCareer = 1;
-  var idTutorship = 8;
+  var idCareer = 5;
+  var idTutorship = 28;
   
   async function obtenerBloque(){
     return axios.post('http://localhost:5000/api/db/getOneBlock',{

@@ -434,6 +434,19 @@ function updateBlock(idBlock, idCareer, start, end){
 	});
 }
 
+function getSessionStatus(idPupil){
+	return new Promise((resolve,reject) => {
+		pool.query('CALL sp_get_sessionStatus(?)',[idPupil],(err,results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+
+
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
@@ -470,5 +483,6 @@ module.exports = {
 	updateTutorshipStatus: updateTutorshipStatus,
 	getNextTutorship:getNextTutorship,
 	getLastTutorship: getLastTutorship,
-	updateBlock: updateBlock
+	updateBlock: updateBlock,
+	getSessionStatus: getSessionStatus
 }

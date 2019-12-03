@@ -36,7 +36,7 @@ const Schedule = memo(props => {
 
   async function getSessions() {
     return axios.post('http://localhost:5000/api/db/getBlockSessions', {
-      idBlock: 19
+      idBlock: 39
     });
   }
 

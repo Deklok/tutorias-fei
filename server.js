@@ -802,6 +802,18 @@ app.post('/api/db/lastTutorship', (req, res) => {
   }
 });
 
+app.post('/api/db/getSessionStatus', (req, res) => {
+  var idPupil = req.body['idPupil'];
+  if(idPupil!=null){
+    database.getSessionStatus(idPupil)
+    .then(function(response){
+      res.json(response);
+    });
+  }else{
+    res.sendStatus(400);
+  }
+})
+
 app.post('/api/db/updateBlock', (req, res) => {
   const idBlock = req.body["idBlock"];
   const idCareer = req.body["idCareer"];
