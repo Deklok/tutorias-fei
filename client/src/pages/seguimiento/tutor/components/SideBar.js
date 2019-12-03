@@ -33,6 +33,7 @@ const SideBar = memo(props => {
 
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
+	const [cancelarTutoriaDialog, setCancelarTutoriaDialog] = React.useState(false);
 	const [feedbackRoute, setFeedbackRoute] = React.useState(false);
 	const [mainRoute, setMainRoute] = React.useState(false);
 	const [adjustRoute, setAdjustRoute] = React.useState(false);
@@ -56,6 +57,18 @@ const SideBar = memo(props => {
 
 	const handleLogin = () => {
 		setLoginDialog(false);
+	}
+
+	const handleConfirmarCancelarTutoria = () => {
+		setCancelarTutoriaDialog(false);
+	}
+
+	const handleCerrarCancelarTutoria = () => {
+		setCancelarTutoriaDialog(false);
+	}
+
+	const handleCancelarTutoria = () => {
+		setCancelarTutoriaDialog(true);
 	}
 
 	const handleSiguienteTerminos = () => {
@@ -116,7 +129,7 @@ const SideBar = memo(props => {
 						<ListItemIcon>
 							<CancelPresentation />
 						</ListItemIcon>
-						<ListItemText primary="Cancelar Tutoría" />
+						<ListItemText primary="Cancelar Tutoría" onClick={handleCancelarTutoria}/>
 					</ListItem>
 					<ListItem button component="a" onClick={redirectToFeedback}>
 						{ feedbackRoute && <Redirect to='/tutor/feedback'/> }
@@ -150,17 +163,12 @@ const SideBar = memo(props => {
 				aria-labelledby="scroll-dialog-title"
 				aria-describedby="scroll-dialog-description">
 
-				<DialogTitle id="scroll-dialog-title">Términos y Condiciones</DialogTitle>
+				<DialogTitle id="scroll-dialog-title">Aviso de Privacidad</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						{[...new Array(50)]
-							.map(
-								() => `Cras mattis consectetur purus sit amet fermentum.
-									Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-									Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-									Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-							)
-							.join('\n')}
+						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcionen.\n
+Sus datos personales serán utilizados para le proporcionar los correspondientes registros de sus tutorados.Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.\n
+Se informa que no realizarán transferencias que requieren su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados. 
 					</DialogContentText>
 					<FormControlLabel
 						control={
@@ -171,7 +179,7 @@ const SideBar = memo(props => {
 								color="primary"
 							/>
 						}
-						label="Acepto los términos y condiciones"
+						label="Acepto"
 					/>
 				</DialogContent>
 				<DialogActions>
@@ -210,6 +218,26 @@ const SideBar = memo(props => {
 				<DialogActions>
 					<Button onClick={handleLogin} color="primary">
 						Enviar
+          			</Button>
+				</DialogActions>
+			</Dialog>
+			<Dialog open={cancelarTutoriaDialog}
+				scroll={'paper'}
+				aria-labelledby="scroll-dialog-title"
+				aria-describedby="scroll-dialog-description">
+
+				<DialogTitle id="form-dialog-title">Cancelar Tutoría</DialogTitle>
+				<DialogContent>
+					<DialogContentText>
+						¿Desea cancelar la tutoría actual?
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleCerrarCancelarTutoria} color="primary">
+						Cancelar
+          			</Button>
+					  <Button onClick={handleConfirmarCancelarTutoria} color="primary">
+						Aceptar
           			</Button>
 				</DialogActions>
 			</Dialog>
