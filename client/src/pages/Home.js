@@ -80,13 +80,13 @@ const Home = memo(props => {
                         path={props.path}
                         /> : <Redirect to={'/'}/>}
                     </Route>
-                    <Route path="/tutorado/dashboard-inicio">
+                    <Route path="/tutorado/sesiones">
                         {pupilAccess() ?
                              <DashboardInicio classes={classes} />
                              : <Redirect to ={'/'} />
                          }
                     </Route>
-                    <Route path="/tutorado/dashboard-fin">
+                    <Route path="/tutorado/agendar">
                         {pupilAccess() ?
                         <DashboardFin classes={classes} />
                         : <Redirect to={'/'} />

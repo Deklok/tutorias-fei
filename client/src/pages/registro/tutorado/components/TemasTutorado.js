@@ -53,7 +53,7 @@ const TemasTutorado = memo(props => {
   );
   function deleteSession(){
     cancelarReserva();
-    window.location="/tutorado/dashboard-inicio";
+    window.location="/tutorado/sesiones";
   }
 
   function validate(){
