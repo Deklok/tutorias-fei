@@ -40,7 +40,7 @@ const Main = memo(props => {
   	const route = process.env.REACT_APP_API_SERVER;
   	
 	const comenzarTutoria = () =>{
-		axios.post('http://localhost:5000/api/db/updateTutorshipStatus', {
+		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
 	      idTutorship: idTutorship,
 	      idTutor: tutor,
 	      new_status: 1
@@ -53,7 +53,7 @@ const Main = memo(props => {
 	}
 
 	const finalizarTutoria = () =>{
-		axios.post('http://localhost:5000/api/db/updateTutorshipStatus', {
+		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
 	      idTutorship: idTutorship,
 	      idTutor: tutor,
 	      new_status: 2
@@ -82,7 +82,7 @@ const Main = memo(props => {
 
 	async function getNextTutorship(){
 		if(connect){
-			return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+			return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
 		      idTutor: tutor
 		    },{
 		      headers: { Authorization: token + ";" + role }

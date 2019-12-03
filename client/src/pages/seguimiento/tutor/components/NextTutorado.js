@@ -87,7 +87,7 @@ const NextTutorado = memo(props => {
 
   async function comenzar() {
     if(connect){
-      return axios.post('http://localhost:5000/api/db/updateStatus', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
         idTutorship: 1,
         idPupil: tutorado['studentId'],
         new_status: 1,
@@ -101,7 +101,7 @@ const NextTutorado = memo(props => {
 
   async function pass() {
     if(connect){
-      return axios.post('http://localhost:5000/api/db/updateStatus', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
         idTutorship: 1,
         idPupil: tutorado['studentId'],
         new_status: 2,

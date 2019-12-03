@@ -36,7 +36,7 @@ if (cookie) {
 }
 
 function cargarDatos() {
-  return axios.post('http://localhost:5000/api/db/tutorData', {
+  return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/tutorData', {
       username: username,
     },{
       headers: { Authorization: token + ";" + role }
@@ -45,7 +45,7 @@ function cargarDatos() {
 
 function cargarTutorados(connect) {
   if (connect){
-    return axios.post('http://localhost:5000/api/db/sessions', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/sessions', {
       idTutorship: 1,
     },{
       headers: { Authorization: token + ";" + role }
@@ -74,7 +74,7 @@ const Dashboard = memo(props => {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   async function getNextTutorship(){
-    return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
       idTutor: personnelNum
     },{
       headers: { Authorization: token + ";" + role }

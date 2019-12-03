@@ -38,7 +38,7 @@ const DashboardFin = memo(props => {
   }
 
   async function cargarDatos() {
-    return axios.post('http://localhost:5000/api/db/pupilData', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/pupilData', {
       studentId: username,
     });
   }

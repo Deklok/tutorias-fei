@@ -39,18 +39,18 @@ const DashboardInicio = memo(props => {
   }
 
   async function cargarDatos() {
-    return axios.post('http://localhost:5000/api/db/pupilData', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/pupilData', {
       studentId: username,
     });
   }
 
   async function obtenerTutoria(){
-    return axios.post('http://localhost:5000/api/db/getTutorship',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getTutorship',{
       idTutorship: 28
     });
   }
   async function obtenerIDs() {
-    return axios.post('http://localhost:5000/api/db/getcareerBlock', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getcareerBlock', {
       idPupil: username,
     });
   }
@@ -67,7 +67,7 @@ const DashboardInicio = memo(props => {
   var idTutorship = 28;
   
   async function obtenerBloque(){
-    return axios.post('http://localhost:5000/api/db/getOneBlock',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getOneBlock',{
       idCareer: idCareer,
       idTutorship: idTutorship
     });

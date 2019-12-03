@@ -74,7 +74,7 @@ const DashboardTutorado = memo(props => {
     var user = utilities.splitCookie(cookies.get('token')).id;
     var token = utilities.splitCookie(cookies.get('token')).token;
     var role = utilities.splitCookie(cookies.get('token')).session;
-    return axios.post('http://localhost:5000/api/db/pupilData', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/pupilData', {
       studentId: user
     },
       {

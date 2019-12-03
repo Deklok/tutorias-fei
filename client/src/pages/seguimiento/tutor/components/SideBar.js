@@ -44,6 +44,9 @@ const SideBar = memo(props => {
 	const [feedbackRoute, setFeedbackRoute] = React.useState(false);
 	const [mainRoute, setMainRoute] = React.useState(false);
 	const [adjustRoute, setAdjustRoute] = React.useState(false);
+	const [username, setUsername] = React.useState("");
+	const [password, setPassword] = React.useState("");
+	const [errors, setErrors] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -65,7 +68,21 @@ const SideBar = memo(props => {
 	};
 
 	const handleLogin = () => {
-		setLoginDialog(false);
+		setErrors(false);
+		if (username.length < 2 || username.length < 2) {
+			setErrors(true);
+		} else {
+			axios.post(process.env.REACT_APP_API_SERVER + 'api/dataimport/tutor', {
+				user: username,
+				pass: password
+			},{
+				headers: { Authorization: token + ";" + role }
+			}).then(function(response){
+				setLoginDialog(false);
+			}).catch(function(err){
+				console.log(err.response);
+			});
+		}
 	}
 
 	const handleConfirmarCancelarTutoria = () => {
@@ -236,6 +253,8 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 						label="Matrícula"
 						type="email"
 						fullWidth
+						error={errors}
+						onChange={e=>setUsername(e.target.value)}
 					/>
 					<TextField
 						autoFocus
@@ -244,6 +263,8 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 						label="Contraseña"
 						type="password"
 						fullWidth
+						error={errors}
+						onChange={e=>setPassword(e.target.value)}
 					/>
 				</DialogContent>
 				<DialogActions>

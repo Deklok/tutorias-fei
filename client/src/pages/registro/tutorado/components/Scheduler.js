@@ -35,7 +35,7 @@ const Schedule = memo(props => {
   }
 
   async function getSessions() {
-    return axios.post('http://localhost:5000/api/db/getBlockSessions', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlockSessions', {
       idBlock: 39
     });
   }
@@ -80,7 +80,7 @@ const Schedule = memo(props => {
   }
 
     async function reservarSesion(matricula, idBlock, fechaI, horaI, fechaF, horaF){
-      return axios.post('http://localhost:5000/api/db/reserveSession', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/reserveSession', {
         startTime: fechaI+" "+horaI,
         endTime: fechaF+" "+horaF,
         idBlock: idBlock,

@@ -22,7 +22,7 @@ const Indicacion = memo(props => {
     }
 
     async function cargarDatos() {
-        return axios.post('http://localhost:5000/api/db/getSession', {
+        return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSession', {
           idPupil: username
         });
       }

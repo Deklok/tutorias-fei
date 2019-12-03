@@ -148,7 +148,7 @@ const Inicio = memo(props =>  {
         setAccountError(false);
         // http://localhost:5000/api/user/login
         // http://localhost:5000/api/test/session
-        axios.post('http://localhost:5000/api/test/session', {
+        axios.post(process.env.REACT_APP_API_SERVER + 'api/test/session', {
           user: username,
           pass: password,
           withCredentials: true,
@@ -159,7 +159,7 @@ const Inicio = memo(props =>  {
               cookies.set('token', 'id=' + username + ';token=' + result.data);
               axios({
                 method: 'post',
-                url: 'http://localhost:5000/api/auth',
+                url: process.env.REACT_APP_API_SERVER + 'api/auth',
                 headers: { Authorization: result.data }
               })
                 .then((result) => {

@@ -86,7 +86,7 @@ export default function Schedule(props) {
   async function saveTutorialship() {
     var month = date.getMonth() + 1;
       var id = utilities.splitCookie(cookies.get('token')).id;
-      return axios.post('http://localhost:5000/api/db/addTutorship', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addTutorship', {
         place: place,
         tutorshipNum: tutorshipNum,
         period: period,
@@ -103,7 +103,7 @@ export default function Schedule(props) {
   async function saveBlock() {
     var start = startDate.getHours() + ":" + startDate.getMinutes() + ":" + startDate.getMilliseconds();
       var end = endDate.getHours() + ":" + endDate.getMinutes() + ":" + endDate.getMilliseconds();
-      return axios.post('http://localhost:5000/api/db/addBlock', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addBlock', {
         idCareer: 5, // 5 = career general
         start: start,
         end: end,
@@ -115,7 +115,7 @@ export default function Schedule(props) {
 
   async function saveEmail() {
     //var id = utilities.splitCookie(cookies.get('token')).id;
-      return axios.post('http://localhost:5000/api/notify/email/signup', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/notify/email/signup', {
         user: personnelNum,
         email: email
       }, {
@@ -125,7 +125,7 @@ export default function Schedule(props) {
 
   async function getPersonnelNumTutor(){
     var id = utilities.splitCookie(cookies.get('token')).id;
-    return axios.post('http://localhost:5000/api/db/getpersonnelNumTutor',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getpersonnelNumTutor',{
       username: id
     },{
       headers: { Authorization: token + ";" + role }
@@ -133,7 +133,7 @@ export default function Schedule(props) {
   }
 
   async function getPupil() {
-    return axios.post('http://localhost:5000/api/db/getAllPupilByTutor', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getAllPupilByTutor', {
       //userName: 'Z13011798'
       personnelNum: personnelNum
       }, {
@@ -142,7 +142,7 @@ export default function Schedule(props) {
   }
 
   async function getNextTutorship(){
-    return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
         idTutor: personnelNum
       },{
         headers: { Authorization: token + ";" + role }

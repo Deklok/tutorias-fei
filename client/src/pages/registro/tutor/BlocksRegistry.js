@@ -38,7 +38,7 @@ export default class BlocksRegistry extends Component {
   route = process.env.REACT_APP_API_SERVER;
   
   getPersonnelNumTutor(){
-    return axios.post('http://localhost:5000/api/db/getpersonnelNumTutor',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getpersonnelNumTutor',{
       username: this.username
     },{
       headers: { Authorization: this.token + ";" + this.role }
@@ -46,7 +46,7 @@ export default class BlocksRegistry extends Component {
   }
 
   getLastTutorship(personnelNum) {
-    return axios.post('http://localhost:5000/api/db/lastTutorship', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/lastTutorship', {
       idTutor: personnelNum
     }, {
       headers: {Authorization: this.token + ";" + this.role}
@@ -54,7 +54,7 @@ export default class BlocksRegistry extends Component {
   }
 
   getBlocks(idTutorship, idCareer) {
-    return axios.post('http://localhost:5000/api/db/getBlock', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlock', {
       idCareer: idCareer,
       idTutorship: idTutorship
     });
@@ -62,7 +62,7 @@ export default class BlocksRegistry extends Component {
 
   saveBlock = (block) => {
     const idTutorship = this.state.tutorship;
-    return axios.post('http://localhost:5000/api/db/addBlock', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addBlock', {
       idCareer: block.idCareer,
       start: block.start,
       end: block.end,
@@ -73,7 +73,7 @@ export default class BlocksRegistry extends Component {
   }
 
   editBlock = (block) => {
-    return axios.post('http://localhost:5000/api/db/updateBlock', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateBlock', {
       idBlock: block.idBlock,
       idCareer: block.idCareer,
       start: block.start,

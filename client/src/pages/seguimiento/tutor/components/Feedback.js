@@ -63,7 +63,7 @@ const Feedback = memo(props => {
   const[exists, setExists] = React.useState(true);
   async function cargarFeedback() {
     if(connect){
-      return axios.post('http://localhost:5000/api/db/feedback/get', {
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/feedback/get', {
         idTutorship: idTutorship,
       },{
         headers: { Authorization: token + ";" + role }
@@ -74,7 +74,7 @@ const Feedback = memo(props => {
   }
 
   function getCurrentTutorship(){
-    return axios.post('http://localhost:5000/api/db/getNextTutorship', {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
         idTutor: tutor
       },{
         headers: { Authorization: token + ";" + role }

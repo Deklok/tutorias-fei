@@ -86,7 +86,7 @@ const CurrentTutorado = memo(props => {
 
   function finalizarTutoria(){
     console.log(currentPupil['studentId']);
-    axios.post('http://localhost:5000/api/db/updateStatus', {
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
       idTutorship: 1,
       idPupil: currentPupil['studentId'],
       new_status: 3

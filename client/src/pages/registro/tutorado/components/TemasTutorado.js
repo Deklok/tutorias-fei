@@ -33,7 +33,7 @@ const TemasTutorado = memo(props => {
   }
 
   async function obtenerSesion(){
-    return axios.post('http://localhost:5000/api/db/getSpecificSessionData',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSpecificSessionData',{
       idPupil: username
     });
   }
@@ -44,13 +44,13 @@ const TemasTutorado = memo(props => {
     }).catch(console.log);
 
   async function cancelarReserva(){
-    return axios.post('http://localhost:5000/api/db/deleteSession',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/deleteSession',{
       idSession: idSession
     });
   }
 
   async function agendarSession(topics){
-    return axios.post('http://localhost:5000/api/db/addSession',{
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addSession',{
       idSession: idSession,
       topics: topics
     });
