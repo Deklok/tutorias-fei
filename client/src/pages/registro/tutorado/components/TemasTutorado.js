@@ -57,12 +57,13 @@ const TemasTutorado = memo(props => {
       topics: topics
     });
   }
-  function denegar() {
-    notifier.error("Estás utilizando caracteres inválidos, solo puedes usar letras, numeros y letras acentudas:  ", {
+  function denegar(mensaje) {
+    notifier.error(mensaje, {
       position: "top-right",
       autoClose: 3000
     });
   };
+
   return (
     <React.Fragment>
       {mainTutorado && <Redirect to="/tutorado"/>}
@@ -89,16 +90,20 @@ const TemasTutorado = memo(props => {
 
   function validate(){
     var tema = document.getElementById("tema").value;
-    var validador = /^[A-Za-zÀ-ú0-9 \n _]*[A-Za-zÀ-ú0-9][A-Za-zÀ-ú0-9 \n _]*$/;
-    var validador2 = /<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/;
+    var validador = /^[a-zA-Z0-9 , . ! ? \n ]*[A-Za-zÀ-ú0-9][A-Za-zÀ-ú0-9 , . ! ? \n _]*$/;
+    var valido = tema.replace(/&/g, "&amp; ").replace(/>/g, "&gt; ").replace(/</g, "&lt; ").replace(/"/g, "&quot; ");
     
     if (tema.trim().length != 0){
-      if(!tema.match(validador)){
-        denegar();
-      }else{
-        agendarSession(tema.trim());
-        console.log(username);
-        redirectToMainTutorado();
+      if(tema.length >= 501){
+        denegar("No se se permite el acceso de muchos temas, recuerda que solo tienes 15 minutos de tutoría");
+      } else {
+        if(!tema.match(validador)){
+          denegar("Lo siento pero estás usando caractéres inválidos, como \. \< \> \" \= entre otros, solo se permiten letras y números");
+        }else{
+          alert("Todo correcto");
+          agendarSession(tema.trim());
+          redirectToMainTutorado();
+        }
       }
     } else {
       tema = " ";

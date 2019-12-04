@@ -121,7 +121,7 @@ const DashboardFin = memo(props => {
             {/* Temas Tutorado */}
             <Grid item xs={12} sm={4} lg={5}>
               <Paper elevation={0} className={classes.sidebarAboutBox}>
-                <TemasTutorado/>
+                <TemasTutorado />
               </Paper>
             </Grid>
           </Grid>

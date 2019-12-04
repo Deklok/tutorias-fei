@@ -115,10 +115,8 @@ const DashboardTutorado = memo(props => {
     console.log(status);
     if(status == undefined){
       window.location.href = "/tutorado/sesiones";
-      //return <Redirect to="/tutorado/sesiones"/>
     } else if (status == 2){
       window.location.href = "/tutorado/agendar";
-      //return <Redirect to="/tutorado/agendar"/>
     }
   }
 
