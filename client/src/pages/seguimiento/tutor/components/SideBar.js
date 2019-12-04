@@ -46,7 +46,7 @@ const SideBar = memo(props => {
 	const [feedbackRoute, setFeedbackRoute] = React.useState(false);
 	const [mainRoute, setMainRoute] = React.useState(false);
 	const [adjustRoute, setAdjustRoute] = React.useState(false);
-	const [username, setUsername] = React.useState(utilities.splitCookie(cookie).id);
+	const [username, setUsername] = React.useState(utilities.splitCookie(cookies.get('token')).id);
 	const [password, setPassword] = React.useState("");
 	const [errors, setErrors] = React.useState(false);
 	const [authError, setAuthError] = React.useState(false);
