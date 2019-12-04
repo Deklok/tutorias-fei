@@ -27,6 +27,14 @@ const DashboardFin = memo(props => {
   const [nombre, setNombre] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
+  const [status, setStatus] = React.useState('');
+
+  async function getStatus(){
+    var user = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSessionStatus',{
+      idPupil: user
+    });
+  }
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -52,6 +60,28 @@ const DashboardFin = memo(props => {
       setMatricula(result.data[0][0]['studentId']);
       setEmail(result.data[0][0]['email']);
     }).catch(console.log);
+    
+  getStatus()
+  .then(result => {
+    if(result.data[0][0] == undefined){
+      setStatus(undefined);
+    }else{
+      setStatus(result.data[0][0]['status']);
+    }
+  }).catch(console.log);
+  
+  function redireccion(){
+    console.log(status);
+    if(status == undefined){
+      window.location.href = "/tutorado/sesiones";
+      //return <Redirect to="/tutorado/sesiones"/>
+    } else if (status == 3){
+      window.location.href = "/tutorado";
+      //return <Redirect to="/tutorado/agendar"/>
+    }
+  }
+
+  window.addEventListener("load", redireccion());
 
   return (
     <div className={classes.root}>

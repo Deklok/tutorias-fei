@@ -9,6 +9,8 @@ import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
+import notifier from 'simple-react-notifications';
+import 'simple-react-notifications/dist/index.css';
 
 const TemasTutorado = memo(props => {
   const [idSession, setIdSession] = React.useState('');
@@ -55,7 +57,12 @@ const TemasTutorado = memo(props => {
       topics: topics
     });
   }
-console.log(idSession);
+  function denegar() {
+    notifier.error("Estás utilizando caracteres inválidos, solo puedes usar letras, numeros y letras acentudas:  ", {
+      position: "top-right",
+      autoClose: 3000
+    });
+  };
   return (
     <React.Fragment>
       {mainTutorado && <Redirect to="/tutorado"/>}
@@ -87,7 +94,7 @@ console.log(idSession);
     
     if (tema.trim().length != 0){
       if(!tema.match(validador)){
-        alert("Estás usando caracteres inválidos, revisa tus datos");
+        denegar();
       }else{
         agendarSession(tema.trim());
         console.log(username);

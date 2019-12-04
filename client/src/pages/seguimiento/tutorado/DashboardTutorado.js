@@ -37,6 +37,14 @@ const DashboardTutorado = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(5);
+  const [status, setStatus] = React.useState('');
+
+  async function getStatus(){
+    var user = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSessionStatus',{
+      idPupil: user
+    });
+  }
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -93,6 +101,28 @@ const DashboardTutorado = memo(props => {
       notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
     }).catch(console.log);
   },[]);
+  
+  getStatus()
+  .then(result => {
+    if(result.data[0][0] == undefined){
+      setStatus(undefined);
+    }else{
+      setStatus(result.data[0][0]['status']);
+    }
+  }).catch(console.log);
+  
+  function redireccion(){
+    console.log(status);
+    if(status == undefined){
+      window.location.href = "/tutorado/sesiones";
+      //return <Redirect to="/tutorado/sesiones"/>
+    } else if (status == 2){
+      window.location.href = "/tutorado/agendar";
+      //return <Redirect to="/tutorado/agendar"/>
+    }
+  }
+
+  window.addEventListener("load", redireccion());
 
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
   Estimados tutorados

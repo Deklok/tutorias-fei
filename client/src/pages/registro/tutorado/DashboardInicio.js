@@ -15,6 +15,7 @@ import Schedule from './components/Scheduler';
 import { notifications } from '../../pushOneSignal';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
+import { Redirect } from 'react-router-dom';
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
@@ -30,6 +31,19 @@ const DashboardInicio = memo(props => {
   const [fecha, setFecha] = React.useState('');
   const [career, setIdCareer] = React.useState('');
   const [tutorship, setIdTutorship] = React.useState('');
+  const [status, setStatus] = React.useState('');
+  const [mainTutorado, setRouteMainTutorado] = React.useState(false);
+  const [sessionsTutorado, setRouteAgendarTutorado] = React.useState(false);
+
+  const redirectToMainTutorado = () => {
+    setRouteMainTutorado(true);
+    setRouteAgendarTutorado(false);
+  }
+  
+  const redirectToAgendarTutorado = () => {
+    setRouteMainTutorado(false);
+    setRouteAgendarTutorado(true);
+  }
   
   const cookies = new Cookies();
   var cookie = cookies.get('token');
@@ -55,13 +69,36 @@ const DashboardInicio = memo(props => {
     });
   }
   
+  async function getStatus(){
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSessionStatus',{
+      idPupil: username
+    });
+  }
+  
   obtenerIDs()
   .then(result => {
     setIdCareer(result.data[0][0]['idCareer']);
     setIdTutorship(result.data[0][0]['idTutorship']);
   }).catch(console.log);
 
-  console.log(tutorship);
+  getStatus()
+  .then(result => {
+    if(result.data[0][0] != undefined){
+      setStatus(result.data[0][0]['status']);
+    }
+  }).catch(console.log);
+
+  function redireccion(){
+    if(status == 3){
+      window.location.href = "/tutorado";
+      //return <Redirect to="/tutorado"/>
+    } else if (status == 2){
+      window.location.href = "/tutorado/agendar";
+      //return <Redirect to="/tutorado/agendar"/>
+    }
+  }
+
+  redireccion();
 
   var idCareer = 5;
   var idTutorship = 28;
