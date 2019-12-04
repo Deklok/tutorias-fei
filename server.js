@@ -138,7 +138,7 @@ app.post('/api/auth', (req,res) => {
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available (Probably you are trying to connect outside UV network)
-*   200 = Authenticated
+*   200 = Authenticated + session ID
 *   404 = Not authenticated (not found/wrong password)
 */
 app.post('/api/user/login', function (request, res){
@@ -152,8 +152,12 @@ app.post('/api/user/login', function (request, res){
     } else {
       request.session.role = true;
     }
-    console.log(request.session.id);
-    res.status(response).send(request.session.id);
+    if (response == 200) {
+      console.log(request.session.id);
+      res.status(response).send(request.session.id);
+    } else {
+      res.sendStatus(response);
+    }
   });
  } else {
   res.sendStatus(400);
@@ -321,7 +325,7 @@ app.post('/api/db/sessions', (req,res) => {
 * 400: Param excepected
 */
 app.post('/api/db/isagree', (req,res) => {
-  var userId = req.body.userId;
+  var userId = req.body.user;
   if (userId) {
     var isAgree = false;
     if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
@@ -350,8 +354,8 @@ app.post('/api/db/isagree', (req,res) => {
 * 201: Agreement state changed
 * 500: DB error
 */
-app.post('/api/db/agreement', (req,res) => {
-  var userId = req.body.userId;
+app.post('/api/db/setAgreement', (req,res) => {
+  var userId = req.body.user;
   if (userId) {
     var code = 201;
     if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {

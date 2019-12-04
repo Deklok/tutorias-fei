@@ -46,7 +46,7 @@ const SideBar = memo(props => {
 	const [feedbackRoute, setFeedbackRoute] = React.useState(false);
 	const [mainRoute, setMainRoute] = React.useState(false);
 	const [adjustRoute, setAdjustRoute] = React.useState(false);
-	const [username, setUsername] = React.useState("");
+	const [username, setUsername] = React.useState(utilities.splitCookie(cookie).id);
 	const [password, setPassword] = React.useState("");
 	const [errors, setErrors] = React.useState(false);
 	const [authError, setAuthError] = React.useState(false);
@@ -149,7 +149,7 @@ const SideBar = memo(props => {
 	}
 
 	async function cancelarTutoria(){
-		axios.post(route+'api/db/updateTutorshipStatus', {
+		axios.post(route + 'api/db/updateTutorshipStatus', {
 	      idTutorship: idTutorship,
 	      idTutor: tutor,
 	      new_status: 3
@@ -158,8 +158,23 @@ const SideBar = memo(props => {
 	    });
 	}
 	async function notifyAllCanceledDay(){
-		axios.post(route+'api/notify/student/canceledday', {
-	      user: tutor
+		axios.post(route + 'api/notify/student/canceledday', {
+	      user: username
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
+	//FALTAN DE INTEGRAR
+	async function checkIsAgree(){
+		axios.post(route + 'api/db/isagree', {
+	      user: username
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
+	async function setAgreement(){
+		axios.post(route + 'api/db/setAgreement', {
+	      user: username
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
@@ -237,8 +252,8 @@ const SideBar = memo(props => {
 				<DialogTitle id="scroll-dialog-title">Aviso de Privacidad</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcionen.\n
-Sus datos personales serán utilizados para le proporcionar los correspondientes registros de sus tutorados.Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.\n
+						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcionen.
+Sus datos personales serán utilizados para le proporcionar los correspondientes registros de sus tutorados.Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.
 Se informa que no realizarán transferencias que requieren su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados.
 					</DialogContentText>
 					<FormControlLabel

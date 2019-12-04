@@ -114,13 +114,16 @@ export default function Schedule(props) {
   }
 
   async function saveEmail() {
-    //var id = utilities.splitCookie(cookies.get('token')).id;
+    var id = utilities.splitCookie(cookies.get('token')).id;
+    console.log("Email notifications for ", id);
+    /*
       return axios.post(process.env.REACT_APP_API_SERVER + 'api/notify/email/signup', {
         user: personnelNum,
         email: email
       }, {
         headers: { Authorization: token + ";" + role }
       });
+    */
   }
 
   async function getPersonnelNumTutor(){
