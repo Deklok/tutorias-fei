@@ -1,6 +1,8 @@
 import React, { memo } from 'react';
 import { Redirect } from 'react-router-dom';
+import notifier from 'simple-react-notifications';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import Typography from '@material-ui/core/Typography';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
@@ -47,6 +49,7 @@ const SideBar = memo(props => {
 	const [username, setUsername] = React.useState("");
 	const [password, setPassword] = React.useState("");
 	const [errors, setErrors] = React.useState(false);
+	const [authError, setAuthError] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -69,18 +72,38 @@ const SideBar = memo(props => {
 
 	const handleLogin = () => {
 		setErrors(false);
+		setAuthError(false);
 		if (username.length < 2 || username.length < 2) {
 			setErrors(true);
 		} else {
-			axios.post(process.env.REACT_APP_API_SERVER + 'api/dataimport/tutor', {
+			axios.post(route + 'api/dataimport/tutor', {
 				user: username,
 				pass: password
 			},{
 				headers: { Authorization: token + ";" + role }
 			}).then(function(response){
-				setLoginDialog(false);
+				if (response.data.auth_error) {
+					setAuthError(true);
+				} else {
+					if (response.data.scraper_error || response.data.persistence_error) {
+						notifier.error("Error en el proceso de importación - Error de servidor", {
+							position: "top-right",
+							autoClose: 3000
+						});
+					} else {
+						notifier.success("La importación de datos se ha realizado correctamente", {
+							position: "top-right",
+							autoClose: 3000
+						});
+					}
+					setLoginDialog(false);
+				}
 			}).catch(function(err){
 				console.log(err.response);
+				notifier.error("Error en el proceso de importación - Error inesperado", {
+					position: "top-right",
+					autoClose: 3000
+				});
 			});
 		}
 	}
@@ -246,6 +269,7 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 					<DialogContentText>
 						Es necesario que revalide sus credenciales para continuar
 					</DialogContentText>
+					{ authError && <Typography color="error" variant="caption"> Cuenta no existente o contraseña incorrecta. Porfavor compruebe sus datos </Typography> }
 					<TextField
 						autoFocus
 						margin="dense"
