@@ -15,7 +15,6 @@ import Schedule from './components/Scheduler';
 import { notifications } from '../../pushOneSignal';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
-import { Redirect } from 'react-router-dom';
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
@@ -29,21 +28,7 @@ const DashboardInicio = memo(props => {
   const [finBloque, setFinBloque] = React.useState('');
   const [lugar, setLugar] = React.useState('');
   const [fecha, setFecha] = React.useState('');
-  const [career, setIdCareer] = React.useState('');
-  const [tutorship, setIdTutorship] = React.useState('');
   const [status, setStatus] = React.useState('');
-  const [mainTutorado, setRouteMainTutorado] = React.useState(false);
-  const [sessionsTutorado, setRouteAgendarTutorado] = React.useState(false);
-
-  const redirectToMainTutorado = () => {
-    setRouteMainTutorado(true);
-    setRouteAgendarTutorado(false);
-  }
-  
-  const redirectToAgendarTutorado = () => {
-    setRouteMainTutorado(false);
-    setRouteAgendarTutorado(true);
-  }
   
   const cookies = new Cookies();
   var cookie = cookies.get('token');
@@ -63,23 +48,12 @@ const DashboardInicio = memo(props => {
       idTutorship: 28
     });
   }
-  async function obtenerIDs() {
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getcareerBlock', {
-      idPupil: username,
-    });
-  }
   
   async function getStatus(){
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSessionStatus',{
       idPupil: username
     });
   }
-  
-  obtenerIDs()
-  .then(result => {
-    setIdCareer(result.data[0][0]['idCareer']);
-    setIdTutorship(result.data[0][0]['idTutorship']);
-  }).catch(console.log);
 
   getStatus()
   .then(result => {
@@ -91,10 +65,8 @@ const DashboardInicio = memo(props => {
   function redireccion(){
     if(status == 3){
       window.location.href = "/tutorado";
-      //return <Redirect to="/tutorado"/>
     } else if (status == 2){
       window.location.href = "/tutorado/agendar";
-      //return <Redirect to="/tutorado/agendar"/>
     }
   }
 
@@ -152,7 +124,7 @@ const DashboardInicio = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar" href="/">
+            <IconButton color="inherit" label="Cerrar" href="/logout">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>

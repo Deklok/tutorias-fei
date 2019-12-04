@@ -19,20 +19,30 @@ const Schedule = memo(props => {
   const lugar = props.lugar;
   const fecha = props.fecha;
   const matricula = props.matricula;
-  const [open, setOpen] = React.useState(true);
   const [sessions, setSessions] = React.useState('');
   const [agendarRoute, setAgendarRoute] = React.useState(false);
+  const [career, setIdCareer] = React.useState('');
+  const [tutorship, setIdTutorship] = React.useState('');
+  const cookies = new Cookies();
   
   const redirectToAgendar = () => {
     setAgendarRoute(true);
   }
-
-  const cookies = new Cookies();
-  var cookie = cookies.get('token');
-  var username;
-  if (cookie) {
-    username = utilities.splitCookie(cookie).id;
+  
+  async function obtenerIDs() {
+    var user = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getcareerBlock', {
+      idPupil: user,
+    });
   }
+  
+  obtenerIDs()
+  .then(result => {
+    setIdCareer(result.data[0][0]['idCareer']);
+    setIdTutorship(result.data[0][0]['idTutorship']);
+  }).catch(console.log);
+
+  console.log(career + " - " + tutorship);
 
   async function getSessions() {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlockSessions', {

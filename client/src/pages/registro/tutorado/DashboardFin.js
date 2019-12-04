@@ -22,7 +22,6 @@ import utilities from '../../../utilities';
 
 const DashboardFin = memo(props => {
   const classes = props.classes;
-  const [open, setOpen] = React.useState(true);
   const [matricula, setMatricula] = React.useState('');
   const [nombre, setNombre] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -74,10 +73,8 @@ const DashboardFin = memo(props => {
     console.log(status);
     if(status == undefined){
       window.location.href = "/tutorado/sesiones";
-      //return <Redirect to="/tutorado/sesiones"/>
     } else if (status == 3){
       window.location.href = "/tutorado";
-      //return <Redirect to="/tutorado/agendar"/>
     }
   }
 
@@ -97,7 +94,7 @@ const DashboardFin = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar" href="/">
+            <IconButton color="inherit" label="Cerrar" href="/logout">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
