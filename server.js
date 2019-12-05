@@ -5,12 +5,11 @@ const bodyParser = require('body-parser');
 const miuvws = require('./server/miuvws/miuv.js');
 const database = require('./server/db/database.js');
 const session = require('express-session');
-var MemoryStore = require('memorystore')(session)
+var MemoryStore = require('memorystore')(session);
 const cors = require('cors');
 const app = express();
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
-const emailpush = require('./server/webpush/emailIntegration.js');
 const director = require('./requestDirector.js');
 const dataimport = require('./server/dataimport/dataimport');
 
@@ -68,7 +67,7 @@ function hasSession(req,res,next) {
 
   }
 }
-app.all('/api',hasSession);
+//app.all('/api',hasSession);
 
 app.post('/api/test/session', (request,res) => {
   var userId = request.body.user;
@@ -173,16 +172,30 @@ app.post('/api/user/login', function (request, res){
 *   200 = Suscribed
 */
 app.post('/api/notify/email/signup',async function (request, res){
-  var tutorId = request.body.user;
+  var personnelNum = request.body.user;
   var email = request.body.email;
-  if (tutorId && email) {
-    var emailToPushRecord = {emailAddress: email,
-              externalId: tutorId};
-    var code = await emailpush.registerEmailToNotification(emailToPushRecord);
+  if (personnelNum && email) {
+    var dataToPushRecord = {emailAddress: email,
+              id: personnelNum};
+    var code = await director.setupTutorEmail(dataToPushRecord);
     res.sendStatus(code);
-    if (code == 200) {
-      database.saveTutorSuscribedOn(tutorId);
-    }
+  } else {
+    res.sendStatus(400);
+  }
+});
+/*
+*Service to reset professor to email notifications.
+*NOTE: ONLY FOR PROFESSOR
+*Param: user = extenal professor ID/username (magarcia)
+*   400 = Parameters needed
+*   500 = Service not available
+*   200 = reset email and status
+*/
+app.post('/api/notify/email/reset',async function (request, res){
+  var username = request.body.user;
+  if (username) {
+    var code = await director.resetTutorEmail(username);
+    res.sendStatus(code);
   } else {
     res.sendStatus(400);
   }

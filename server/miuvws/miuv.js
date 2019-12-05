@@ -62,7 +62,7 @@ function getPersonalData(user,pass) {
                         career: career
                     }
                 }
-                console.log(finalResponse);
+                console.log(user, " data");
                 return finalResponse;
             }).catch(function (err) {
                 console.log(err);
@@ -168,7 +168,7 @@ function getTutorData(user,pass) {
             }).catch(function (err) {
                 console.log(err);
             });
-        console.log(finalResponse);
+        console.log(user, " data");
         resolve(promiseResponse);
     });
     return promise;

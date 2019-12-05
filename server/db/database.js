@@ -73,7 +73,28 @@ function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData, username) {
 		});
 	});
 }
-
+function getStudentSuscribedStatus(studentId){
+	return new Promise((resolve, reject) => {
+		pool.query('SELECT isEmailSuscribed FROM Pupil WHERE studentId = ?',[studentId],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+function getTutorSuscribedStatus(personnelNum){
+	return new Promise((resolve, reject) => {
+		pool.query('SELECT isEmailSuscribed FROM Tutor WHERE personnelNum = ?',[personnelNum],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
 function saveStudentSuscribedOn(studentId){
 	return new Promise((resolve, reject) => {
 		pool.query('UPDATE Pupil SET isEmailSuscribed = 1 WHERE studentId = ?',[studentId],(err, results) => {
@@ -85,9 +106,9 @@ function saveStudentSuscribedOn(studentId){
 		});
 	});
 }
-function saveTutorSuscribedOn(personnelNum){
+function updateTutorSuscribedStatus(username, status){
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor SET isEmailSuscribed = 1 WHERE personnelNum = ?',[personnelNum],(err, results) => {
+		pool.query('UPDATE Tutor SET isEmailSuscribed = ? WHERE username = ?',[status, username],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -99,6 +120,17 @@ function saveTutorSuscribedOn(personnelNum){
 function updateStudentData(email, idCareer, studentId){
 	return new Promise((resolve, reject) => {
 		pool.query('UPDATE Pupil SET email = ?, idCareer = ? WHERE studentId = ?',[email, idCareer, studentId],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results);
+			}
+		});
+	});
+}
+function updateTutorEmail(email, personnelNum){
+	return new Promise((resolve, reject) => {
+		pool.query('UPDATE Tutor SET contact = ? WHERE personnelNum = ?',[email, personnelNum],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -395,7 +427,6 @@ function updateTutorshipStatus(idTutorship,idTutor, new_status){
 }
 
 function getNextTutorship(idTutor){
-	console.log(idTutor)
 	return new Promise((resolve,reject) => {
         pool.query('CALL sp_getNextTutorship(?)',[idTutor],(err,results) => {
             if(err){
@@ -408,7 +439,6 @@ function getNextTutorship(idTutor){
 }
 
 function getLastTutorship(idTutor) {
-
     return new Promise((resolve, reject) => {
 
         pool.query('SELECT * FROM Tutorship WHERE idTutor = ? ORDER BY idTutorship DESC LIMIT 1', [idTutor], (err, results) => {
@@ -454,8 +484,11 @@ module.exports = {
 	getTutorUsernameFromPupil: getTutorUsernameFromPupil,
 	saveStudentSuscribedOn: saveStudentSuscribedOn,
 	updateStudentData: updateStudentData,
+	updateTutorEmail: updateTutorEmail,
 	getIdCareer: getIdCareer,
-	saveTutorSuscribedOn: saveTutorSuscribedOn,
+	getStudentSuscribedStatus: getStudentSuscribedStatus,
+	getTutorSuscribedStatus: getTutorSuscribedStatus,
+	updateTutorSuscribedStatus: updateTutorSuscribedStatus,
 	isTutorPrivacyAgreement: isTutorPrivacyAgreement,
 	isPupilPrivacyAgreement: isTutorPrivacyAgreement,
 	setPupilPrivacyAgreement: setPupilPrivacyAgreement,

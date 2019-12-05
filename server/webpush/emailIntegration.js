@@ -27,6 +27,53 @@ async function registerEmailToNotification (emailToPushRecord) {
   return code;
 }
 
+async function resetTutorEmailToNotification (username) {
+  
+    var { success, emailRecordId } = await createSegment(username);
+  if (success) {
+    console.log(`segment record `, emailRecordId)
+    return 200;
+  } else {
+    return 500;
+  }
+}
+async function createSegment(username) {
+  const segmentName = "tempToDelete"; 
+  let emailRecordId;
+  try {
+    /* Create an email record */
+    {
+      const response = await fetch(
+        "https://onesignal.com/api/v1/apps/"+VARS.ONESIGNAL_APP_ID+"/segments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic " + VARS.ONESIGNAL_APP_REST_API_KEY
+          },
+          body: JSON.stringify({
+            name: segmentName,
+            device_type: 11,
+            include_external_user_ids: username,
+          })
+        });
+      emailRecordId = (await response);
+    }
+    if (emailRecordId) {
+      return {
+        success: true,
+        emailRecordId: emailRecordId,
+      };
+    }
+  } catch (e) {
+    console.error(`Error while creating segment record:`, e);
+    return {
+      success: false,
+      emailRecordId: emailRecordId,
+    };
+  }
+}
+
 /*
 * Worker function to connect to Onesignal system and register users
 */
@@ -52,7 +99,7 @@ async function createEmailRecordStudent(emailToPushRecord) {
             external_user_id: externalId,
           })
         }
-        );
+      );
       emailRecordId = (await response.json())["id"];
     }
     if (emailRecordId) {
@@ -109,5 +156,6 @@ async function createEmailRecordProfessor(emailToPushRecord) {
 }
 module.exports = {
   registerEmailToNotification: registerEmailToNotification,
+  resetTutorEmailToNotification: resetTutorEmailToNotification,
 }
 
