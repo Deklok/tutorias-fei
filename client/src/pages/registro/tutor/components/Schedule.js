@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{memo} from 'react';
 import './style.css';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
@@ -20,7 +20,7 @@ import { notifications } from '../../../pushOneSignal';
 const cors = require('cors');
 const cookies = new Cookies();
 
-export default function Schedule(props) {
+const Schedule = memo(props =>{
   const [tutorshipNum, setTutorshipNum] = React.useState(1);
   const [date, setDate] = React.useState(new Date());
   const [indications, setIndications] = React.useState('');
@@ -313,4 +313,6 @@ export default function Schedule(props) {
 
     </Dialog>
   );
-}
+});
+
+export default Schedule;
