@@ -378,7 +378,7 @@ app.post('/api/db/sessions', (req,res) => {
 * 200: true/false
 * 400: Param excepected
 */
-app.post('/api/db/isagree', (req,res) => {
+app.post('/api/db/isagree', async (req,res) => {
   var userId = req.body.user;
   if (userId) {
     var status = await director.checkAgreementStatus(userId);
@@ -395,7 +395,7 @@ app.post('/api/db/isagree', (req,res) => {
 * 500: DB error
 * 400: param expected
 */
-app.post('/api/db/setAgreement', (req,res) => {
+app.post('/api/db/setAgreement',async (req,res) => {
   var userId = req.body.user;
   if (userId) {
     var code = await director.setAgreementStatus(userId);
