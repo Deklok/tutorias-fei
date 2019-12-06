@@ -30,6 +30,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { notifications } from '../../pushOneSignal';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 const cookies = new Cookies();
 
@@ -38,6 +39,23 @@ const DashboardTutorado = memo(props => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(5);
   const [status, setStatus] = React.useState('');
+  const [sessionsTutorado, setRouteSessionsTutorado] = React.useState(false);
+  const [agendTutorado, setRouteAgendTutorado] = React.useState(false);
+  const [logout, setRouteLogout] = React.useState(false);
+
+  const redirectToSessionsTutorado = () => {
+    setRouteSessionsTutorado(true);
+    setRouteAgendTutorado(false);
+  }
+  
+  const redirectToAgendTutorado = () => {
+    setRouteSessionsTutorado(false);
+    setRouteAgendTutorado(true);
+  }
+  
+  const redirectToLogout = () => {
+    setRouteLogout(true);
+  }
 
   async function getStatus(){
     var user = utilities.splitCookie(cookies.get('token')).id;
@@ -70,6 +88,10 @@ const DashboardTutorado = memo(props => {
   const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
 
+  var user = utilities.splitCookie(cookies.get('token')).id;
+    var token = utilities.splitCookie(cookies.get('token')).token;
+    var role = utilities.splitCookie(cookies.get('token')).session;
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   function logout() {
@@ -79,9 +101,6 @@ const DashboardTutorado = memo(props => {
   }
 
   async function cargarDatos() {
-    var user = utilities.splitCookie(cookies.get('token')).id;
-    var token = utilities.splitCookie(cookies.get('token')).token;
-    var role = utilities.splitCookie(cookies.get('token')).session;
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/pupilData', {
       studentId: user
     },
@@ -93,34 +112,36 @@ const DashboardTutorado = memo(props => {
   React.useEffect(()=>{
     cargarDatos()
     .then(result => {
-      console.log(result);
-      setNombre(result.data[0][0]['name']);
-      setCarrera(result.data[0][0]['careerName']);
-      setMatricula(result.data[0][0]['studentId']);
-      setEmail(result.data[0][0]['email']);
-      notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+      console.log('Terminado');
+      if(result){
+        setNombre(result.data[0][0]['name']);
+        setCarrera(result.data[0][0]['careerName']);
+        setMatricula(result.data[0][0]['studentId']);
+        setEmail(result.data[0][0]['email']);
+        notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+        getStatus()
+        .then(result => {
+          if(result.data[0][0] == undefined){
+            setStatus(undefined);
+          }else{
+            setStatus(result.data[0][0]['status']);
+          }
+        })
+          redireccion();
+        }else{
+          console.log('Algo aslio mal');
+        }
     }).catch(console.log);
-  },[]);
-  
-  getStatus()
-  .then(result => {
-    if(result.data[0][0] == undefined){
-      setStatus(undefined);
-    }else{
-      setStatus(result.data[0][0]['status']);
-    }
-  }).catch(console.log);
+  },[nombre, status]);
   
   function redireccion(){
     console.log(status);
     if(status == undefined){
-      window.location.href = "/tutorado/sesiones";
+      redirectToSessionsTutorado();
     } else if (status == 2){
-      window.location.href = "/tutorado/agendar";
+      redirectToAgendTutorado();
     }
   }
-
-  window.addEventListener("load", redireccion());
 
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
   Estimados tutorados
@@ -144,137 +165,143 @@ const DashboardTutorado = memo(props => {
   `
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar>
-        <Toolbar>
-          <div id="userData" data-userid={matricula}></div>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
-          </Typography>
-          <Tooltip title="Fake Feedback">
-            <IconButton onClick={handleClickOpen} color="inherit">
-              <StarIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Cerrar Sesión">
-            <IconButton href="/logout" color="inherit" label="Cerrar">
-              <ExitToAppIcon />
-            </IconButton>
-          </Tooltip>
-        </Toolbar>
-        <Dialog open={open} disableBackdropClick
-          disableEscapeKeyDown
-          aria-labelledby="form-dialog-title">
-          <DialogTitle id="form-dialog-title">Retroalimentación</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Ha finalizado tu tutoría, por favor asigna una calificación
-						</DialogContentText>
-            <Box component="fieldset" mb={3} borderColor="transparent">
-              <Typography component="legend">Calificación</Typography>
-              <Rating
-                name="simple-controlled"
-                size="large"
-                value={value}
-                onChange={(event, newValue) => {
-                  setValue(newValue);
-                }}
-              />
-            </Box>
-            <DialogContentText>
-              ¿Hubo algún problema?
-						</DialogContentText>
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={state.Option1}
-                    onChange={handleChange('Option1')}
-                    value="Option1"
-                    color="primary"
-                  />
-                }
-                label="La información fue irrelevante"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={state.Option2}
-                    onChange={handleChange('Option2')}
-                    value="Option2"
-                    color="primary"
-                  />
-                }
-                label="No solucionó mis dudas"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={state.Option3}
-                    onChange={handleChange('Option3')}
-                    value="Option3"
-                    color="primary"
-                  />
-                }
-                label="Mi tutor no asistió/no llego a tiempo"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={state.Option4}
-                    onChange={handleChange('Option4')}
-                    value="Option4"
-                    color="primary"
-                  />
-                }
-                label="Espere mucho para ser atendido"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={state.Option5}
-                    onChange={handleChange('Option5')}
-                    value="Option5"
-                    color="primary"
-                  />
-                }
-                label="El tiempo no fue suficiente"
-              />
-            </FormGroup>
-          </DialogContent>
-          <DialogActions>
-            <Button color="primary" onClick={handleClose}>
-              Enviar
-						</Button>
-          </DialogActions>
-        </Dialog>
-      </AppBar>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Banner classes={classes} estado={false} />
-          <Grid container spacing={3}>
-            {/* Agenda */}
-            <Grid item xs={12} sm={8} lg={8} id="agenda">
-              <Typography variant="h6" gutterBottom>
-                Agenda
-		            </Typography>
-              <Divider />
-              <Agenda className={classes.markdown}>
-                {test}
-              </Agenda>
-            </Grid>
-            {/* Temas Tutorado */}
-            <Grid item xs={12} sm={4} lg={4}>
-              <Paper elevation={0} className={classes.sidebarAboutBox}>
-                <TemasTutorado />
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-      </main>
-    </div>
+          <div>
+            {sessionsTutorado && <Redirect to="/tutorado/sesiones"/>}
+            {agendTutorado && <Redirect to="/tutorado/agendar"/>}
+            <div className={classes.root}>
+              <CssBaseline />
+              <AppBar>
+                <Toolbar>
+                  <div id="userData" data-userid={matricula}></div>
+                  <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+                    {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
+                  </Typography>
+                  <Tooltip title="Fake Feedback">
+                    <IconButton onClick={handleClickOpen} color="inherit">
+                      <StarIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Cerrar Sesión">
+                    <IconButton color="inherit" label="Cerrar" onClick={redirectToLogout}>
+                      { logout && <Redirect to="/logout"/> }
+                      <ExitToAppIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Toolbar>
+                <Dialog open={open} disableBackdropClick
+                  disableEscapeKeyDown
+                  aria-labelledby="form-dialog-title">
+                  <DialogTitle id="form-dialog-title">Retroalimentación</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>
+                      Ha finalizado tu tutoría, por favor asigna una calificación
+                    </DialogContentText>
+                    <Box component="fieldset" mb={3} borderColor="transparent">
+                      <Typography component="legend">Calificación</Typography>
+                      <Rating
+                        name="simple-controlled"
+                        size="large"
+                        value={value}
+                        onChange={(event, newValue) => {
+                          setValue(newValue);
+                        }}
+                      />
+                    </Box>
+                    <DialogContentText>
+                      ¿Hubo algún problema?
+                    </DialogContentText>
+                    <FormGroup row>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={state.Option1}
+                            onChange={handleChange('Option1')}
+                            value="Option1"
+                            color="primary"
+                          />
+                        }
+                        label="La información fue irrelevante"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={state.Option2}
+                            onChange={handleChange('Option2')}
+                            value="Option2"
+                            color="primary"
+                          />
+                        }
+                        label="No solucionó mis dudas"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={state.Option3}
+                            onChange={handleChange('Option3')}
+                            value="Option3"
+                            color="primary"
+                          />
+                        }
+                        label="Mi tutor no asistió/no llego a tiempo"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={state.Option4}
+                            onChange={handleChange('Option4')}
+                            value="Option4"
+                            color="primary"
+                          />
+                        }
+                        label="Espere mucho para ser atendido"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={state.Option5}
+                            onChange={handleChange('Option5')}
+                            value="Option5"
+                            color="primary"
+                          />
+                        }
+                        label="El tiempo no fue suficiente"
+                      />
+                    </FormGroup>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="primary" onClick={handleClose}>
+                      Enviar
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              </AppBar>
+              <main className={classes.content}>
+                <div className={classes.appBarSpacer} />
+                <Container maxWidth="lg" className={classes.container}>
+                  <Banner classes={classes} estado={false} />
+                  <Grid container spacing={3}>
+                    {/* Agenda */}
+                    <Grid item xs={12} sm={8} lg={8} id="agenda">
+                      <Typography variant="h6" gutterBottom>
+                        Agenda
+                        </Typography>
+                      <Divider />
+                      <Agenda className={classes.markdown}>
+                        {test}
+                      </Agenda>
+                    </Grid>
+                    {/* Temas Tutorado */}
+                    <Grid item xs={12} sm={4} lg={4}>
+                      <Paper elevation={0} className={classes.sidebarAboutBox}>
+                        <TemasTutorado />
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                </Container>
+              </main>
+            </div> 
+          </div>
+          
   );
 });
 

@@ -15,10 +15,10 @@ import Schedule from './components/Scheduler';
 import { notifications } from '../../pushOneSignal';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
+import { Redirect } from 'react-router-dom';
 
 const DashboardInicio = memo(props => {
   const classes = props.classes;
-  const [open, setOpen] = React.useState(true);
   const [matricula, setMatricula] = React.useState('');
   const [nombre, setNombre] = React.useState('');
   const [email, setEmail] = React.useState('');
@@ -29,6 +29,25 @@ const DashboardInicio = memo(props => {
   const [lugar, setLugar] = React.useState('');
   const [fecha, setFecha] = React.useState('');
   const [status, setStatus] = React.useState('');
+  const [mainTutorado, setRouteMainTutorado] = React.useState(false);
+  const [agendTutorado, setRouteAgendTutorado] = React.useState(false);
+  const [logout, setRouteLogout] = React.useState(false);
+  const [career, setIdCareer] = React.useState('');
+  const [tutorship, setIdTutorship] = React.useState('');
+
+  const redirectToMainTutorado = () => {
+    setRouteMainTutorado(true);
+    setRouteAgendTutorado(false);
+  }
+  
+  const redirectToAgendTutorado = () => {
+    setRouteMainTutorado(false);
+    setRouteAgendTutorado(true);
+  }
+
+  const redirectToLogout = () => {
+    setRouteLogout(true);
+  }
   
   const cookies = new Cookies();
   var cookie = cookies.get('token');
@@ -54,23 +73,19 @@ const DashboardInicio = memo(props => {
       idPupil: username
     });
   }
-
-  getStatus()
-  .then(result => {
-    if(result.data[0][0] != undefined){
-      setStatus(result.data[0][0]['status']);
-    }
-  }).catch(console.log);
-
-  function redireccion(){
-    if(status == 3){
-      window.location.href = "/tutorado";
-    } else if (status == 2){
-      window.location.href = "/tutorado/agendar";
-    }
+  
+  async function obtenerIDs() {
+    var user = utilities.splitCookie(cookies.get('token')).id;
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getcareerBlock', {
+      idPupil: user,
+    });
   }
-
-  redireccion();
+  
+  obtenerIDs()
+  .then(result => {
+    setIdCareer(result.data[0][0]['idCareer']);
+    setIdTutorship(result.data[0][0]['idTutorship']);
+  }).catch(console.log);
 
   var idCareer = 5;
   var idTutorship = 28;
@@ -93,14 +108,30 @@ const DashboardInicio = memo(props => {
     }).catch(console.log);
   },[]);
 
-  cargarDatos()
+  React.useEffect(()=>{
+    cargarDatos()
     .then(result => {
-      setNombre(result.data[0][0]['name']);
-      setCarrera(result.data[0][0]['careerName']);
-      setMatricula(result.data[0][0]['studentId']);
-      setEmail(result.data[0][0]['email']);
-      notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+      console.log('Terminado');
+      if(result){
+        setNombre(result.data[0][0]['name']);
+        setCarrera(result.data[0][0]['careerName']);
+        setMatricula(result.data[0][0]['studentId']);
+        setEmail(result.data[0][0]['email']);
+        notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+        getStatus()
+        .then(result => {
+          if(result.data[0][0] == undefined){
+            setStatus(undefined);
+          }else{
+            setStatus(result.data[0][0]['status']);
+          }
+        })
+          redireccion();
+        }else{
+          console.log('Algo aslio mal');
+        }
     }).catch(console.log);
+  },[nombre, status]);
 
   obtenerTutoria()
         .then(result => {
@@ -109,10 +140,21 @@ const DashboardInicio = memo(props => {
           setLugar(result.data[0]['place']);
         }
       }).catch(console.log);
+      
+  function redireccion(){
+    if(status == 3){
+      redirectToMainTutorado();
+    } else if (status == 2){
+      redirectToAgendTutorado();
+    }
+  }
 
     return (
+      <div>
+      {mainTutorado && <Redirect to="/tutorado"/>}
+      {agendTutorado && <Redirect to="/tutorado/agendar"/>}
       <div className={classes.root}>
-        <CssBaseline />
+      <CssBaseline />
       <AppBar>
         <Toolbar>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -124,7 +166,8 @@ const DashboardInicio = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar" href="/logout">
+            <IconButton color="inherit" label="Cerrar" onClick={redirectToLogout}>
+              {logout && <Redirect to="/logout"/>}
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
@@ -150,6 +193,7 @@ const DashboardInicio = memo(props => {
             </Grid>
           </Container>
         </main>
+      </div>
       </div>
     );
 });

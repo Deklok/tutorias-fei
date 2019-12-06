@@ -19,6 +19,8 @@ import Horario from './components/Horario';
 import TemasTutorado from './components/TemasTutorado';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
+import { notifications } from '../../pushOneSignal';
+import { Redirect } from 'react-router-dom';
 
 const DashboardFin = memo(props => {
   const classes = props.classes;
@@ -27,6 +29,23 @@ const DashboardFin = memo(props => {
   const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
   const [status, setStatus] = React.useState('');
+  const [mainTutorado, setRouteMainTutorado] = React.useState(false);
+  const [sessionsTutorado, setRouteSessionsTutorado] = React.useState(false);
+  const [logout, setRouteLogout] = React.useState(false);
+
+  const redirectToMainTutorado = () => {
+    setRouteMainTutorado(true);
+    setRouteSessionsTutorado(false);
+  }
+  
+  const redirectToSessionsTutorado = () => {
+    setRouteMainTutorado(false);
+    setRouteSessionsTutorado(true);
+  }
+  
+  const redirectToLogout = () => {
+    setRouteLogout(true);
+  }
 
   async function getStatus(){
     var user = utilities.splitCookie(cookies.get('token')).id;
@@ -52,35 +71,44 @@ const DashboardFin = memo(props => {
 
   const indicaciones = "## Primera Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)\n\nWhy do we use it? **esto está en negritas** It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English...\n\n![image](https://images.unsplash.com/photo-1502759683299-cdcd6974244f?auto=format&fit=crop&w=440&h=220&q=60)"
 
-  cargarDatos()
+  React.useEffect(()=>{
+    cargarDatos()
     .then(result => {
-      setNombre(result.data[0][0]['name']);
-      setCarrera(result.data[0][0]['careerName']);
-      setMatricula(result.data[0][0]['studentId']);
-      setEmail(result.data[0][0]['email']);
+      console.log('Terminado');
+      if(result){
+        setNombre(result.data[0][0]['name']);
+        setCarrera(result.data[0][0]['careerName']);
+        setMatricula(result.data[0][0]['studentId']);
+        setEmail(result.data[0][0]['email']);
+        notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+        getStatus()
+        .then(result => {
+          if(result.data[0][0] == undefined){
+            setStatus(undefined);
+          }else{
+            setStatus(result.data[0][0]['status']);
+          }
+        })
+          redireccion();
+        }else{
+          console.log('Algo aslio mal');
+        }
     }).catch(console.log);
-    
-  getStatus()
-  .then(result => {
-    if(result.data[0][0] == undefined){
-      setStatus(undefined);
-    }else{
-      setStatus(result.data[0][0]['status']);
-    }
-  }).catch(console.log);
+  },[nombre, status]);
   
   function redireccion(){
     console.log(status);
     if(status == undefined){
-      window.location.href = "/tutorado/sesiones";
+      redirectToSessionsTutorado();
     } else if (status == 3){
-      window.location.href = "/tutorado";
+      redirectToMainTutorado();
     }
   }
 
-  window.addEventListener("load", redireccion());
-
   return (
+    <div>
+    {mainTutorado && <Redirect to="/tutorado"/>}
+    {sessionsTutorado && <Redirect to="/tutorado/sesiones"/>}
     <div className={classes.root}>
       <CssBaseline />
       <AppBar>
@@ -94,7 +122,8 @@ const DashboardFin = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar" href="/logout">
+            <IconButton color="inherit" label="Cerrar" onClick={redirectToLogout}>
+              {logout && <Redirect to="/logout"/>}
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
@@ -124,6 +153,7 @@ const DashboardFin = memo(props => {
           </Grid>
         </Container>
       </main>
+    </div>
     </div>
   );
 });

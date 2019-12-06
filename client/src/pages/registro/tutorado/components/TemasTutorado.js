@@ -69,7 +69,7 @@ const TemasTutorado = memo(props => {
       {mainTutorado && <Redirect to="/tutorado"/>}
       {sessionsTutorado && <Redirect to="/tutorado/sesiones"/>}
       <Typography variant="h6" gutterBottom>
-        Intereses del Tutorado
+        La tutoría no cuenta con algún tema de su interes, ingrese sus temas de interes:
       </Typography>
       <Input
         id="tema"

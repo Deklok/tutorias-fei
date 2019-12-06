@@ -50,6 +50,7 @@ const Indicacion = memo(props => {
                 <div className={classes.mainFeaturedPostContent}>
                   <Typography component="h1" variant="h3" color="inherit" gutterBottom>
                     Primera Tutoría
+                    Indicaciones generales para la tutoría:
                   </Typography>
                   <Typography variant="h7" color="inherit">
                   {indicaciones}

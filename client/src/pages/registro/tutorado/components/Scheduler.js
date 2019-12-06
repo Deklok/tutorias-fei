@@ -12,7 +12,7 @@ import {
     Appointments
   } from "@devexpress/dx-react-scheduler-material-ui";
 
-const Schedule = memo(props => {
+  const Schedule = memo(props => {
   const inicioBloque = props.inicioBloque;
   const finBloque = props.finBloque;
   const bloque = props.bloque;
@@ -21,28 +21,11 @@ const Schedule = memo(props => {
   const matricula = props.matricula;
   const [sessions, setSessions] = React.useState('');
   const [agendarRoute, setAgendarRoute] = React.useState(false);
-  const [career, setIdCareer] = React.useState('');
-  const [tutorship, setIdTutorship] = React.useState('');
   const cookies = new Cookies();
   
   const redirectToAgendar = () => {
     setAgendarRoute(true);
   }
-  
-  async function obtenerIDs() {
-    var user = utilities.splitCookie(cookies.get('token')).id;
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getcareerBlock', {
-      idPupil: user,
-    });
-  }
-  
-  obtenerIDs()
-  .then(result => {
-    setIdCareer(result.data[0][0]['idCareer']);
-    setIdTutorship(result.data[0][0]['idTutorship']);
-  }).catch(console.log);
-
-  console.log(career + " - " + tutorship);
 
   async function getSessions() {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlockSessions', {
@@ -271,10 +254,13 @@ const Schedule = memo(props => {
     }
     window.onload = loadPage();
 
+    const texto = "La tutoría será el "+ fechaDate;
+
     return (
           <Paper>
             {agendarRoute && <Redirect to="/tutorado/agendar"/>}
-              <Title>Bloques de tutoría</Title>
+            <Title>{texto}</Title>
+            <p>Seleccione un bloque de tutoría, cada bloque cuenta con 15 minutos de duración.</p>
               <Scheduler data={dataBlock} locale="es-MX">
                   <ViewState currentDate={fechaDate} />
                   <DayView startDayHour={inicioHora} endDayHour={finHora} />

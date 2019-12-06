@@ -40,10 +40,10 @@ const Horario = memo (props =>{
     <React.Fragment>
       <Title>Datos Generales</Title>
         <div background-image="url(https://images.unsplash.com/photo-1527187162622-535b785f65f5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1394&q=80)">
-          <p>{place}</p>
-          <p>{fechaInicio.getHours()+":"+fechaInicio.getMinutes()}</p>
-          <p>{date.split("T")[0]}</p>
-          <p>{contact}</p>
+          <p>Lugar de la tutoría: {place}</p>
+          <p>Hora de la tutoría: {fechaInicio.getHours()+":"+fechaInicio.getMinutes()}</p>
+          <p>Fecha de la tutoría: {date.split("T")[0]}</p>
+          <p>Contacto con el tutor: {contact}</p>
         </div>
     </React.Fragment>
   );
