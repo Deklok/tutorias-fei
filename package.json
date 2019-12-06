@@ -32,7 +32,8 @@
     "mysql": "^2.17.1",
     "node-fetch": "^2.6.0",
     "nodemon": "^1.19.4",
-    "request-promise": "^4.2.4"
+    "request-promise": "^4.2.4",
+    "spdy": "^4.0.1"
   },
   "devDependencies": {
     "concurrently": "^4.0.1"

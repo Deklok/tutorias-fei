@@ -7,6 +7,8 @@ const database = require('./server/db/database.js');
 const session = require('express-session');
 var MemoryStore = require('memorystore')(session);
 const cors = require('cors');
+const fs = require('fs');
+const spdy = require('spdy');
 const app = express();
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
@@ -885,6 +887,47 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.get('*',(req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
-const httpServer = http.createServer(app);
-httpServer.listen(5000);
-console.log('App listening on port 5000');
+
+let enableHttp = process.env.ENABLE_HTTP;
+let enableHttps = process.env.ENABLE_HTTPS;
+
+if ((typeof enableHttp === 'undefined' || enableHttp !== 'true') && (typeof enableHttps === 'undefined' || enableHttps !== 'true')) {
+  throw new Error("Required ENV variables are not set: [ENABLE_HTTP,ENABLE_HTTPS]");
+}
+
+if (enableHttp === 'true') {
+  let httpPort = process.env.HTTP_PORT;
+  if (typeof httpPort === 'undefined') {
+    throw new Error("Required ENV variable is not set: [HTTP_PORT]");
+  }
+  const httpServer = http.createServer(app);
+  httpServer.listen(httpPort, () => {
+    console.log(`HTTP Server is listening on port ${httpPort}`);
+  });
+}
+
+if (enableHttps === 'true') {
+  let sslKey = process.env.SSL_KEY_PATH;
+  if (typeof sslKey === 'undefined') {
+    throw new Error("Required ENV variable is not set: [SSL_KEY_PATH]");
+  }
+
+  let sslCert = process.env.SSL_CERT_PATH;
+  if (typeof sslCert === 'undefined') {
+    throw new Error("Required ENV variable is not set: [SSL_CERT_PATH]");
+  }
+
+  let httpsPort = process.env.HTTPS_PORT;
+  if (typeof httpsPort === 'undefined') {
+    throw new Error("Required ENV variable is not set: [HTTPS_PORT]");
+  }
+
+  const privateKey  = fs.readFileSync(sslKey, 'utf8');
+  const certificate = fs.readFileSync(sslCert, 'utf8');
+  const credentials = {key: privateKey, cert: certificate};
+
+  const httpsServer = spdy.createServer(credentials, app);
+  httpsServer.listen(httpsPort, () => {
+    console.log(`HTTPS server is listening on port ${httpsPort}`);
+  });
+}
