@@ -41,7 +41,6 @@ const DashboardTutorado = memo(props => {
   const [status, setStatus] = React.useState('');
   const [sessionsTutorado, setRouteSessionsTutorado] = React.useState(false);
   const [agendTutorado, setRouteAgendTutorado] = React.useState(false);
-  const [logout, setRouteLogout] = React.useState(false);
 
   const redirectToSessionsTutorado = () => {
     setRouteSessionsTutorado(true);
@@ -51,10 +50,6 @@ const DashboardTutorado = memo(props => {
   const redirectToAgendTutorado = () => {
     setRouteSessionsTutorado(false);
     setRouteAgendTutorado(true);
-  }
-  
-  const redirectToLogout = () => {
-    setRouteLogout(true);
   }
 
   async function getStatus(){
@@ -182,8 +177,7 @@ const DashboardTutorado = memo(props => {
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Cerrar Sesión">
-                    <IconButton color="inherit" label="Cerrar" onClick={redirectToLogout}>
-                      { logout && <Redirect to="/logout"/> }
+                    <IconButton color="inherit" label="Cerrar" href="/logout">
                       <ExitToAppIcon />
                     </IconButton>
                   </Tooltip>

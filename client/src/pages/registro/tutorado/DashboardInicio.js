@@ -166,8 +166,7 @@ const DashboardInicio = memo(props => {
             </Badge>
           </IconButton>
           <Tooltip title="Cerrar Sesión">
-            <IconButton color="inherit" label="Cerrar" onClick={redirectToLogout}>
-              {logout && <Redirect to="/logout"/>}
+            <IconButton color="inherit" label="Cerrar"  href="/logout">
               <ExitToAppIcon />
             </IconButton>
           </Tooltip>
