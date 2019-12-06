@@ -67,7 +67,7 @@ function hasSession(req,res,next) {
 
   }
 }
-//app.all('/api',hasSession);
+app.all('/api',hasSession);
 
 app.post('/api/test/session', (request,res) => {
   var userId = request.body.user;
@@ -81,6 +81,13 @@ app.post('/api/test/session', (request,res) => {
   res.json(token);
 });
 
+/**
+* Service to check auth token agains MemoryStore.
+* Params: token in header
+* Responses:
+*   200 = token in MemoryStore and isUserATutor
+*   404 = It cant determine user rol (from that token)
+*/
 app.post('/api/auth', (req,res) => {
   var token = req.header('Authorization');
   store.get(token, function(error,session) {
@@ -98,34 +105,50 @@ app.post('/api/auth', (req,res) => {
  * Service to return email and career of the student provided
  * Webscraping from MiUV
  * Params:
- *   userId = student or professor identifier
+ *   user = student or professor identifier
  *   pass = student or professor password
- * Response: {"mail":"someEmail", "career":"ingenieria de software"}
+ * Responses: 
+ *  200 = {"mail":"someEmail", "career":"ingenieria de software"}
+ *  400 = Param excepected
  */
  app.post('/api/miuv/student', (request,res) => {
   var userId = request.body.user;
   var password = request.body.pass;
-  miuvws.data(userId, password).then(function(response){
-    res.send(response);
-    if (response.mail) {
-      response.studentId = userId;
-      director.setupStudentData(response);
-    }
-  });
+  if (userId && password) {
+    miuvws.data(userId, password).then(function(response){
+      res.send(response);
+      if (response.mail) {
+        response.studentId = userId;
+        director.setupStudentData(response);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  } 
 });
 
 /**
  * Service to return personel number and name from teacher, as well as students assiociated with the teacher
  * including its studentID and name from each student
  * Webscraping from MiUV
+ * Params:
+ *   user = student or professor identifier
+ *   pass = student or professor password
+ * Responses:
+ *    200 = {teacher{name: , personnelNum: }, students[{name: , studentId: }]}
+ *    400 = Param excepected
  */
  app.post('/api/miuv/tutor', (req,res) => {
   var user = req.body["user"];
   var pass = req.body["pass"];
-  miuvws.tutor(user,pass)
-  .then(function(response){
-    res.send(response);
-  });
+  if (user && pass) {
+    miuvws.tutor(user,pass)
+    .then(function(response){
+      res.send(response);
+    });
+  } else {
+    res.sendStatus(400);
+  } 
 });
 
 /*
@@ -300,34 +323,50 @@ app.post('/api/notify/student/canceledday', function (req, res){
 });
 /*
 *Service to retrieve tutor data by username.
-*Response: [{personnelNum, name, contact, isEmailSuscribed}]
+*Response: 
+*   200 = [{personnelNum, name, contact, isEmailSuscribed}]
+*   400 = Param expected
 */
 app.post('/api/db/tutorData', (req,res) => {
   var username = req.body["username"];
-  database.getDataTutor(username).then(function(response){
-    res.send(response);
-  });
+  if(username){
+    database.getDataTutor(username).then(function(response){
+      res.send(response);
+    });
+  }else {
+    res.sendStatus(400);
+  }
 });
 /*
 *Service to retrieve pupil/student data by studentId.
-*Response: [[{studentID, name, email, careerName, idTutor}],{BD info}]
+*Response: [[{studentId, name, email, isEmailSuscribed, isActive, idCareer, careerName, idTutor}],{DB info}]
 */
 app.post('/api/db/pupilData', (req,res) => {
-  var studentId = req.body["studentId"];
-  database.getDataPupil(studentId).then(function (response) {
-    res.json(response);
-  });
+  var studentId = req.body["studentId"];  
+  if(studentId){
+    database.getDataPupil(studentId).then(function (response) {
+      res.json(response);
+    });
+  }else {
+    res.sendStatus(400);
+  }
 });
 
 /*
 *Service to retrieve all session data by idTutorship.
-*Response: [[{studentID, name, email, start, end}...N],{BD info}]
+*Response: 
+* 200 = [[{studentID, name, email, start, end}...N],{DB info}]
+* 400 = param expected
 */
 app.post('/api/db/sessions', (req,res) => {
   var idTutorship = req.body["idTutorship"];
-  database.getAllSessions(idTutorship).then(function(response){
-    res.json(response);
-  });
+  if(idTutorship && !isNaN(idTutorship)){
+    database.getAllSessions(idTutorship).then(function(response){
+      res.json(response);
+    });
+  }else {
+    res.sendStatus(400);
+  }  
 });
 
 /*
@@ -340,22 +379,8 @@ app.post('/api/db/sessions', (req,res) => {
 app.post('/api/db/isagree', (req,res) => {
   var userId = req.body.user;
   if (userId) {
-    var isAgree = false;
-    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
-      database.isPupilPrivacyAgreement(userId).then(function (response) {
-        if (response) {
-          isAgree = true;
-        }
-        res.send(isAgree);
-      });
-    } else {
-      database.isTutorPrivacyAgreement(userId).then(function (response) {
-        if (response) {
-          isAgree = true;
-        }
-        res.send(isAgree);
-      });
-    }
+    var status = await director.checkAgreementStatus(userId);
+    res.send(status);
   } else {
     res.sendStatus(400);
   }
@@ -366,27 +391,13 @@ app.post('/api/db/isagree', (req,res) => {
 *Responses:
 * 201: Agreement state changed
 * 500: DB error
+* 400: param expected
 */
 app.post('/api/db/setAgreement', (req,res) => {
   var userId = req.body.user;
   if (userId) {
-    var code = 201;
-    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
-      database.setPupilPrivacyAgreement(userId).then(function (response) {
-       if (response.toString().includes("error")) {
-          code = 500;
-        }
-        res.sendStatus(code);
-      });
-    } else {
-      database.setTutorPrivacyAgreement(userId).then(function (response) {
-        console.table(response);
-        if (response.toString().includes("error")) {
-          code = 500;
-        }
-        res.sendStatus(code);
-      });
-    }
+    var code = await director.setAgreementStatus(userId);
+    res.sendStatus(code);
   } else {
     res.sendStatus(400);
   }
@@ -394,14 +405,23 @@ app.post('/api/db/setAgreement', (req,res) => {
 
 /**
  * Service to trigger tutor's data import
- *
+ * Param: 
+ *    user = username from UV system
+ *    pass = password from UV system
+ * Responses:
+ *    200 = setup tutor data and his pupils
+ *    400 = param expected
  */
 app.post('/api/dataimport/tutor', (req,res) => {
   let user = req.body["user"];
   let pass = req.body["pass"];
-  dataimport.importTutor(user, pass).then(function (response) {
-    res.send(response);
-  })
+  if(username){
+    dataimport.importTutor(user, pass).then(function (response) {
+      res.send(response);
+    });
+  }else {
+    res.sendStatus(400);
+  }
 });
 
 
@@ -411,6 +431,10 @@ app.post('/api/dataimport/tutor', (req,res) => {
  *  grade: 5
  *  idSession: 45,
  *  comments(optional): "1,3,4" -> String with the id of the comment separated by commas
+ * Responses:
+ *    200 = Satisfactory DB query 
+ *    400 = Param expected
+ *    500 = DB not available
  */
 app.post('/api/db/feedback/add', (req,res) => {
   var grade = req.body.grade;
@@ -436,7 +460,8 @@ app.post('/api/db/feedback/add', (req,res) => {
  * Params:
  *  idTutorship: 4
  * Response:
- *  {
+ * 200 =
+   {
     "average": 4,
     "c1": 2,
     "c2": 1,
@@ -447,10 +472,11 @@ app.post('/api/db/feedback/add', (req,res) => {
     "complete": 0,
     "absent": 3
     }
+ *  400 = Param expected
+ *  500 = DB not available
  */
 app.post('/api/db/feedback/get',(req,res) => {
   var idTutorship = req.body.idTutorship;
-  console.log(idTutorship);
   if (idTutorship) {
     database.getFeedbackData(idTutorship).then(function (response) {
       res.json(response[0][0]);
@@ -462,16 +488,8 @@ app.post('/api/db/feedback/get',(req,res) => {
     res.sendStatus(400);
   }
 });
-
-// Use this code when is on production
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-app.get('*',(req,res) =>{
-  res.sendFile(path.join(__dirname+'/client/build/index.html'));
-});
-
 /*
-*Service to create tutorship
+*Service to create a tutorship
 *Params:
 *   place = place where the tutorship will take place
 *   tutorshipNum = number tutorship
@@ -482,63 +500,72 @@ app.get('*',(req,res) =>{
 *Resturns:
 *   201: number of rows modified
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/addTutorship', (req, res) => {
   var place = req.body.place;
   var tutorshipNum = req.body.tutorshipNum;
   var period = req.body.period;
-  var indications = req.body.indications;
+  var indications = req.body.indications; //REALMENTE ES OBLIGATORIO?
   var date = req.body.date;
   var idTutor = req.body.idTutor;
-
-  if(place && tutorshipNum, period, indications, date, idTutor){
+  if(place && tutorshipNum && period && indications && date && idTutor){
     database.addTutorship(place, tutorshipNum, period, indications, date, idTutor).then(function (response) {
       res.status(201).send(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.status(400);
   }
 });
-
 /*
 *Service to create block general
 *Params:
 *   idCareer = identified career
 *   start = time start block tutorship
 *   end = time end block tutorship
-*   idTutorship = identified tutorshipo scheduled
+*   idTutorship = identified tutorship scheduled
 *Resturns:
 *   200: number of rows modified
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/addBlock', (req, res) =>{
   var idCareer = req.body.idCareer;
   var start = req.body.start;
   var end = req.body.end;
   var idTutorship = req.body.idTutorship;
-  if(idCareer && start, end, idTutorship){
+  if(idCareer && start && end && idTutorship){
     database.addBlock(idCareer, start, end, idTutorship).then(function (response){
       res.send(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.status(400)
   }
-
 });
 
 /*
-*Service to create tutorship general (?)
+*Service to retrieve how many pupils are related to a tutor
 *Params:
-*   userName = tutor userName
+*   personnelNum = tutor personnelNum
 *Returns:
-*   200: all pupils by tutor
+*   200: Pupils by tutor [{size: 0}]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getAllPupilByTutor', (req, res) =>{
   var personnelNum = req.body.personnelNum;
   if(personnelNum){
     database.getAllPupilByTutor(personnelNum).then(function (response){
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.status(400);
@@ -550,14 +577,18 @@ app.post('/api/db/getAllPupilByTutor', (req, res) =>{
 *Params:
 *   username = tutor username
 *Returns:
-*   200: get personnelNum
+*   200: personnelNum
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getpersonnelNumTutor', (req, res)=>{
   var username = req.body.username;
   if(username){
     database.getPersonnelNumTutor(username).then(function (response){
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.status(400);
@@ -594,6 +625,11 @@ app.post('/api/db/getBlock', (req, res) => {
 app.post('/api/db/getOneBlock', (req, res) => {
   var idCareer = req.body["idCareer"];
   var idTutorship = req.body["idTutorship"];
+  if(username){
+
+  }else {
+    res.sendStatus(400);
+  }
   database.getOneBlock(idCareer,idTutorship).then(function (response) {
     res.json(response);
   });
@@ -843,6 +879,12 @@ app.post('/api/db/updateBlock', (req, res) => {
   }
 });
 
+// Use this code when is on production
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('*',(req,res) =>{
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
 const httpServer = http.createServer(app);
 httpServer.listen(5000);
 console.log('App listening on port 5000');

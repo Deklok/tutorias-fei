@@ -22,7 +22,6 @@ async function setupStudentData (studentData){
 		});
 	});
 }
-
 async function setupTutorEmail (tutorData){
 	database.getTutorSuscribedStatus(tutorData.id).then(function (responseStatus) {
 		if (responseStatus == false) {
@@ -41,16 +40,55 @@ async function setupTutorEmail (tutorData){
 		}
 	});
 }
+/*
+*This function will allow the user to setup a new email but this won't unsubscribe it in Onesignal.
+*/
 async function resetTutorEmail (username){
 	try{
-		emailpush.resetTutorEmailToNotification(username);//DOING
-		//database.updateTutorSuscribedStatus(username, 0);
+		database.updateTutorSuscribedStatus(username, 0);
 		return 200;
 	} catch (err) {
 		console.log(err);
 		return 500;
 	}
 }
+async function checkAgreementStatus (userId){
+	var isAgree = false;
+    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
+      database.isPupilPrivacyAgreement(userId).then(function (response) {
+        if (response) {
+          isAgree = true;
+        }
+        return isAgree;
+      });
+    } else {
+      database.isTutorPrivacyAgreement(userId).then(function (response) {
+        if (response) {
+          isAgree = true;
+        }
+        return isAgree;
+      });
+    }
+}
+async function setAgreementStatus (userId){
+	var code = 201;
+    if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
+      database.setPupilPrivacyAgreement(userId).then(function (response) {
+       if (response.toString().includes("error")) {
+          code = 500;
+        }
+        return code;
+      });
+    } else {
+      database.setTutorPrivacyAgreement(userId).then(function (response) {
+        if (response.toString().includes("error")) {
+          code = 500;
+        }
+        return code;
+      });
+    }
+}
+
 async function getIdCareer(careerName){
 	const subStringNameMatch = careerName.substring(1, 4);
 	return await database.getIdCareer(subStringNameMatch);
@@ -60,4 +98,7 @@ module.exports = {
 	setupStudentData: setupStudentData,
 	setupTutorEmail: setupTutorEmail,
 	resetTutorEmail: resetTutorEmail,
+	checkAgreementStatus: checkAgreementStatus,
+	setAgreementStatus: setAgreementStatus,
+
 }

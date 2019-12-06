@@ -12,7 +12,7 @@ function publishedDay (professorId) {
 		};
 		resolve(sendNotification(message, "push"));
 	});
-	return promise;
+	return promise.catch(function(error) { return 500; });
 }
 function publishedDayEmail (professorId) {
 	var promise = new Promise(function (resolve,reject) {
@@ -27,7 +27,7 @@ function publishedDayEmail (professorId) {
 		};
 		resolve(sendNotification(message, "email"));
 	});
-	return promise;
+	return promise.catch(function(error) { return 500; });
 }
 function canceledDay (professorId) {
 	var promise = new Promise(function (resolve,reject) {
@@ -40,7 +40,7 @@ function canceledDay (professorId) {
 		};
 		resolve(sendNotification(message, "push"));
 	});
-	return promise;
+	return promise.catch(function(error) { return 500; });
 }
 function studentCanceled (professorId) {
 	var promise = new Promise(function (resolve,reject) {
@@ -53,7 +53,7 @@ function studentCanceled (professorId) {
 		};
 		resolve(sendNotification(message, "push"));
 	});
-	return promise;
+	return promise.catch(function(error) { return 500; });
 }
 function studentCanceledEmail (professorId) {
 	var promise = new Promise(function (resolve,reject) {
@@ -67,7 +67,7 @@ function studentCanceledEmail (professorId) {
 		};
 		resolve(sendNotification(message, "email"));
 	});
-	return promise;
+	return promise.catch(function(error) { return 500; });
 }
 function youAreNext (studentId) {
 	var promise = new Promise(function (resolve,reject) {
@@ -80,7 +80,7 @@ function youAreNext (studentId) {
 		};
 		resolve(sendNotification(message, "push"));
 	});
-	return promise;
+	return promise.catch(function(error) { return 500; });
 }
 function youWereCanceled (studentId) {
 	var promise = new Promise(function (resolve,reject) {
@@ -93,7 +93,7 @@ function youWereCanceled (studentId) {
 		};
 		resolve(sendNotification(message, "push"));
 	});
-	return promise;	
+	return promise.catch(function(error) { return 500; });
 }
 
 function sendNotification(message, notificationType) {
@@ -118,7 +118,7 @@ function sendNotification(message, notificationType) {
 				res.on('data', function(message) {
 					console.log("Response:");
 					console.log(JSON.parse(message));
-					if (!message.includes("errors")) {
+					if (!message.includes("Error")) {
 						code = 200;
 					}
 					resolve(code);
@@ -127,6 +127,7 @@ function sendNotification(message, notificationType) {
 			req.on('error', function(e) {
 			console.log("ERROR:");
 			console.log(e);
+			reject(code);
 		});
 		} catch (err) {
 			console.log(err);
