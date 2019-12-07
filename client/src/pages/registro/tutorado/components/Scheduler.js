@@ -158,7 +158,14 @@ import {
     var idSession;
 
     function loadPage(){
-      var bloques = document.getElementsByClassName("makeStyles-appointment-447");
+      var makeStyleNumber = 413;
+      var bloques = document.getElementsByClassName("makeStyles-appointment-"+makeStyleNumber);
+      if(bloques.length == 0){
+        while(bloques.length == 0 && makeStyleNumber <= 460){
+          makeStyleNumber = makeStyleNumber + 1;
+          bloques = document.getElementsByClassName("makeStyles-appointment-"+makeStyleNumber);
+        }
+      }
       if(bloques.length > 0){
         for(var i = 0; i < bloques.length; i++){
           bloques[i].addEventListener("click",function(event){

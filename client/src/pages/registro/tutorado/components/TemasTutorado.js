@@ -64,12 +64,14 @@ const TemasTutorado = memo(props => {
     });
   };
 
+  const texto = "¿La tutoría no cuenta con algún tema de su interes?\nIngrese sus temas de interes:";
+
   return (
     <React.Fragment>
       {mainTutorado && <Redirect to="/tutorado"/>}
       {sessionsTutorado && <Redirect to="/tutorado/sesiones"/>}
       <Typography variant="h6" gutterBottom>
-        La tutoría no cuenta con algún tema de su interes, ingrese sus temas de interes:
+        {texto}
       </Typography>
       <Input
         id="tema"

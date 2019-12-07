@@ -32,7 +32,7 @@ const Indicacion = memo(props => {
           setIndications(result.data[0][0]['indications']);
         }).catch(console.log);
 
-    const texto = "Primera Tutoría\nIndicaciones generales para la tutoría:";
+    const texto = "Indicaciones generales para la tutoría:";
 
     return (
         <React.Fragment>
