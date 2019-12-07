@@ -32,6 +32,8 @@ const Indicacion = memo(props => {
           setIndications(result.data[0][0]['indications']);
         }).catch(console.log);
 
+    const texto = "Primera Tutoría\nIndicaciones generales para la tutoría:";
+
     return (
         <React.Fragment>
             {/* Main featured post */}
@@ -49,8 +51,7 @@ const Indicacion = memo(props => {
               <Grid item md={6}>
                 <div className={classes.mainFeaturedPostContent}>
                   <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                    Primera Tutoría
-                    Indicaciones generales para la tutoría:
+                    {texto}
                   </Typography>
                   <Typography variant="h7" color="inherit">
                   {indicaciones}

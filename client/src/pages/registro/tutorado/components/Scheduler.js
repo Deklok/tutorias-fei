@@ -28,9 +28,11 @@ import {
   }
 
   async function getSessions() {
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlockSessions', {
-      idBlock: 39
-    });
+    if(bloque){
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlockSessions', {
+        idBlock: bloque
+      });
+    }
   }
 
   if(fecha.length > 1){
@@ -45,13 +47,13 @@ import {
   }
 
   React.useEffect(() => {
-    getSessions()
-      .then(result => {
-      if(result.status === 200){
-        setSessions(result.data);
-      }
-    }).catch(console.log);
-  },[]);
+      getSessions()
+        .then(result => {
+        if(result.status === 200){
+          setSessions(result.data);
+        }
+      }).catch(console.log);
+  },[bloque]);
   
   var dataSession = [];
 
@@ -253,8 +255,11 @@ import {
       }
     }
     window.onload = loadPage();
+    var texto;
 
-    const texto = "La tutoría será el "+ fechaDate;
+    if(anioB !== undefined && mesB !== undefined && diaB !== undefined){
+      texto = "La tutoría será el día "+ diaB.split("T")[0] + " del mes " + mesB + " del " + anioB;
+    }
 
     return (
           <Paper>

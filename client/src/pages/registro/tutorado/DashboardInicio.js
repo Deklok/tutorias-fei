@@ -51,7 +51,7 @@ const DashboardInicio = memo(props => {
   
   const cookies = new Cookies();
   var cookie = cookies.get('token');
-  var username;
+  var username = utilities.splitCookie(cookies.get('token')).id;
   if (cookie) {
     username = utilities.splitCookie(cookie).id;
   }
@@ -63,9 +63,11 @@ const DashboardInicio = memo(props => {
   }
 
   async function obtenerTutoria(){
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getTutorship',{
-      idTutorship: 28
-    });
+    if(tutorship){
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getTutorship',{
+        idTutorship: tutorship
+      });
+    }
   }
   
   async function getStatus(){
@@ -86,15 +88,14 @@ const DashboardInicio = memo(props => {
     setIdCareer(result.data[0][0]['idCareer']);
     setIdTutorship(result.data[0][0]['idTutorship']);
   }).catch(console.log);
-
-  var idCareer = 5;
-  var idTutorship = 28;
   
   async function obtenerBloque(){
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getOneBlock',{
-      idCareer: idCareer,
-      idTutorship: idTutorship
-    });
+    if(career && tutorship){
+      return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getOneBlock',{
+        idCareer: career,
+        idTutorship: tutorship
+      });
+    }
   }
   
   React.useEffect(()=>{
@@ -106,7 +107,7 @@ const DashboardInicio = memo(props => {
         setBloque(result.data[0]['idBlock']);
       }
     }).catch(console.log);
-  },[]);
+  },[career, tutorship]);
 
   React.useEffect(()=>{
     cargarDatos()
@@ -133,13 +134,15 @@ const DashboardInicio = memo(props => {
     }).catch(console.log);
   },[nombre, status]);
 
-  obtenerTutoria()
-        .then(result => {
-        if(result.status === 200){
-          setFecha(result.data[0]['date']);
-          setLugar(result.data[0]['place']);
-        }
-      }).catch(console.log);
+  React.useEffect(()=>{
+    obtenerTutoria()
+      .then(result => {
+      if(result.status === 200){
+        setFecha(result.data[0]['date']);
+        setLugar(result.data[0]['place']);
+      }
+    }).catch(console.log);
+  },[tutorship]);
       
   function redireccion(){
     if(status == 3){
