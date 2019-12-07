@@ -43,7 +43,7 @@ async function setupTutorEmail (tutorData){
 /*
 *This function will allow the user to setup a new email but this won't unsubscribe it in Onesignal.
 */
-async function resetTutorEmail (username){
+function resetTutorEmail (username){
 	try{
 		database.updateTutorSuscribedStatus(username, 0);
 		return 200;
@@ -52,41 +52,52 @@ async function resetTutorEmail (username){
 		return 500;
 	}
 }
-async function checkAgreementStatus (userId){
+function checkAgreementStatus (userId){
 	var isAgree = false;
+	var promise = new Promise(function (resolve,reject) {
     if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
       database.isPupilPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
         }
-        return isAgree;
-      });
+        resolve(isAgree);
+      }).catch(function (error) {
+      		console.log(error);
+      		reject(500);    	});
     } else {
       database.isTutorPrivacyAgreement(userId).then(function (response) {
         if (response) {
           isAgree = true;
         }
-        return isAgree;
-      });
+        resolve(isAgree);
+      }).catch(function (error) {
+      		console.log(error);
+      		reject(500);
+    	});
     }
+	});
+    return promise.catch(function(error) { return 500; });
 }
-async function setAgreementStatus (userId){
+function setAgreementStatus (userId){
 	var code = 201;
+	var promise = new Promise(function (resolve,reject) {
     if ((userId.charAt(0).toLowerCase().includes("s")) && !(isNaN(userId.substring(1, 8)))) {
       database.setPupilPrivacyAgreement(userId).then(function (response) {
-       if (response.toString().includes("error")) {
-          code = 500;
-        }
-        return code;
-      });
+        resolve(code);
+      }).catch(function (error) {
+      		console.log(error);
+      		reject(500);
+    	});
     } else {
       database.setTutorPrivacyAgreement(userId).then(function (response) {
-        if (response.toString().includes("error")) {
-          code = 500;
-        }
-        return code;
-      });
+        resolve(code);
+      }).catch(function (error) {
+      		console.log(error);
+      		reject(500);
+    	});
     }
+	});
+	return promise.catch(function(error) { return 500; });
 }
 
 async function getIdCareer(careerName){

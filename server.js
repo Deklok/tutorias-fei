@@ -381,8 +381,12 @@ app.post('/api/db/sessions', (req,res) => {
 app.post('/api/db/isagree', async (req,res) => {
   var userId = req.body.user;
   if (userId) {
-    var status = await director.checkAgreementStatus(userId);
-    res.send(status);
+    director.checkAgreementStatus(userId).then(function (status) {
+      res.send(status);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
   } else {
     res.sendStatus(400);
   }
@@ -395,11 +399,15 @@ app.post('/api/db/isagree', async (req,res) => {
 * 500: DB error
 * 400: param expected
 */
-app.post('/api/db/setAgreement',async (req,res) => {
+app.post('/api/db/setAgreement', async (req,res) => {
   var userId = req.body.user;
   if (userId) {
-    var code = await director.setAgreementStatus(userId);
-    res.sendStatus(code);
+    director.setAgreementStatus(userId).then(function (status) {
+      res.sendStatus(status);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
   } else {
     res.sendStatus(400);
   }
@@ -430,8 +438,8 @@ app.post('/api/dataimport/tutor', (req,res) => {
 /**
  * Service to add a feedback register
  * Params:
- *  grade: 5
- *  idSession: 45,
+ *  grade: 5 (number)
+ *  idSession: 45 (identifier)
  *  comments(optional): "1,3,4" -> String with the id of the comment separated by commas
  * Responses:
  *    200 = Satisfactory DB query 
@@ -460,7 +468,7 @@ app.post('/api/db/feedback/add', (req,res) => {
 /**
  * Service to get the feedback stats of a tutorship
  * Params:
- *  idTutorship: 4
+ *  idTutorship: 4 (id)
  * Response:
  * 200 =
    {
@@ -525,10 +533,10 @@ app.post('/api/db/addTutorship', (req, res) => {
 /*
 *Service to create block general
 *Params:
-*   idCareer = identified career
+*   idCareer = Career identifier
 *   start = time start block tutorship
 *   end = time end block tutorship
-*   idTutorship = identified tutorship scheduled
+*   idTutorship = tutorship scheduled identifier
 *Resturns:
 *   200: number of rows modified
 *   400: Param expected
@@ -597,72 +605,92 @@ app.post('/api/db/getpersonnelNumTutor', (req, res)=>{
   }
 });
 /*
-*Service to retrieve block data from tutorship
+*Service to retrieve all block data from tutorship
 *Params:
 *   idTutorship = tutorship identifier number
+*   idCareer = Career identifier number (? NOT USED)
 *Returns:
-*   200: Block info
+*   200: Block info [{idBlock, idCareer, start, end, idTutorship}...N]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getBlock', (req, res) => {
-  var idCareer = req.body["idCareer"];
   var idTutorship = req.body["idTutorship"];
-  if (idCareer && idTutorship) {
+  if (idTutorship) {
     database.getBlock(idTutorship).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
   }
 });
 /*
-*Service to retrieve block data from tutorship and career
+*Service to retrieve one kind of block data from tutorship and career
 *Params:
-*   idCareer = Student id carrer (?)
+*   idCareer = Student id carrer
 *   idTutorship = tutorship identifier number
 *Returns:
-*   200: Block info
+*   200: Block info [{idBlock, start, end}...N]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getOneBlock', (req, res) => {
   var idCareer = req.body["idCareer"];
   var idTutorship = req.body["idTutorship"];
-  if(username){
-
+  if(idCareer && idTutorship){
+    database.getOneBlock(idCareer,idTutorship).then(function (response) {
+      res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
   }else {
     res.sendStatus(400);
   }
-  database.getOneBlock(idCareer,idTutorship).then(function (response) {
-    res.json(response);
-  });
+
 });
 /*
-*Service to retrieve session data from block
+*Service to retrieve session data relatec from one block
 *Params:
 *   idBlock = block identifier number
 *Returns:
-*   200: Session info
+*   200: Session info [{startTime, endTime}...N]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getBlockSessions', (req, res) => {
   var idBlock = req.body["idBlock"];
-  database.getBlockSessions(idBlock).then(function (response){
-    res.json(response);
-  });
+  if (idBlock) {
+    database.getBlockSessions(idBlock).then(function (response){
+      res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  } else {
+    res.sendStatus(400);
+  }
 });
 /*
 *Service to retrieve tutorship data
 *Params:
 *   idTutorship = tutorship identifier number
 *Returns:
-*   200: tutorship info
+*   200: tutorship info [{place, indications, date}]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getTutorship', (req, res) => {
   var idTutorship = req.body["idTutorship"];
   if (idTutorship) {
     database.getTutorship(idTutorship).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
@@ -678,15 +706,19 @@ app.post('/api/db/getTutorship', (req, res) => {
 *Returns:
 *   200: confirmation insert
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/reserveSession', (req, res) => {
   var startTime = req.body["startTime"];
   var endTime = req.body["endTime"];
   var idBlock = req.body["idBlock"];
   var idPupil = req.body["idPupil"];
-  if (idPupil && idBlock, endTime, startTime) {
+  if (idPupil && idBlock && endTime && startTime) {
     database.reserveSession(startTime,endTime,idBlock,idPupil).then(function (response) {
       res.status(201).send(`${response.insertId}`);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
@@ -700,6 +732,7 @@ app.post('/api/db/reserveSession', (req, res) => {
 *Returns:
 *   200: confirmation insert
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/addSession', (req, res) => {
   var idSession = req.body["idSession"];
@@ -707,6 +740,9 @@ app.post('/api/db/addSession', (req, res) => {
   if (topics && idSession) {
     database.addSession(idSession,topics).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
@@ -717,14 +753,18 @@ app.post('/api/db/addSession', (req, res) => {
 *Params:
 *   idPupil = pupil identifier string
 *Returns:
-*   200: confirmation update
+*   200: Session data [[{startTime, place, date, indications, contact}...N]]{DB info}]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getSession', (req, res) => {
   var idPupil = req.body["idPupil"];
   if (idPupil) {
     database.getSession(idPupil).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
@@ -737,12 +777,16 @@ app.post('/api/db/getSession', (req, res) => {
 *Returns:
 *   200: confirmation update
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/deleteTutorship', (req, res) => {
   var idTutorship = req.body["idTutorship"];
   if (idTutorship) {
     database.deleteTutorship(idTutorship).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
@@ -756,125 +800,210 @@ app.post('/api/db/deleteTutorship', (req, res) => {
 *Returns:
 *   200: confirmation update
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/deleteSession', (req, res) => {
   var idSession = req.body["idSession"];
   if (idSession) {
     database.deleteSession(idSession).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
   }
 });
 /*
-*Service to get important data like id session
+*Service to get id session
 *Params:
 *   idSession = session identifier number
 *Returns:
-*   200: confirmation update
+*   200: [[{idSession}]]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getSpecificSessionData', (req, res) => {
   var idPupil = req.body["idPupil"];
   if (idPupil) {
     database.getSpecificSessionData(idPupil).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
   }
 });
 /*
-*Service to get important data like id session
+*Service to get idCareer and idTutorship
 *Params:
 *   idSession = session identifier number
 *Returns:
-*   200: confirmation update
+*   200: [[{idCareer, idTutorship}]]
 *   400: Param expected
+*   500: DB not available
 */
 app.post('/api/db/getcareerBlock', (req, res) => {
   var idPupil = req.body["idPupil"];
   if (idPupil) {
     database.getcareerBlock(idPupil).then(function (response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
   }
 });
-
+/*
+*Service to update Pupil session status
+*Params:
+*   idTutorship = Tutorship identifier number
+*   idPupil = Pupil identifier
+*   new_status = Status number
+*Returns:
+*   200: Update confirmation
+*   400: Param expected
+*   500: DB not available
+*/
 app.post('/api/db/updateStatus', (req, res)=>{
   var idTutorship = req.body['idTutorship'];
   var idPupil = req.body['idPupil'];
   var new_status = req.body['new_status'];
-  if(idTutorship!=null && idPupil!=null && new_status!=null){
+  if(idTutorship && idPupil && new_status){
     database.updateSessionStatus(idPupil, idTutorship, new_status)
     .then(function(response){
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.sendStatus(400);
   }
 });
-
+/*
+*Service to update Tutorship status (Tutor)
+*Params:
+*   idTutorship = Tutorship identifier number
+*   idTutor = Tutor personnel number 
+*   new_status = Status number
+*Returns:
+*   200: Update confirmation
+*   400: Param expected
+*   500: DB not available
+*/
 app.post('/api/db/updateTutorshipStatus', (req, res)=>{
   var idTutorship = req.body['idTutorship'];
   var idTutor = req.body['idTutor'];
   var new_status = req.body['new_status'];
-  if(idTutorship!=null && idTutor!=null && new_status!=null){
+  if(idTutorship && idTutor && new_status){
     database.updateTutorshipStatus(idTutorship, idTutor, new_status)
     .then(function(response){
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.sendStatus(400);
   }
 });
-
+/*
+*Service to get the next tutorship
+*Params:
+*   idTutor = Tutor personnel number 
+*Returns:
+*   200: [{idTutorship, place, tutorshipNum, period, status, indications, date, idTutor}]
+*   400: Param expected
+*   500: DB not available
+*/
 app.post('/api/db/getNextTutorship', (req, res)=>{
   var idTutor = req.body['idTutor'];
-  if(idTutor!=null){
+  if(idTutor){
     database.getNextTutorship(idTutor)
     .then(function(response){
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.sendStatus(400);
   }
 });
-
+/*
+*Service to get the last tutorship 
+*Params:
+*   idTutor = Tutor personnel number 
+*Returns:
+*   200: [{idTutorship, place, tutorshipNum, period, status, indications, date, idTutor}]
+*   400: Param expected
+*   500: DB not available
+*/
 app.post('/api/db/lastTutorship', (req, res) => {
   const idTutor = req.body["idTutor"];
   if(idTutor){
     database.getLastTutorship(idTutor).then(function(response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
   }
 });
-
+/*
+*Service to get sessión status
+*Params:
+*   idPupil = Pupil identifier number 
+*Returns:
+*   200: [[{status}]{DB info}]
+*   400: Param expected
+*   500: DB not available
+*/
 app.post('/api/db/getSessionStatus', (req, res) => {
   var idPupil = req.body['idPupil'];
-  if(idPupil!=null){
+  if(idPupil){
     database.getSessionStatus(idPupil)
     .then(function(response){
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   }else{
     res.sendStatus(400);
   }
 })
-
+/*
+*Service to get the next tutorship
+*Params:
+*   idBlock = Block identifier number 
+*   idCareer = Career identifier number
+*   start = Start time
+*   end = End time
+*Returns:
+*   200: Update confirmation
+*   400: Param expected
+*   500: DB not available
+*/
 app.post('/api/db/updateBlock', (req, res) => {
   const idBlock = req.body["idBlock"];
   const idCareer = req.body["idCareer"];
   const start = req.body["start"];
   const end = req.body["end"];
-  if(idBlock){
+  if(idBlock && idCareer && start && end){
     database.updateBlock(idBlock, idCareer, start, end).then(function(response) {
       res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
     });
   } else {
     res.sendStatus(400);
