@@ -14,6 +14,8 @@ import TemasTutorado from '../../components/TemasTutorado';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
+import notifier from 'simple-react-notifications';
+import io from 'socket.io-client';
 
 const cookies = new Cookies();
 const Main = memo(props => {
@@ -36,7 +38,8 @@ const Main = memo(props => {
 	const [finalizar, setFinalizar]=React.useState(false);
 	const [redirect, setRedirect] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
-  	var role = utilities.splitCookie(cookies.get('token')).session;
+	var role = utilities.splitCookie(cookies.get('token')).session;
+
   	
 	const comenzarTutoria = () =>{
 		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
@@ -46,9 +49,9 @@ const Main = memo(props => {
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
-		setPupil(tutorados[0]);
 		setStatus(1);
 		setComenzado(true);
+		siguienteTutorado();
 	}
 
 	const finalizarTutoria = () =>{
@@ -72,8 +75,26 @@ const Main = memo(props => {
 	    	setFinalizar(true);
 	    }
 	    setVerify(true);
-	    setPupil(tutorados_aux[0]);
-	    notifyYouAreNext(tutorados_aux[0].matricula);
+		setPupil(tutorados_aux[0]);
+		console.log(tutorados_aux[0]);
+		notifyYouAreNext(tutorados_aux[0].studentId);
+		const socket = io(process.env.REACT_APP_API_SERVER,{
+			query: {
+			  room: tutorados_aux[0].studentId
+			}
+		});
+		
+		socket.on("connect", () => {
+			console.log("Connected to socket.io on new pupil");
+		})
+
+		socket.on("pupilReady",() => {
+			console.log("event from pupil, is ready");
+			notifier.success("La sessión ha sido confirmada por el siguiente tutorado", {
+				position: "top-right",
+				autoClose: 3000
+			});
+		});
 	}
 
 	const redirectToCreation = () => {

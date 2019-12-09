@@ -11,6 +11,7 @@ import 'simple-react-notifications/dist/index.css';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
+import io from 'socket.io-client';
 
 const cookies = new Cookies();
 const route = process.env.REACT_APP_API_SERVER;
@@ -30,9 +31,23 @@ async function notifyCancelSession() {
 const Banner = memo(props => {
   const classes = props.classes;
   const estado = props.estado;
+  const room = props.room;
   const [estado_tuto,setEstado] = React.useState(estado);
+  const [acceptButton, setAcceptButton] = React.useState(false);
+  const [cancelButton, setCancelButton] = React.useState(true);
+  const socket = io(process.env.REACT_APP_API_SERVER,{
+    query: {
+      room: room
+    }
+  });
+
+  socket.on("connect", () => {
+    console.log("Connected to socket.io on new pupil");
+  })
+
   function confirmar() {
     //AQUI FALTA AGREGAR 
+    socket.emit("pupilReady");
     notifier.success("La sessión ha sido confirmada", {
       position: "top-right",
       autoClose: 3000
@@ -46,6 +61,7 @@ const Banner = memo(props => {
       autoClose: 3000
     });
   };
+
   return (
     <React.Fragment>
   {/* Main featured post */}

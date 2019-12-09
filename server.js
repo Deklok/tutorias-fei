@@ -10,6 +10,7 @@ const cors = require('cors');
 const fs = require('fs');
 const spdy = require('spdy');
 const app = express();
+const socketio = require("socket.io");
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const director = require('./requestDirector.js');
@@ -1067,6 +1068,25 @@ if (enableHttp === 'true') {
     throw new Error("Required ENV variable is not set: [HTTP_PORT]");
   }
   const httpServer = http.createServer(app);
+  const io = socketio(httpServer);
+
+  io.on('connection', socket => {
+    let room = socket.handshake.query.room;
+    socket.join(room);
+    socket.on("nextInLine", () => {
+      socket.to(room).emit("nextInLine");
+    })
+    socket.on("pupilReady", () =>{
+      socket.to(room).emit("pupilReady");
+    })
+    socket.on("startSession", () =>{
+      socket.to(room).emit("startSession");
+    })
+    socket.on("endSession",() => {
+      socket.to(room).emit("endSession");
+    });
+  });
+
   httpServer.listen(httpPort, () => {
     console.log(`HTTP Server is listening on port ${httpPort}`);
   });
