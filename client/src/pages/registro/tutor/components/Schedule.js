@@ -181,8 +181,8 @@ const Schedule = memo(props => {
             }
           }).catch(console.log);
         } else {
-          setTitle("Error en las indicaciones.");
-          setMessage("Hubo un error al redactar las indicaciones.");
+          setTitle("Error de redacción.");
+          setMessage("Hubo un error al redactar las indicaciones o al definir el lugar.");
           openDialogError();
         }
       } else {
