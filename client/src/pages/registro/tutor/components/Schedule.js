@@ -16,8 +16,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
 import { notifications } from '../../../pushOneSignal';
+import { Link } from 'react-router-dom';
 
-const cors = require('cors');
 const cookies = new Cookies();
 
 const Schedule = memo(props => {
@@ -28,8 +28,8 @@ const Schedule = memo(props => {
   const [size, setSize] = React.useState(0);
   const [title, setTitle] = React.useState("Error");
   const [message, setMessage] = React.useState("");
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [openDialogMain, setOpenDialogMain] = React.useState(true);
+  const [dialogError, setDialogError] = React.useState(false);
+  const [dialogMain, setDialogMain] = React.useState(true);
   const [idTutorship, setIdTutorship] = React.useState(0);
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
@@ -38,17 +38,20 @@ const Schedule = memo(props => {
   var endDate = new Date('December 1, 2019 07:00:00');
   var period = '';
 
-  const closeDialogMain = () => {
-    setOpenDialogMain(false);
+  const openDialogMain = () =>{
+    setDialogMain(true);
   };
 
-  const openDialogError = () => {
-    setOpenDialog(true);
+  const closeDialogMain = () =>{
+    setDialogMain(false);
   };
 
-  const closeDialogError = () => {
-    setOpenDialog(false);
-    setOpenDialogMain(true);
+  const openDialogError = () =>{
+    setDialogError(true);
+  };
+
+  const closeDialogError = () =>{
+    setDialogError(false);
   };
 
   const tutorshipNumChange = event => {
@@ -79,9 +82,6 @@ const Schedule = memo(props => {
   function calculateTime() {
     endDate.setMinutes(size * 15);
   }
-
-  var token = utilities.splitCookie(cookies.get('token')).token;
-  var role = utilities.splitCookie(cookies.get('token')).session;
 
   async function saveTutorialship() {
     var month = date.getMonth() + 1;
@@ -139,7 +139,7 @@ const Schedule = memo(props => {
     });
   }
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     getNextTutorship()
       .then(result => {
         if (result.data[0].length) {
@@ -148,7 +148,7 @@ const Schedule = memo(props => {
         }
         console.log(idTutorship);
       });
-  }, [idTutorship]);
+  }, [idTutorship]);*/
 
   getPersonnelNumTutor().then(result => {
     if (result) {
@@ -165,22 +165,20 @@ const Schedule = memo(props => {
   const save = () => {
     var dateActual = new Date();
     var regExp = new RegExp(/<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)/);
-    if (date != "" && indications != "" && place != "") {
+    if (date != "" && indications != "" && place != "" && indications.trim() && place.trim()) {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (!regExp.test(indications) && !regExp.test(place)) {
           calculatePeriod();
           calculateTime();
-
           saveTutorialship().then(result => {
             if (result) {
               setIdTutorship(result.data['insertId']);
               saveBlock().then(result => {
-                console.log(result);
                 if (result) {
                   setTitle("Éxito");
                   setMessage("La tutoria se ha calendarizado exitosamente.");
-                  setOpenDialog(true);
-                  setOpenDialogMain(false);
+                  openDialogError();
+                  closeDialogMain();
                 }
               }).catch(console.log);
             }
@@ -200,12 +198,11 @@ const Schedule = memo(props => {
       setMessage("No puede haber campos vacios.");
       openDialogError();
     }
-    setOpenDialogMain(false);
   }
 
   return (
     <div>
-      <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={openDialogMain} >
+      <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={dialogMain} >
       <div className="dialog">
         <h3>Calendarizar tutoria:</h3>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
@@ -262,13 +259,15 @@ const Schedule = memo(props => {
             onChange={event => indicationsChange(event)} />
         </div>
         <div>
+        <Link to='/'>
           <Button id="cancelBtn" variant="contained" onClick={closeDialogMain} >Cancelar</Button>
+        </Link>
           <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
         </div>
       </div>
 
     </Dialog>
-     <Dialog open={openDialog}>
+     <Dialog open={dialogError}>
      <div id="dialogError">
        <DialogTitle >
          {title}
