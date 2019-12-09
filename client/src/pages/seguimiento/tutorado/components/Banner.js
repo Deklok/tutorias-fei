@@ -32,14 +32,16 @@ const Banner = memo(props => {
   const estado = props.estado;
   const [estado_tuto,setEstado] = React.useState(estado);
   function confirmar() {
-    notifier.success("The number of meetings you have next week:  ", {
+    //AQUI FALTA AGREGAR 
+    notifier.success("La sessión ha sido confirmada", {
       position: "top-right",
       autoClose: 3000
     });
   };
   function denegar() {
+    //AQUI FALTA AGREGAR 
     notifyCancelSession();
-    notifier.error("The number of meetings you have next week:  ", {
+    notifier.error("Sesión cancelada", {
       position: "top-right",
       autoClose: 3000
     });

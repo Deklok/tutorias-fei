@@ -15,7 +15,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
-import { notifications } from '../../../pushOneSignal';
 
 const cors = require('cors');
 const cookies = new Cookies();
@@ -153,7 +152,6 @@ const Schedule = memo(props => {
   getPersonnelNumTutor().then(result => {
     if (result) {
       personnelNum = result.data[0]['personnelNum'];
-      notifications(result.data[0]['personnelNum'], "");
       getPupil().then(result => {
         if (result) {
           setSize(result.data[0]['size']);

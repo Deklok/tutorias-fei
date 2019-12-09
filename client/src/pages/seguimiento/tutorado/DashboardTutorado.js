@@ -29,7 +29,7 @@ import Box from '@material-ui/core/Box';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { notifications } from '../../pushOneSignal';
+import { notifications, initNotifications } from '../../pushOneSignal';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 const cookies = new Cookies();
@@ -82,6 +82,7 @@ const DashboardTutorado = memo(props => {
   const [nombre, setNombre] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
+  const [idTutor, setidTutor] = React.useState('');
 
   var user = utilities.splitCookie(cookies.get('token')).id;
     var token = utilities.splitCookie(cookies.get('token')).token;
@@ -103,17 +104,26 @@ const DashboardTutorado = memo(props => {
         headers: { Authorization: token + ";" + role }
       });
   }
+  function setupNotifications(externalId, tutorId) {
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getUsernameTutor', {
+      personnelNum: tutorId
+    },
+    {
+      headers: { Authorization: token + ";" + role }
+    }).then(result => {
+      notifications(matricula, result.data.username);
+    });
+  }
 
   React.useEffect(()=>{
     cargarDatos()
     .then(result => {
-      console.log('Terminado');
       if(result){
         setNombre(result.data[0][0]['name']);
         setCarrera(result.data[0][0]['careerName']);
         setMatricula(result.data[0][0]['studentId']);
         setEmail(result.data[0][0]['email']);
-        notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+        setupNotifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
         getStatus()
         .then(result => {
           if(result.data[0][0] == undefined){
@@ -124,11 +134,14 @@ const DashboardTutorado = memo(props => {
         })
           redireccion();
         }else{
-          console.log('Algo aslio mal');
+          console.log('Algo salió mal');
         }
     }).catch(console.log);
-  },[nombre, status]);
-  
+  },[status]);
+  React.useEffect(()=>{
+    initNotifications();
+  }, []);
+
   function redireccion(){
     console.log(status);
     if(status == undefined){

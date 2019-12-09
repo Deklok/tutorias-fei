@@ -35,7 +35,6 @@ export default class BlocksRegistry extends Component {
   token = utilities.splitCookie(this.cookies.get('token')).token;
   role = utilities.splitCookie(this.cookies.get('token')).session;
   username = utilities.splitCookie(this.cookies.get('token')).id;
-  route = process.env.REACT_APP_API_SERVER;
   
   getPersonnelNumTutor(){
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getpersonnelNumTutor',{
@@ -103,7 +102,7 @@ export default class BlocksRegistry extends Component {
     this.notifyPublishedDay();
   }
   notifyPublishedDay = () => {
-    axios.post(this.route+'api/notify/student/publishedday', {
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/notify/student/publishedday', {
         user: this.username
       },{
         headers: { Authorization: this.token + ";" + this.role }

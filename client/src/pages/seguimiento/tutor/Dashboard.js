@@ -24,7 +24,7 @@ import {
 import Main from './components/Main';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
-import { notifications } from '../../pushOneSignal';
+import { notifications, initNotifications } from '../../pushOneSignal';
 
 const cookies = new Cookies();
 var cookie = cookies.get('token');
@@ -59,7 +59,7 @@ const Dashboard = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(true);
   const [nombre, setNombre] = React.useState('');
-  const [contacto, setContacto] = React.useState('');
+  const [contacto, setContacto] = React.useState(' ');
   const [tutorados, setTutorados] = React.useState('');
   const [connect, setConnect] = React.useState(true);
   const [comenzado, setComenzado] = React.useState(false);
@@ -107,6 +107,10 @@ const Dashboard = memo(props => {
         })
     }).catch(console.log);
   },[idTutorship]);
+  React.useEffect(()=>{
+    initNotifications();
+  }, []);
+
   const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
 Estimados tutorados
 
@@ -143,6 +147,7 @@ Saludos
           classes = {classes}
           idTutor = {personnelNum}
           idTutorship = {idTutorship}
+          contacto = {contacto}
       />
       <Switch>
         <Route exact path="/tutor">

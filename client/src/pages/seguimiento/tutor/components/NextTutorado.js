@@ -123,16 +123,23 @@ const NextTutorado = memo(props => {
       }
     });
   }
-
   function saltar(){
+    notifyStudentYouWereCanceled();
     pass()
     .then(result=>{
       if(result){
         props.next();
       }
-    })
+    });
   }
 
+  async function notifyStudentYouWereCanceled(){
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/notify/student/youwerecanceled', {
+        user: tutorado['studentId']
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+  }
   function validate(){
     return !atendiendo && tutorados.length > 0 && tutorados[0].name!=undefined;
   }

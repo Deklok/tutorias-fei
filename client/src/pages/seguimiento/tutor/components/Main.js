@@ -37,7 +37,6 @@ const Main = memo(props => {
 	const [redirect, setRedirect] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
-  	const route = process.env.REACT_APP_API_SERVER;
   	
 	const comenzarTutoria = () =>{
 		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
@@ -74,6 +73,7 @@ const Main = memo(props => {
 	    }
 	    setVerify(true);
 	    setPupil(tutorados_aux[0]);
+	    notifyYouAreNext(tutorados_aux[0].matricula);
 	}
 
 	const redirectToCreation = () => {
@@ -90,14 +90,7 @@ const Main = memo(props => {
 		}
 	}
 	async function notifyYouAreNext(studentId){
-		axios.post(route+'api/notify/student/youarenext', {
-	      user: studentId
-	    },{
-	      headers: { Authorization: token + ";" + role }
-	    });
-	}
-	async function notifyYouWereCanceled(studentId){
-		axios.post(route+'api/notify/student/youwerecanceled', {
+		axios.post(process.env.REACT_APP_API_SERVER +'api/notify/student/youarenext', {
 	      user: studentId
 	    },{
 	      headers: { Authorization: token + ";" + role }

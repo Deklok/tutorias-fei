@@ -40,6 +40,7 @@ const SideBar = memo(props => {
 	const classes = props.classes;
 	const tutor = props.idTutor;
 	const idTutorship = props.idTutorship;
+	const [email, setEmail] = React.useState(props.contacto);
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
 	const [cancelarTutoriaDialog, setCancelarTutoriaDialog] = React.useState(false);
@@ -52,14 +53,21 @@ const SideBar = memo(props => {
 	const [authError, setAuthError] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
-
 	const [state, setState] = React.useState({
 		terminos: false,
 	});
+	var initTerminos = false;
+
+	React.useEffect(()=>{
+    	checkIsAgree().then(function (result){
+    		var terminosValue = {terminos: result.data};
+    		setState(terminosValue);
+    		initTerminos = result.data;
+    	});
+  	}, []);
 
 	const handleCheckTerminos = name => event => {
 		setState({ ...state, [name]: event.target.checked });
-		console.log(state.terminos)
 	};
 
 	const handleAbrirTerminos = () => {
@@ -107,6 +115,9 @@ const SideBar = memo(props => {
 			});
 		}
 	}
+	const handleCerrarLogin = () => {
+		setLoginDialog(false);
+	}
 
 	const handleConfirmarCancelarTutoria = () => {
 		setCancelarTutoriaDialog(false);
@@ -128,7 +139,31 @@ const SideBar = memo(props => {
 	const handleSiguienteTerminos = () => {
 		setTerminosDialog(false);
 		setLoginDialog(true);
+		if (!initTerminos) {
+			setAgreement();
+		}	
 	};
+	const handleCerrarTerminosDialog = () => {
+		setTerminosDialog(false);
+		notifier.error("Para importar los datos es necesario aceptar los términos", {
+			position: "top-right",
+			autoClose: 3000
+		});
+	}
+	//Falta agregar un botón para que lo llame para registrar el correo. En caso de ya tener un correo en el texfield no debería dejar actualizar hasta que des de baja el otro. 
+	const handleActualizarCorreo = () => {
+		console.log("EMAIL", email); //Si es este el nuevo?
+		var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
+		if (regExpEmail.test(email)) {
+			notifySetupEmail();
+		} else {
+			notifier.error("Esto no parece un correo válido", {
+				position: "top-right",
+				autoClose: 3000
+			});
+		}
+
+	}
 
 	const redirectToFeedback = () => {
 		setMainRoute(false);
@@ -157,16 +192,24 @@ const SideBar = memo(props => {
 	      headers: { Authorization: token + ";" + role }
 	    });
 	}
-	async function notifyAllCanceledDay(){
-		axios.post(route + 'api/notify/student/canceledday', {
-	      user: username
+	async function notifySetupEmail(){
+		axios.post(route + 'api/notify/email/signup', {
+	      user: tutor,
+	      email: email
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
 	}
-	//FALTAN DE INTEGRAR
+	//Falta agregar un botón para llamar y dar de "baja" 
+	async function notifyResetEmail(){
+		axios.post(route + 'api/notify/email/reset', {
+	      user: tutor,
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
 	async function checkIsAgree(){
-		axios.post(route + 'api/db/isagree', {
+		return axios.post(route + 'api/db/isagree', {
 	      user: username
 	    },{
 	      headers: { Authorization: token + ";" + role }
@@ -175,6 +218,14 @@ const SideBar = memo(props => {
 	async function setAgreement(){
 		axios.post(route + 'api/db/setAgreement', {
 	      user: username
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
+	async function notifyAllCanceledDay(emailInput){
+		axios.post(route + '/api/notify/email/signup', {
+	      user: username,
+	      email: emailInput
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
@@ -269,6 +320,9 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 					/>
 				</DialogContent>
 				<DialogActions>
+					<Button onClick={handleCerrarTerminosDialog} color="secondary">
+						Cancelar
+          			</Button>
 					<Button color="primary" disabled={!state.terminos} onClick={handleSiguienteTerminos}>
 						Siguiente
 					</Button>
@@ -307,6 +361,9 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 					/>
 				</DialogContent>
 				<DialogActions>
+					<Button onClick={handleCerrarLogin} color="secondary">
+						Cancelar
+          			</Button>
 					<Button onClick={handleLogin} color="primary">
 						Enviar
           			</Button>

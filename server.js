@@ -211,15 +211,15 @@ app.post('/api/notify/email/signup',async function (request, res){
 /*
 *Service to reset professor to email notifications.
 *NOTE: ONLY FOR PROFESSOR
-*Param: user = extenal professor ID/username (magarcia)
+*Param: user = extenal professor ID/personnelNum (12353)
 *   400 = Parameters needed
 *   500 = Service not available
 *   200 = reset email and status
 */
 app.post('/api/notify/email/reset',async function (request, res){
-  var username = request.body.user;
-  if (username) {
-    var code = await director.resetTutorEmail(username);
+  var personnelNum = request.body.user;
+  if (personnelNum) {
+    var code = await director.resetTutorEmail(personnelNum);
     res.sendStatus(code);
   } else {
     res.sendStatus(400);
@@ -604,6 +604,29 @@ app.post('/api/db/getpersonnelNumTutor', (req, res)=>{
     res.status(400);
   }
 });
+/*
+*Service to get username tutor
+*Params:
+*   personnelNum = tutor personnelNum
+*Returns:
+*   200: username
+*   400: Param expected
+*   500: DB not available
+*/
+app.post('/api/db/getUsernameTutor', (req, res)=>{
+  var personnelNum = req.body.personnelNum;
+  if(personnelNum){
+    database.getTutorUsername(personnelNum).then(function (response){
+      res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  }else{
+    res.status(400);
+  }
+});
+
 /*
 *Service to retrieve all block data from tutorship
 *Params:
@@ -1010,13 +1033,27 @@ app.post('/api/db/updateBlock', (req, res) => {
   }
 });
 
+/*
+*The OneSignalSDKWorker file MUST be public
+*/
+app.get('/OneSignalSDKWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKWorker.js'));
+});
+/*
+*The OneSignalSDKUpdaterWorker file MUST be public
+*/
+app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKUpdaterWorker.js'));
+});
+
 // Use this code when is on production
+/*
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
-
+*/
 let enableHttp = process.env.ENABLE_HTTP;
 let enableHttps = process.env.ENABLE_HTTPS;
 
