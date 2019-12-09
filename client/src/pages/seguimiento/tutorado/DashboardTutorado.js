@@ -83,6 +83,9 @@ const DashboardTutorado = memo(props => {
   const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
   const [idTutor, setidTutor] = React.useState('');
+  const [agenda, setAgenda] = React.useState('');
+  const [place, setPlace] = React.useState('');
+  const [hour, setHour] = React.useState('');
 
   var user = utilities.splitCookie(cookies.get('token')).id;
     var token = utilities.splitCookie(cookies.get('token')).token;
@@ -104,6 +107,16 @@ const DashboardTutorado = memo(props => {
         headers: { Authorization: token + ";" + role }
       });
   }
+
+  async function cargarSesion() {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSession', {
+      idPupil: user
+    },
+    {
+      headers: { Authorization: token + ";" + role }
+    });
+  }
+
   function setupNotifications(externalId, tutorId) {
     axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getUsernameTutor', {
       personnelNum: tutorId
@@ -137,6 +150,14 @@ const DashboardTutorado = memo(props => {
           console.log('Algo salió mal');
         }
     }).catch(console.log);
+    cargarSesion()
+    .then(result => {
+      if (result) {
+        setAgenda(result.data[0][0].indications);
+        setPlace(result.data[0][0].place);
+        setHour(result.data[0][0].startTime);
+      }
+    })
   },[status]);
   React.useEffect(()=>{
     initNotifications();
@@ -150,27 +171,6 @@ const DashboardTutorado = memo(props => {
       redirectToAgendTutorado();
     }
   }
-
-  const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
-  Estimados tutorados
-
-  El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios
-
-  9:00 am a 11:30 am  Atención a estudiantes de Ingeniería de Software
-
-  11:30 am a 14:30 pm Atención a estudiantes de Redes y Servicios de Cómputo
-
-  Les recuerdo a los tutorados de nuevo ingreso que traigan lo que es encargué en la primera tutoría. Los temas que vamos a platicar mañana son:
-
-  - Resultados de los primeros parciales
-  - Comentarios previos a la acreditación de la LIS
-  - Detectar problemas académicos que podamos atender a tiempo
-  - Asuntos generales.
-
-  Cualquier cosa estoy a sus órdenes
-
-  Saludos
-  `
 
   return (
           <div>
@@ -294,7 +294,7 @@ const DashboardTutorado = memo(props => {
                         </Typography>
                       <Divider />
                       <Agenda className={classes.markdown}>
-                        {test}
+                        {agenda}
                       </Agenda>
                     </Grid>
                     {/* Temas Tutorado */}
