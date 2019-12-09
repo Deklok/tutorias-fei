@@ -30,17 +30,14 @@ const Schedule = memo(props => {
   const [message, setMessage] = React.useState("");
   const [dialogError, setDialogError] = React.useState(false);
   const [dialogMain, setDialogMain] = React.useState(true);
-  const [idTutorship, setIdTutorship] = React.useState(0);
+  
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
   var personnelNum = 0;
   var startDate = new Date('December 1, 2019 07:00:00');
   var endDate = new Date('December 1, 2019 07:00:00');
   var period = '';
-
-  const openDialogMain = () =>{
-    setDialogMain(true);
-  };
+  var idTutorship = 0;
 
   const closeDialogMain = () =>{
     setDialogMain(false);
@@ -143,7 +140,7 @@ const Schedule = memo(props => {
     getNextTutorship()
       .then(result => {
         if (result.data[0].length) {
-          setIdTutorship(result.data[0][0].idTutorship);
+          idTutorship = result.data[0][0].idTutorship;
           setOpenDialogMain(false);
         }
         console.log(idTutorship);
@@ -172,7 +169,7 @@ const Schedule = memo(props => {
           calculateTime();
           saveTutorialship().then(result => {
             if (result) {
-              setIdTutorship(result.data['insertId']);
+              idTutorship = result.data['insertId'];
               saveBlock().then(result => {
                 if (result) {
                   setTitle("Éxito");
