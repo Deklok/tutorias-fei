@@ -78,6 +78,7 @@ const NextTutorado = memo(props => {
   const comenzado = props.comenzado;
   const setCurrentPupil = props.setCurrentPupil;
   const setAtendiendo = props.setAtendiendo;
+  const setTemas = props.setTemas;
   const tutorados = props.tutorados;
   const atendiendo = props.atendiendo;
   const[connect, setConnect] = React.useState(true);
@@ -120,6 +121,7 @@ const NextTutorado = memo(props => {
         props.next();
         setCurrentPupil(tutorado);
         setAtendiendo(true);
+        setTemas(tutorado['topics']);
       }
     });
   }

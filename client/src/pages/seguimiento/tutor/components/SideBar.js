@@ -231,6 +231,12 @@ const SideBar = memo(props => {
 	    });
 	}
 
+	function logout() {
+		console.log("Loggin out");
+		cookies.remove('token');
+		window.location.reload();
+	  }
+
 	return (
 		<Drawer
 			variant="permanent"
@@ -287,7 +293,7 @@ const SideBar = memo(props => {
 						</ListItemIcon>
 						<ListItemText primary="Actualizar Datos" />
 					</ListItem>
-					<ListItem button component="a" href="/logout">
+					<ListItem button component="a" onClick={logout}>
 						<ListItemIcon>
 							<ExitToAppIcon />
 						</ListItemIcon>

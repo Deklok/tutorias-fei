@@ -65,6 +65,7 @@ const Dashboard = memo(props => {
   const [comenzado, setComenzado] = React.useState(false);
   const [personnelNum, setPersonnel] = React.useState(0);
   const [idTutorship, setTutorship]=React.useState(0);
+  const [indications, setIndications]=React.useState('');
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -96,6 +97,8 @@ const Dashboard = memo(props => {
         if(result.data[0].length){
           var tutorship_aux = result.data[0][0].idTutorship;
           setTutorship(tutorship_aux);
+          setIndications(result.data[0][0].indications);
+          console.log(indications);
         }
       });
       cargarTutorados(connect)
@@ -110,26 +113,6 @@ const Dashboard = memo(props => {
   React.useEffect(()=>{
     initNotifications();
   }, []);
-
-  const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
-Estimados tutorados
-
-El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios
-
-9:00 am a 11:30 am  Atención a estudiantes de Ingeniería de Software
-11:30 am a 14:30 pm Atención a estudiantes de Redes y Servicios de Cómputo
-
-Les recuerdo a los tutorados de nuevo ingreso que traigan lo que es encargué en la primera tutoría. Los temas que vamos a platicar mañana son:
-
-- Resultados de los primeros parciales
-- Comentarios previos a la acreditación de la LIS
-- Detectar problemas académicos que podamos atender a tiempo
-- Asuntos generales.
-
-Cualquier cosa estoy a sus órdenes
-
-Saludos
-`
 
   return (
     <div className={classes.root}>
@@ -153,7 +136,6 @@ Saludos
         <Route exact path="/tutor">
           <Main
             classes={classes}
-            test={test}
             tutorados={tutorados}
             setTutorados={setTutorados}
             comenzado={comenzado}

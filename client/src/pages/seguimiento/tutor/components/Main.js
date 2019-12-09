@@ -23,8 +23,8 @@ const Main = memo(props => {
 	const tutorados = props.tutorados;
 	const setTutorados = props.setTutorados;
 	const tutor = props.tutor;
-	const test = props.test;
 	const [tutorshipExists, setExists] = React.useState(true);
+	const [indications, setIndications] = React.useState('');
 	const [status, setStatus] = React.useState(0);
 	const [connect, setConnect]=React.useState(true);
 	const [currentPupil,setCurrentPupil] = React.useState([]);
@@ -98,14 +98,15 @@ const Main = memo(props => {
 	}
 
 	React.useEffect(()=>{
-		setTemas('¿Quería comentar una situación que me está pasando con mi maestro de Estructuras de Datos, porque ya van dos semanas y aún no entrega los resultados de los exámenes parciales');
 		if(tutor != 0){
 			getNextTutorship()
 			.then(result=>{
 				if(result.data[0].length){
 					var tutorship_aux = result.data[0][0].idTutorship;
+					var indications_aux = result.data[0][0].indications;
 					setTutorship(tutorship_aux);
 					setStatus(result.data[0][0].status);
+					setIndications(indications_aux);
 					if(status == 1){
 						setComenzado(true);
 						if(tutorados.length){
@@ -159,7 +160,8 @@ const Main = memo(props => {
 		          	next={siguienteTutorado}
 		          	setCurrentPupil={setCurrentPupil}
 		          	setVerify = {setVerify}
-		          	tutorados = {tutorados}
+					tutorados = {tutorados}
+					setTemas = {setTemas}
 		          	/>
 		        </Grid>
 		      </Grid>
@@ -171,7 +173,7 @@ const Main = memo(props => {
 		            </Typography>
 		          <Divider />
 		          <Agenda className={classes.markdown}>
-		            {test}
+		            {indications}
 		          </Agenda>
 		        </Grid>
 		        <Grid item xs={12} md={3} lg={3}>

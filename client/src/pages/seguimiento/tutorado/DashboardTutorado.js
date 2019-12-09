@@ -190,7 +190,7 @@ const DashboardTutorado = memo(props => {
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Cerrar Sesión">
-                    <IconButton color="inherit" label="Cerrar" href="/logout">
+                    <IconButton color="inherit" label="Cerrar" onClick={logout}>
                       <ExitToAppIcon />
                     </IconButton>
                   </Tooltip>
