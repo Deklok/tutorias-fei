@@ -21,38 +21,103 @@ import { Link } from 'react-router-dom';
 const cookies = new Cookies();
 
 const Schedule = memo(props => {
-  const [tutorshipNum, setTutorshipNum] = React.useState(1);
+
+  /**
+   * @type {number}
+   * 1 = Turoria 1
+   * 2 = Tutoria 2
+   * 3 = Tutoria 3
+   * 4 = Tutoria extraordinaria
+   */
+  const [typeTutorship, setTypeTutorShip] = React.useState(1);
+  /**
+   * @type {date}
+   * Date selected by user
+   */
   const [date, setDate] = React.useState(new Date());
+  /**
+   * @type {string}
+   * Indications written by user
+   */
   const [indications, setIndications] = React.useState('');
+  /**
+   * @type {string}
+   * Place written by user
+   */
   const [place, setPlace] = React.useState('');
-  const [size, setSize] = React.useState(0);
-  const [title, setTitle] = React.useState("Error");
-  const [message, setMessage] = React.useState("");
-  const [dialogError, setDialogError] = React.useState(false);
+  /**
+   * @type {string}
+   * Error title
+   */
+  const [title, setTitle] = React.useState('');
+  /**
+   * @type {string}
+   * Error message
+   */
+  const [message, setMessage] = React.useState('');
+  /**
+   * @type {boolean}
+   * true = open dialog notifications
+   * false = close dialog notifications
+   */
+  const [dialogNotification, setDialogNotification] = React.useState(false);
+  /**
+   * @type {boolean}
+   * true = open dialog main
+   * false = close dialog main
+   */
   const [dialogMain, setDialogMain] = React.useState(true);
   
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
+
+  /**
+   * @type {number}
+   * Personnel number of user
+   */
   var personnelNum = 0;
+  /**
+   * @type {date}
+   * Start date, Its default value is Deceber 1, 2019 07:00:00
+   * Only time is used
+   */
   var startDate = new Date('December 1, 2019 07:00:00');
+  /**
+   * @type {date}
+   * End date, Its default value is Deceber 1, 2019 07:00:00
+   * Only time is used and after is modified by the number of pupils
+   */
   var endDate = new Date('December 1, 2019 07:00:00');
+  /**
+   * @type{string}
+   * Present semester period
+   */
   var period = '';
+  /**
+   * @type{number}
+   * saved tutorship id
+   */
   var idTutorship = 0;
+  /**
+   * @type{number}
+   * quantity of pupil by tutor
+   */
+  var countPupils = 0;
 
   const closeDialogMain = () =>{
     setDialogMain(false);
   };
 
   const openDialogError = () =>{
-    setDialogError(true);
+    setDialogNotification(true);
   };
 
   const closeDialogError = () =>{
-    setDialogError(false);
+    setDialogNotification(false);
   };
 
   const tutorshipNumChange = event => {
-    setTutorshipNum(event.target.value);
+    setTypeTutorShip(event.target.value);
   };
 
   const dateChange = date => {
@@ -67,6 +132,9 @@ const Schedule = memo(props => {
     setPlace(event.target.value);
   };
 
+  /**
+   * Function to calculate the present period
+   */
   function calculatePeriod() {
     var dateActual = new Date();
     if (dateActual.getMonth() < 6) {
@@ -76,8 +144,11 @@ const Schedule = memo(props => {
     }
   }
 
+  /**
+   * Function to calculate ent time of tutorship general
+   */
   function calculateTime() {
-    endDate.setMinutes(size * 15);
+    endDate.setMinutes(countPupils * 15);
   }
 
   async function saveTutorialship() {
@@ -85,7 +156,7 @@ const Schedule = memo(props => {
     var id = utilities.splitCookie(cookies.get('token')).id;
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addTutorship', {
       place: place,
-      tutorshipNum: tutorshipNum,
+      tutorshipNum: typeTutorship,
       period: period,
       status: 1,
       indications: indications,
@@ -128,32 +199,13 @@ const Schedule = memo(props => {
     });
   }
 
-  async function getNextTutorship() {
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
-      idTutor: personnelNum
-    }, {
-      headers: { Authorization: token + ";" + role }
-    });
-  }
-
-  /*React.useEffect(() => {
-    getNextTutorship()
-      .then(result => {
-        if (result.data[0].length) {
-          idTutorship = result.data[0][0].idTutorship;
-          setOpenDialogMain(false);
-        }
-        console.log(idTutorship);
-      });
-  }, [idTutorship]);*/
-
   getPersonnelNumTutor().then(result => {
     if (result) {
       personnelNum = result.data[0]['personnelNum'];
       notifications(result.data[0]['personnelNum'], "");
       getPupil().then(result => {
         if (result) {
-          setSize(result.data[0]['size']);
+          countPupils = result.data[0]['size'];
         }
       }).catch(console.log);
     }
@@ -178,7 +230,7 @@ const Schedule = memo(props => {
                   closeDialogMain();
                 }
               }).catch(console.log);
-            }
+            } 
           }).catch(console.log);
         } else {
           setTitle("Error de redacción.");
@@ -229,7 +281,7 @@ const Schedule = memo(props => {
             <Select
               id="demo-customized-select-native"
               label="Tipo de tutoría:"
-              value={tutorshipNum}
+              value={typeTutorship}
               onChange={tutorshipNumChange}>
               <MenuItem value={1}>Tutoría 1</MenuItem>
               <MenuItem value={2}>Tutoría 2</MenuItem>
@@ -256,7 +308,7 @@ const Schedule = memo(props => {
             onChange={event => indicationsChange(event)} />
         </div>
         <div>
-        <Link to='/'>
+        <Link style={{textDecoration: 'none'}} to='/'>
           <Button id="cancelBtn" variant="contained" onClick={closeDialogMain} >Cancelar</Button>
         </Link>
           <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
@@ -264,7 +316,7 @@ const Schedule = memo(props => {
       </div>
 
     </Dialog>
-     <Dialog open={dialogError}>
+     <Dialog open={dialogNotification}>
      <div id="dialogError">
        <DialogTitle >
          {title}
