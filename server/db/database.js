@@ -102,7 +102,7 @@ function getTutorSuscribedStatus(personnelNum){
 			if(err){
 				return reject(err);
 			}else{
-				return resolve(results);
+				return resolve(results[0]);
 			}
 		});
 	});

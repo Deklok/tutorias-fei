@@ -40,7 +40,8 @@ const SideBar = memo(props => {
 	const classes = props.classes;
 	const tutor = props.idTutor;
 	const idTutorship = props.idTutorship;
-	const [email, setEmail] = React.useState(props.contacto);
+	const contacto = props.contacto;
+	const [email, setEmail] = React.useState(contacto);
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
 	const [cancelarTutoriaDialog, setCancelarTutoriaDialog] = React.useState(false);
@@ -50,6 +51,8 @@ const SideBar = memo(props => {
 	const [username, setUsername] = React.useState(utilities.splitCookie(cookies.get('token')).id);
 	const [password, setPassword] = React.useState("");
 	const [errors, setErrors] = React.useState(false);
+	const [contactoDialog, setContactoDialog] = React.useState(false);
+	const [contactoPermitirCambio, setContactoCambio] = React.useState(contacto == null);
 	const [authError, setAuthError] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
@@ -150,19 +153,50 @@ const SideBar = memo(props => {
 			autoClose: 3000
 		});
 	}
-	//Falta agregar un botón para que lo llame para registrar el correo. En caso de ya tener un correo en el texfield no debería dejar actualizar hasta que des de baja el otro. 
+	const handleAbrirActualizarContacto = () => {
+		console.log(contacto);
+		console.log(contactoPermitirCambio);
+		setContactoDialog(true);
+	}
+	const handleCerrarActualizarContacto = () => {
+		setContactoDialog(false);
+	}
+	const handleResetContacto = () => {
+		notifyResetEmail().then(function (response) {
+			if (response.status == 200) {
+				notifier.success("Correo olvidado en el sistema", {
+					position: "top-right",
+					autoClose: 3000
+				});
+				setContactoCambio(true);
+			} else {
+				setEmail(null);
+				menssageError();
+			}
+		});
+	}
 	const handleActualizarCorreo = () => {
-		console.log("EMAIL", email); //Si es este el nuevo?
 		var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
 		if (regExpEmail.test(email)) {
-			notifySetupEmail();
+			notifySetupEmail().then(function (response){
+				if (response.status == 201) {
+					setContactoCambio(false);
+					notifier.success("Correo registrado en el sistema", {
+						position: "top-right",
+						autoClose: 3000
+					});
+				} else {
+					setEmail(null);
+					menssageError();
+				}
+				setContactoDialog(false);
+			});		
 		} else {
 			notifier.error("Esto no parece un correo válido", {
 				position: "top-right",
 				autoClose: 3000
 			});
 		}
-
 	}
 
 	const redirectToFeedback = () => {
@@ -193,16 +227,15 @@ const SideBar = memo(props => {
 	    });
 	}
 	async function notifySetupEmail(){
-		axios.post(route + 'api/notify/email/signup', {
+		return axios.post(route + 'api/notify/email/signup', {
 	      user: tutor,
 	      email: email
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
 	}
-	//Falta agregar un botón para llamar y dar de "baja" 
 	async function notifyResetEmail(){
-		axios.post(route + 'api/notify/email/reset', {
+		return axios.post(route + 'api/notify/email/reset', {
 	      user: tutor,
 	    },{
 	      headers: { Authorization: token + ";" + role }
@@ -229,6 +262,12 @@ const SideBar = memo(props => {
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
+	}
+	function menssageError(){
+		notifier.error("Algo salió en el registro :(", {
+			position: "top-right",
+			autoClose: 3000
+		});
 	}
 
 	function logout() {
@@ -293,6 +332,12 @@ const SideBar = memo(props => {
 						</ListItemIcon>
 						<ListItemText primary="Actualizar Datos" />
 					</ListItem>
+					<ListItem button onClick={handleAbrirActualizarContacto}>
+						<ListItemIcon>
+							<CachedIcon />
+						</ListItemIcon>
+						<ListItemText primary="Actualizar Contacto" />
+					</ListItem>
 					<ListItem button component="a" onClick={logout}>
 						<ListItemIcon>
 							<ExitToAppIcon />
@@ -309,9 +354,9 @@ const SideBar = memo(props => {
 				<DialogTitle id="scroll-dialog-title">Aviso de Privacidad</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcionen.
-Sus datos personales serán utilizados para le proporcionar los correspondientes registros de sus tutorados.Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.
-Se informa que no realizarán transferencias que requieren su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados.
+						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcione.
+Sus datos personales serán utilizados para proporcionar los correspondientes registros de sus tutorados. Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.
+Se informa que no realizarán transferencias que requieren de su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados.
 					</DialogContentText>
 					<FormControlLabel
 						control={
@@ -374,6 +419,35 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 						Enviar
           			</Button>
 				</DialogActions>
+			</Dialog>
+				<Dialog open={contactoDialog}
+				scroll={'paper'}
+				aria-labelledby="scroll-dialog-title"
+				aria-describedby="scroll-dialog-description">
+				<DialogTitle id="form-dialog-title">Actualizar correo electrónico</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="contacto"
+						placeholder = {contacto}
+						label="Correo electrónico"
+						type="email"
+						fullWidth
+						onChange={e=>setEmail(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleResetContacto} disabled={contactoPermitirCambio} color="secondary">
+						Olvidar correo
+          			</Button>
+					<Button onClick={handleActualizarCorreo} disabled={!contactoPermitirCambio} color="primary">
+						Actualizar
+          			</Button>
+				</DialogActions>
+				<Button onClick={handleCerrarActualizarContacto} color="secondary">
+						Cancelar
+          			</Button>
 			</Dialog>
 			<Dialog open={cancelarTutoriaDialog}
 				scroll={'paper'}

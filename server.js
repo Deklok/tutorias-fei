@@ -195,16 +195,23 @@ app.post('/api/user/login', function (request, res){
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available
-*   200 = Suscribed
+*   201 = Suscribed
+*   200 = Did nothing
 */
 app.post('/api/notify/email/signup',async function (request, res){
   var personnelNum = request.body.user;
   var email = request.body.email;
+  console.log(personnelNum);
+  console.log(email);
   if (personnelNum && email) {
     var dataToPushRecord = {emailAddress: email,
               id: personnelNum};
-    var code = await director.setupTutorEmail(dataToPushRecord);
-    res.sendStatus(code);
+    director.setupTutorEmail(dataToPushRecord).then(function(responseCode){
+      res.sendStatus(responseCode);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
   } else {
     res.sendStatus(400);
   }
@@ -1048,13 +1055,13 @@ app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
 });
 
 // Use this code when is on production
-/*
+
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
-*/
+
 let enableHttp = process.env.ENABLE_HTTP;
 let enableHttps = process.env.ENABLE_HTTPS;
 
