@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { memo, Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -6,86 +6,17 @@ import Button from '@material-ui/core/Button';
 import { Select } from '@material-ui/core';
 
 
-class AddBox extends Component {
+const AddBox = memo(props => {
+    const selectedInfo = props.editingBlock;
+    var career = selectedInfo.idCareer;
+    var startTime = selectedInfo.start;
+    var endTime = selectedInfo.end;
 
-    render() {
-
-        const selectedInfo = this.props.editingBlock;
-
-        this.state = {
-            career: selectedInfo.idCareer,
-            startTime: selectedInfo.start,
-            endTime: selectedInfo.end
-        }
-
-        return (
-            <div>
-                <Paper className={this.props.classes.registryBox}>
-                    <Typography variant="h5" component="h3" gutterBottom className={this.props.classes.title}>
-                        Añadir bloque.
-                </Typography>
-                    <Select
-                        id="outlined-textarea"
-                        label="Carrera del bloque"
-                        placeholder="Carrera"
-                        value={this.state.career}
-                        multiline
-                        margin="normal"
-                        variant="outlined"
-                        className={this.props.classes.careerField}
-                        onChange={event => this.onCareerChange2(event)}>
-                        <option value="1">Ingeniería de Software</option>
-                        <option value="2">Redes</option>
-                        <option value="3">Tecnologías Computacionales</option>
-                    </Select>
-                    <TextField
-                        id="outlined-textarea"
-                        label="Inicio"
-                        type="time"
-                        margin="normal"
-                        variant="outlined"
-                        className={this.props.classes.timeField}
-                        value={this.state.startTime}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        inputProps={{
-                            step: 300, // 5 min
-                        }}
-                        onChange={event => this.onStartTimeChange(event)}
-                    />
-                    <TextField
-                        id="outlined-textarea"
-                        label="Fin"
-                        type="time"
-                        margin="normal"
-                        variant="outlined"
-                        className={this.props.classes.timeField}
-                        value={this.state.endTime}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        inputProps={{
-                            step: 300, // 5 min
-                        }}
-                        onChange={event => this.onEndTimeChange(event)}
-                    />
-                    <Button variant="contained"
-                        color="primary"
-                        className={this.props.classes.button}
-                        onClick={event => this.onSubmit(event)}>
-                        Añadir
-                </Button>
-                </Paper>
-            </div>
-        );
-    }
-
-    onCareerChange2(e) {
-        const id = this.props.editingBlock.blockId;
+    const onCareerChange2 = (e) => {
+        const id = props.editingBlock.idBlock;
         const career = e.target.value;
-        const start = this.props.editingBlock.start;
-        const end = this.props.editingBlock.end;
+        const start = props.editingBlock.start;
+        const end = props.editingBlock.end;
 
         const block = {
             idBlock: id,
@@ -94,28 +25,18 @@ class AddBox extends Component {
             end: end
         }
 
-        this.props.onChange(block);
+        props.onChange(block);
     }
 
-    onStartTimeChange(e) {
-        const id = this.props.editingBlock.blockId;
-        const career = this.props.editingBlock.career;
+    const onStartTimeChange = (e) => {
+        e.preventDefault();
+        const id = selectedInfo.idBlock;
+        const career = selectedInfo.idCareer;
         const value = e.target.value;
-        const endTime = this.props.editingBlock.end;
+        const endTime = selectedInfo.end;
 
         
-        if (value > endTime) {
-            const block = {
-                idBblock: id,
-                idCareer: career,
-                start: value,
-                end: value
-            }
-    
-            this.props.onChange(block);
-        } else if (value === "") {
-            e.target.value = this.state.startTime;
-        } else {
+        if (value < endTime) {
             const block = {
                 idBlock: id,
                 idCareer: career,
@@ -123,21 +44,33 @@ class AddBox extends Component {
                 end: endTime
             }
     
-            this.props.onChange(block);
+            props.onChange(block);
+        } else if (value === "") {
+            e.target.value = startTime;
+        } else {
+            const block = {
+                idBlock: id,
+                idCareer: career,
+                start: endTime,
+                end: endTime
+            }
+    
+            props.onChange(block);
         }
     }
 
-    onEndTimeChange(e) {
-        const id = this.props.editingBlock.blockId;
-        const career = this.props.editingBlock.careerId;
-        const startTime = this.props.editingBlock.start;
+    const onEndTimeChange = (e) => {
+        e.preventDefault();
+        const id = selectedInfo.idBlock;
+        const career = selectedInfo.idCareer;
+        const startTime = selectedInfo.start;
         const endTime = e.target.value;
 
         if (endTime < startTime) {
             alert("La hora de fin no debe ser menor a la de inicio");
             e.target.value = startTime;
         } else if (endTime === "") {
-            e.target.value = this.state.endTime;
+            e.target.value = endTime;
         } else {
             const block = {
                 idBlock: id,
@@ -146,16 +79,16 @@ class AddBox extends Component {
                 end: endTime
             }
     
-            this.props.onChange(block);
+            props.onChange(block);
         }
     }
 
-    onSubmit(e) {
+    const onSubmit = (e) => {
         e.preventDefault();
         var isRegistered = false;
-        const blocks = this.props.blocks;
+        const blocks = props.blocks;
         blocks.forEach(block => {
-            if (block.careerId === this.state.career) {
+            if (block.idCareer === career) {
                 isRegistered = true;
             }
         });
@@ -164,14 +97,71 @@ class AddBox extends Component {
             alert("El bloque de la carrera seleccionada ya ha sido registrado, " +
                 "para editarlo, seleccione el ícono de edición para editarlo.")
         } else {
-            this.setState({
-                career: "Ingeniería de Software",
-                startTime: "07:30",
-                endTime: "07:30"
-            });
-            this.props.addBlock(this.state.career, this.state.startTime, this.state.endTime);
+            props.addBlock(career, startTime, endTime);
         }
     }
-}
+
+    return (
+        <div>
+            <Paper className={props.classes.registryBox}>
+                <Typography variant="h5" component="h3" gutterBottom className={props.classes.title}>
+                    Añadir bloque.
+            </Typography>
+                <Select
+                    id="outlined-textarea"
+                    label="Carrera del bloque"
+                    placeholder="Carrera"
+                    value={career}
+                    multiline
+                    margin="normal"
+                    variant="outlined"
+                    className={props.classes.careerField}
+                    onChange={event => onCareerChange2(event)}>
+                    <option value="1">Ingeniería de Software</option>
+                    <option value="2">Redes</option>
+                    <option value="3">Tecnologías Computacionales</option>
+                </Select>
+                <TextField
+                    id="outlined-textarea"
+                    label="Inicio"
+                    type="time"
+                    margin="normal"
+                    variant="outlined"
+                    className={props.classes.timeField}
+                    value={startTime}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    inputProps={{
+                        step: 300, // 5 min
+                    }}
+                    onChange={event => onStartTimeChange(event)}
+                />
+                <TextField
+                    id="outlined-textarea"
+                    label="Fin"
+                    type="time"
+                    margin="normal"
+                    variant="outlined"
+                    className={props.classes.timeField}
+                    value={endTime}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    inputProps={{
+                        step: 300, // 5 min
+                    }}
+                    onChange={event => onEndTimeChange(event)}
+                />
+                <Button variant="contained"
+                    color="primary"
+                    className={props.classes.button}
+                    onClick={event => onSubmit(event)}>
+                    Añadir
+            </Button>
+            </Paper>
+        </div>
+    );
+});
 
 export default AddBox;

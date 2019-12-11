@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { memo, Component, useState } from 'react';
 import './blockregistry.css';
 import clsx from 'clsx';
 import axios from 'axios';
@@ -14,201 +14,206 @@ import Schedule from './components/Schedule';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
 
-export default class BlocksRegistry extends Component {
+const cookies = new Cookies();
 
-  state = {
-    blocks: [],
-    blockCount: 2,
-    editingBlock: {
-      idBlock: 0,
-      idCareer: 1,
-      start: '09:00',
-      end: '10:00'
-    },
-    openDialog: true,
-    hasEditedBlocks: false,
-    tutorship: 0,
-    registeredBlocks: []
-  };
+const BlocksRegistry = memo(props => {
+  const defaultBlock = {
+    idBlock: 1,
+    idCareer: 1,
+    start: '09:00',
+    end: '10:00'
+  }
+  const [blocks, setBlocks] = React.useState([]);
+  const [blockCount, setBlockCount] = React.useState(1);
+  const [editingBlock, setEditingBlock] = React.useState(defaultBlock);
+  const [openDialog, setOpenDialog] = React.useState(true);
+  const [hasEditedBlocks, setHasEditedBlock] = React.useState(false);
+  const [tutorship, setTutorship] = React.useState(0);
+  const [registeredBlocks, setRegisteredBlocks] = React.useState([]);
 
-  cookies = new Cookies();
-  token = utilities.splitCookie(this.cookies.get('token')).token;
-  role = utilities.splitCookie(this.cookies.get('token')).session;
-  username = utilities.splitCookie(this.cookies.get('token')).id;
-  route = process.env.REACT_APP_API_SERVER;
-  
-  getPersonnelNumTutor(){
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getpersonnelNumTutor',{
-      username: this.username
-    },{
-      headers: { Authorization: this.token + ";" + this.role }
-    });
+  var token = utilities.splitCookie(cookies.get('token')).token;
+  var role = utilities.splitCookie(cookies.get('token')).session;
+  var username = utilities.splitCookie(cookies.get('token')).id;
+  var route = process.env.REACT_APP_API_SERVER;
+
+  async function getPersonnelNumTutor() {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getpersonnelNumTutor', {
+      username: username
+    }, {
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
-  getLastTutorship(personnelNum) {
+  async function getLastTutorship(personnelNum) {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/lastTutorship', {
       idTutor: personnelNum
     }, {
-      headers: {Authorization: this.token + ";" + this.role}
-    });
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
-  getBlocks(idTutorship, idCareer) {
+  async function getBlocks(idTutorship, idCareer) {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlock', {
       idCareer: idCareer,
       idTutorship: idTutorship
     });
   }
 
-  saveBlock = (block) => {
-    const idTutorship = this.state.tutorship;
+  async function saveBlock (block) {
+    const idTutorship = tutorship;
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addBlock', {
       idCareer: block.idCareer,
       start: block.start,
       end: block.end,
       idTutorship: idTutorship
     }, {
-      headers: {Authorization: this.token + ";" + this.role}
-    });
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
-  editBlock = (block) => {
+  async function editBlock (block) {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateBlock', {
       idBlock: block.idBlock,
       idCareer: block.idCareer,
       start: block.start,
       end: block.end
     }, {
-      headers: {Authorization: this.token + ";" + this.role}
-    });
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
-  saveBlocks = () => {
-    const blocks = this.state.blocks;
-    const registeredBlocks = this.state.registeredBlocks;
-    blocks.forEach(block => {
+  async function saveBlocks() {
+    const actualBlocks = blocks;
+    const registerBlocks = registeredBlocks;
+    actualBlocks.forEach(block => {
       var isRegistered = false;
-      registeredBlocks.forEach(registeredBlock => {
+      registerBlocks.forEach(registeredBlock => {
         if (block.idBlock === registeredBlock.idBlock) {
           isRegistered = true
         }
       })
 
       if (isRegistered) {
-        this.editBlock(block)
+        editBlock(block)
       } else {
-        this.saveBlock(block)
+        saveBlock(block)
       }
     });
-    this.notifyPublishedDay();
-  }
-  notifyPublishedDay = () => {
-    axios.post(this.route+'api/notify/student/publishedday', {
-        user: this.username
-      },{
-        headers: { Authorization: this.token + ";" + this.role }
-    });
+    notifyPublishedDay();
   }
 
-  render() {
-
-    const globalClasses = this.props.classes
-    const classes = this.props.registryBlockClasses;
-
-    return (
-      <div>
-        <Schedule open={this.state.openDialog} closeAction={this.closeSchedule} />
-        <AppBar position="static" className={clsx(globalClasses.appBar, globalClasses.appBarShift)}>
-          <Toolbar className={globalClasses.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              className={globalClasses.menuButton}
-            >
-              <ArrowBackIosIcon />
-            </IconButton>
-            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-              Registro de bloques
-                      </Typography>
-            <Button color="inherit" component="a" onClick={this.saveBlocks}>Continuar</Button>
-          </Toolbar>
-        </AppBar>
-        <div>
-          <AddBox blocks={this.state.blocks}
-            editingBlock={this.state.editingBlock}
-            classes={classes}
-            addBlock={this.addBlock}
-            onChange={this.changeEditingBlock}>
-          </AddBox>
-        </div>
-        <div className={classes.blockList}>
-          <BlockList classes={classes}
-            blocks={this.state.blocks}
-            editBlock={this.editBlock}
-            deleteBlock={this.deleteBlock} />
-        </div>
-      </div>
-    );
+  async function notifyPublishedDay() {
+    axios.post(route + 'api/notify/student/publishedday', {
+      user: username
+    }, {
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
-  closeSchedule = (e) => {
-    this.getPersonnelNumTutor().then(result => {
+  const closeSchedule = (e) => {
+    setEditingBlock(defaultBlock);
+    getPersonnelNumTutor().then(result => {
       var personnelNum = result.data[0]['personnelNum'];
-      this.getLastTutorship(personnelNum).then(tutorship => {
+      getLastTutorship(personnelNum).then(tutorship => {
         console.log(tutorship)
         var idTutorship = tutorship.data[0].idTutorship;
-        this.getBlocks(idTutorship, 5).then(result2 => {
+        getBlocks(idTutorship, 5).then(result2 => {
           console.log(result2)
           const blocks = result2.data;
           console.log(blocks);
-          this.setState({ blocks: blocks, loadBlocks: false, tutorship: idTutorship, registeredBlocks: blocks });
+          setBlocks(blocks);
+          setTutorship(idTutorship);
+          setRegisteredBlocks(blocks);
         });
       });
     });
-    this.setState({ openDialog: false });
+    setOpenDialog(false);
   }
 
-  addBlock = (career, startTime, endTime) => {
-    const actualBlocks = this.state.blocks;
-    var count = this.state.blockCount;
+  const addBlock = (career, startTime, endTime) => {
+    const actualBlocks = blocks;
+    var count = blockCount;
 
     const block = {
-      idBlock: count,
+      idBlock: count++,
       idCareer: career,
       start: startTime,
       end: endTime
     }
 
     actualBlocks.push(block)
-    this.setState({ blocks: actualBlocks, blockCount: count });
+    setBlocks(actualBlocks);
+    setBlockCount(count);
   }
 
-  editBlock = (blockId) => {
-    const blocks = this.state.blocks;
+  const loadToEditBlock = (blockId) => {
+    const blocksAux = blocks;
     var actualBlocks = [];
-    blocks.forEach(block => {
+    blocksAux.forEach(block => {
       if (block.idBlock == blockId) {
-        this.setState({ editingBlock: block });
+        setEditingBlock(block);
       } else {
         actualBlocks.push(block);
       }
     });
-    this.setState({ blocks: actualBlocks });
+    setBlocks(actualBlocks);
   }
 
-  deleteBlock = (blockId) => {
-    const blocks = this.state.blocks;
+  const deleteBlock = (blockId) => {
+    const actualBlocks = blocks;
     var newBlocks = [];
-    blocks.forEach(block => {
+    actualBlocks.forEach(block => {
       if (block.idBlock != blockId) {
         newBlocks.push(block);
       }
     });
-    this.setState({ blocks: newBlocks });
+    setBlocks(newBlocks);
   }
 
-  changeEditingBlock = (block) => {
-    this.setState({ editingBlock: block })
+  const changeEditingBlock = (block) => {
+    setEditingBlock(block);
+    console.log(editingBlock);
+    console.log(block);
   }
-}
+
+  const globalClasses = props.classes
+  const classes = props.registryBlockClasses;
+
+  return (
+    <div>
+      <Schedule open={openDialog} closeAction={closeSchedule} />
+      <AppBar position="static" className={clsx(globalClasses.appBar, globalClasses.appBarShift)}>
+        <Toolbar className={globalClasses.toolbar}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            className={globalClasses.menuButton}
+          >
+            <ArrowBackIosIcon />
+          </IconButton>
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+            Registro de bloques
+                      </Typography>
+          <Button color="inherit" component="a" onClick={saveBlocks}>Continuar</Button>
+        </Toolbar>
+      </AppBar>
+      <div>
+        <AddBox blocks={blocks}
+          editingBlock={editingBlock}
+          classes={classes}
+          addBlock={addBlock}
+          onChange={changeEditingBlock}>
+        </AddBox>
+      </div>
+      <div className={classes.blockList}>
+        <BlockList classes={classes}
+          blocks={blocks}
+          editBlock={loadToEditBlock}
+          deleteBlock={deleteBlock} />
+      </div>
+    </div>
+  );
+});
+
+export default BlocksRegistry;
