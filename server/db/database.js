@@ -26,6 +26,18 @@ function getDataTutor(username){
 		});
 	});
 }
+function getTutorUsername(personnelNum){
+	return new Promise((resolve, reject) => {
+		pool.query('SELECT username FROM Tutor WHERE personnelNum = ?',[personnelNum],(err, results) => {
+			if(err){
+				return reject(err);
+			}else{
+				return resolve(results[0]);
+			}
+		});
+	});
+}
+
 function getTutorUsernameFromPupil(studentId){
 	return new Promise((resolve, reject) => {
 		pool.query('SELECT t.username FROM Tutor t INNER JOIN Pupil p ON t.personnelNum = p.idTutor WHERE p.studentId = ?',[studentId],(err, results) => {
@@ -90,7 +102,7 @@ function getTutorSuscribedStatus(personnelNum){
 			if(err){
 				return reject(err);
 			}else{
-				return resolve(results);
+				return resolve(results[0]);
 			}
 		});
 	});
@@ -106,9 +118,9 @@ function saveStudentSuscribedOn(studentId){
 		});
 	});
 }
-function updateTutorSuscribedStatus(username, status){
+function updateTutorSuscribedStatus(personnelNum, status){
 	return new Promise((resolve, reject) => {
-		pool.query('UPDATE Tutor SET isEmailSuscribed = ? WHERE username = ?',[status, username],(err, results) => {
+		pool.query('UPDATE Tutor SET isEmailSuscribed = ? WHERE personnelNum = ?',[status, personnelNum],(err, results) => {
 			if(err){
 				return reject(err);
 			}else{
@@ -480,6 +492,7 @@ function getSessionStatus(idPupil){
 module.exports = {
 	getDataTutor: getDataTutor,
 	getDataPupil: getDataPupil,
+	getTutorUsername: getTutorUsername,
 	getAllSessions: getAllSessions,
 	getTutorUsernameFromPupil: getTutorUsernameFromPupil,
 	saveStudentSuscribedOn: saveStudentSuscribedOn,

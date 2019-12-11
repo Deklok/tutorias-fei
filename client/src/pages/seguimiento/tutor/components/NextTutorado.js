@@ -78,6 +78,7 @@ const NextTutorado = memo(props => {
   const comenzado = props.comenzado;
   const setCurrentPupil = props.setCurrentPupil;
   const setAtendiendo = props.setAtendiendo;
+  const setTemas = props.setTemas;
   const tutorados = props.tutorados;
   const atendiendo = props.atendiendo;
   const[connect, setConnect] = React.useState(true);
@@ -120,19 +121,27 @@ const NextTutorado = memo(props => {
         props.next();
         setCurrentPupil(tutorado);
         setAtendiendo(true);
+        setTemas(tutorado['topics']);
       }
     });
   }
-
   function saltar(){
+    notifyStudentYouWereCanceled();
     pass()
     .then(result=>{
       if(result){
         props.next();
       }
-    })
+    });
   }
 
+  async function notifyStudentYouWereCanceled(){
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/notify/student/youwerecanceled', {
+        user: tutorado['studentId']
+      },{
+        headers: { Authorization: token + ";" + role }
+      });
+  }
   function validate(){
     return !atendiendo && tutorados.length > 0 && tutorados[0].name!=undefined;
   }

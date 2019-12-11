@@ -1,10 +1,9 @@
 /*********************************************************
-* JS to setup user into Onesignal system. 2/11/19
+* JS to setup user into Onesignal system. 8/12/19
 * It should be placed in user dashboard. One time execution.
-* Requires: idUser = enrollment id/ professor id. idTutor = professor id.
+* Requires: externalId = enrollment id/ professor id. idTutor = professor id(username).
 *********************************************************/
-export function notifications(externalId, tutorId){
-
+export const notifications = (externalId, tutorId) => {
 	const OneSignal = window.OneSignal || [];
 	function setupData () {
 		OneSignal.push(function() {
@@ -17,13 +16,6 @@ export function notifications(externalId, tutorId){
 			}
 		});
 	}
-
-	OneSignal.push(function() {
-		OneSignal.init({
-			appId: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
-			autoResubscribe: true,
-		});
-	});
 	OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
 		if (isEnabled) {
 			setupData();
@@ -38,7 +30,16 @@ export function notifications(externalId, tutorId){
 		});
 	});	
 }
-export default notifications;
+export const initNotifications = () => {
+	const OneSignal = window.OneSignal || [];
+	OneSignal.push(function() {
+		OneSignal.init({
+			appId: "464e45cf-4e76-47c5-bcf8-4811dbbb1204",
+			autoResubscribe: true,
+		});
+	});
+}
+	
 
 
 

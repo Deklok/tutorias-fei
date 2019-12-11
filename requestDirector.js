@@ -23,29 +23,44 @@ async function setupStudentData (studentData){
 	});
 }
 async function setupTutorEmail (tutorData){
-	database.getTutorSuscribedStatus(tutorData.id).then(function (responseStatus) {
-		if (responseStatus == false) {
-			var username = tutorData.emailAddress.split("@")[0];
-			try{
-				var emailToPushRecord = {emailAddress: tutorData.emailAddress, 
-					externalId: username};
-				emailpush.registerEmailToNotification(emailToPushRecord);
-				database.updateTutorSuscribedStatus(username, 1);
-				database.updateTutorEmail(tutorData.emailAddress, tutorData.id);
-				return 200;
-			} catch (err) {
-				console.log(err);
-				return 500;
+	var code = 500;
+	var promise = new Promise(function (resolve,reject) {
+		database.getTutorSuscribedStatus(tutorData.id).then(function (responseStatus) {
+			if (responseStatus.isEmailSuscribed == 0) {
+				database.getTutorUsername(tutorData.id).then(function (responseUsername) {
+					try{
+						var emailToPushRecord = {emailAddress: tutorData.emailAddress, 
+							externalId: responseUsername.username};
+						emailpush.registerEmailToNotification(emailToPushRecord);
+						database.updateTutorSuscribedStatus(tutorData.id, 1);
+						database.updateTutorEmail(tutorData.emailAddress, tutorData.id);
+						code = 201;
+						resolve(code);
+					} catch (err) {
+						console.log(err);
+						reject(500);
+					}
+				}).catch(function (error) {
+	      			console.log(error);
+	      			reject(500);
+	    		});
+			} else {
+				code = 200;
+				resolve(200);
 			}
-		}
-	});
+		}).catch(function (error) {
+	      	console.log(error);
+	      	reject(500);
+	    });
+    });
+	return promise.catch(function(error) { return 500; });
 }
 /*
 *This function will allow the user to setup a new email but this won't unsubscribe it in Onesignal.
 */
-function resetTutorEmail (username){
+function resetTutorEmail (personnelNum){
 	try{
-		database.updateTutorSuscribedStatus(username, 0);
+		database.updateTutorSuscribedStatus(personnelNum, 0);
 		return 200;
 	} catch (err) {
 		console.log(err);

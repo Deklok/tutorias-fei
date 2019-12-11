@@ -40,6 +40,8 @@ const SideBar = memo(props => {
 	const classes = props.classes;
 	const tutor = props.idTutor;
 	const idTutorship = props.idTutorship;
+	const contacto = props.contacto;
+	const [email, setEmail] = React.useState(contacto);
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
 	const [cancelarTutoriaDialog, setCancelarTutoriaDialog] = React.useState(false);
@@ -49,17 +51,26 @@ const SideBar = memo(props => {
 	const [username, setUsername] = React.useState(utilities.splitCookie(cookies.get('token')).id);
 	const [password, setPassword] = React.useState("");
 	const [errors, setErrors] = React.useState(false);
+	const [contactoDialog, setContactoDialog] = React.useState(false);
+	const [contactoPermitirCambio, setContactoCambio] = React.useState(contacto == null);
 	const [authError, setAuthError] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
-
 	const [state, setState] = React.useState({
 		terminos: false,
 	});
+	var initTerminos = false;
+
+	React.useEffect(()=>{
+    	checkIsAgree().then(function (result){
+    		var terminosValue = {terminos: result.data};
+    		setState(terminosValue);
+    		initTerminos = result.data;
+    	});
+  	}, []);
 
 	const handleCheckTerminos = name => event => {
 		setState({ ...state, [name]: event.target.checked });
-		console.log(state.terminos)
 	};
 
 	const handleAbrirTerminos = () => {
@@ -107,6 +118,9 @@ const SideBar = memo(props => {
 			});
 		}
 	}
+	const handleCerrarLogin = () => {
+		setLoginDialog(false);
+	}
 
 	const handleConfirmarCancelarTutoria = () => {
 		setCancelarTutoriaDialog(false);
@@ -128,7 +142,62 @@ const SideBar = memo(props => {
 	const handleSiguienteTerminos = () => {
 		setTerminosDialog(false);
 		setLoginDialog(true);
+		if (!initTerminos) {
+			setAgreement();
+		}	
 	};
+	const handleCerrarTerminosDialog = () => {
+		setTerminosDialog(false);
+		notifier.error("Para importar los datos es necesario aceptar los términos", {
+			position: "top-right",
+			autoClose: 3000
+		});
+	}
+	const handleAbrirActualizarContacto = () => {
+		console.log(contacto);
+		console.log(contactoPermitirCambio);
+		setContactoDialog(true);
+	}
+	const handleCerrarActualizarContacto = () => {
+		setContactoDialog(false);
+	}
+	const handleResetContacto = () => {
+		notifyResetEmail().then(function (response) {
+			if (response.status == 200) {
+				notifier.success("Correo olvidado en el sistema", {
+					position: "top-right",
+					autoClose: 3000
+				});
+				setContactoCambio(true);
+			} else {
+				setEmail(null);
+				menssageError();
+			}
+		});
+	}
+	const handleActualizarCorreo = () => {
+		var regExpEmail = new RegExp(/^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i);
+		if (regExpEmail.test(email)) {
+			notifySetupEmail().then(function (response){
+				if (response.status == 201) {
+					setContactoCambio(false);
+					notifier.success("Correo registrado en el sistema", {
+						position: "top-right",
+						autoClose: 3000
+					});
+				} else {
+					setEmail(null);
+					menssageError();
+				}
+				setContactoDialog(false);
+			});		
+		} else {
+			notifier.error("Esto no parece un correo válido", {
+				position: "top-right",
+				autoClose: 3000
+			});
+		}
+	}
 
 	const redirectToFeedback = () => {
 		setMainRoute(false);
@@ -157,16 +226,23 @@ const SideBar = memo(props => {
 	      headers: { Authorization: token + ";" + role }
 	    });
 	}
-	async function notifyAllCanceledDay(){
-		axios.post(route + 'api/notify/student/canceledday', {
-	      user: username
+	async function notifySetupEmail(){
+		return axios.post(route + 'api/notify/email/signup', {
+	      user: tutor,
+	      email: email
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
 	}
-	//FALTAN DE INTEGRAR
+	async function notifyResetEmail(){
+		return axios.post(route + 'api/notify/email/reset', {
+	      user: tutor,
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
 	async function checkIsAgree(){
-		axios.post(route + 'api/db/isagree', {
+		return axios.post(route + 'api/db/isagree', {
 	      user: username
 	    },{
 	      headers: { Authorization: token + ";" + role }
@@ -179,6 +255,26 @@ const SideBar = memo(props => {
 	      headers: { Authorization: token + ";" + role }
 	    });
 	}
+	async function notifyAllCanceledDay(emailInput){
+		axios.post(route + '/api/notify/email/signup', {
+	      user: username,
+	      email: emailInput
+	    },{
+	      headers: { Authorization: token + ";" + role }
+	    });
+	}
+	function menssageError(){
+		notifier.error("Algo salió en el registro :(", {
+			position: "top-right",
+			autoClose: 3000
+		});
+	}
+
+	function logout() {
+		console.log("Loggin out");
+		cookies.remove('token');
+		window.location.reload();
+	  }
 
 	return (
 		<Drawer
@@ -236,7 +332,13 @@ const SideBar = memo(props => {
 						</ListItemIcon>
 						<ListItemText primary="Actualizar Datos" />
 					</ListItem>
-					<ListItem button component="a" href="/logout">
+					<ListItem button onClick={handleAbrirActualizarContacto}>
+						<ListItemIcon>
+							<CachedIcon />
+						</ListItemIcon>
+						<ListItemText primary="Actualizar Contacto" />
+					</ListItem>
+					<ListItem button component="a" onClick={logout}>
 						<ListItemIcon>
 							<ExitToAppIcon />
 						</ListItemIcon>
@@ -252,9 +354,9 @@ const SideBar = memo(props => {
 				<DialogTitle id="scroll-dialog-title">Aviso de Privacidad</DialogTitle>
 				<DialogContent>
 					<DialogContentText>
-						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcionen.
-Sus datos personales serán utilizados para le proporcionar los correspondientes registros de sus tutorados.Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.
-Se informa que no realizarán transferencias que requieren su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados.
+						La Universidad Veracruzana, es el responsable del tratamiento de los Datos Personales que nos proporcione.
+Sus datos personales serán utilizados para proporcionar los correspondientes registros de sus tutorados. Estos datos son de carácter informativo y de uso exclusivo para la gestion del sistema, por lo que, se comunica que no se efectuarán tratamientos adicionales.
+Se informa que no realizarán transferencias que requieren de su consentimiento, salvo aquellas que sean necesarias para atender requerimientos de información de una autoridad competente, debidamente fundados y motivados.
 					</DialogContentText>
 					<FormControlLabel
 						control={
@@ -269,6 +371,9 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 					/>
 				</DialogContent>
 				<DialogActions>
+					<Button onClick={handleCerrarTerminosDialog} color="secondary">
+						Cancelar
+          			</Button>
 					<Button color="primary" disabled={!state.terminos} onClick={handleSiguienteTerminos}>
 						Siguiente
 					</Button>
@@ -307,10 +412,42 @@ Se informa que no realizarán transferencias que requieren su consentimiento, s
 					/>
 				</DialogContent>
 				<DialogActions>
+					<Button onClick={handleCerrarLogin} color="secondary">
+						Cancelar
+          			</Button>
 					<Button onClick={handleLogin} color="primary">
 						Enviar
           			</Button>
 				</DialogActions>
+			</Dialog>
+				<Dialog open={contactoDialog}
+				scroll={'paper'}
+				aria-labelledby="scroll-dialog-title"
+				aria-describedby="scroll-dialog-description">
+				<DialogTitle id="form-dialog-title">Actualizar correo electrónico</DialogTitle>
+				<DialogContent>
+					<TextField
+						autoFocus
+						margin="dense"
+						id="contacto"
+						placeholder = {contacto}
+						label="Correo electrónico"
+						type="email"
+						fullWidth
+						onChange={e=>setEmail(e.target.value)}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleResetContacto} disabled={contactoPermitirCambio} color="secondary">
+						Olvidar correo
+          			</Button>
+					<Button onClick={handleActualizarCorreo} disabled={!contactoPermitirCambio} color="primary">
+						Actualizar
+          			</Button>
+				</DialogActions>
+				<Button onClick={handleCerrarActualizarContacto} color="secondary">
+						Cancelar
+          			</Button>
 			</Dialog>
 			<Dialog open={cancelarTutoriaDialog}
 				scroll={'paper'}

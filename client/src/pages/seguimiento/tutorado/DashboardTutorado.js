@@ -29,7 +29,7 @@ import Box from '@material-ui/core/Box';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import { notifications } from '../../pushOneSignal';
+import { notifications, initNotifications } from '../../pushOneSignal';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
 const cookies = new Cookies();
@@ -82,6 +82,10 @@ const DashboardTutorado = memo(props => {
   const [nombre, setNombre] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [carrera, setCarrera] = React.useState('');
+  const [idTutor, setidTutor] = React.useState('');
+  const [agenda, setAgenda] = React.useState('');
+  const [place, setPlace] = React.useState('');
+  const [hour, setHour] = React.useState('');
 
   var user = utilities.splitCookie(cookies.get('token')).id;
     var token = utilities.splitCookie(cookies.get('token')).token;
@@ -104,16 +108,35 @@ const DashboardTutorado = memo(props => {
       });
   }
 
+  async function cargarSesion() {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSession', {
+      idPupil: user
+    },
+    {
+      headers: { Authorization: token + ";" + role }
+    });
+  }
+
+  function setupNotifications(externalId, tutorId) {
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getUsernameTutor', {
+      personnelNum: tutorId
+    },
+    {
+      headers: { Authorization: token + ";" + role }
+    }).then(result => {
+      notifications(matricula, result.data.username);
+    });
+  }
+
   React.useEffect(()=>{
     cargarDatos()
     .then(result => {
-      console.log('Terminado');
       if(result){
         setNombre(result.data[0][0]['name']);
         setCarrera(result.data[0][0]['careerName']);
         setMatricula(result.data[0][0]['studentId']);
         setEmail(result.data[0][0]['email']);
-        notifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
+        setupNotifications(result.data[0][0]['studentId'], result.data[0][0]['idTutor']);
         getStatus()
         .then(result => {
           if(result.data[0][0] == undefined){
@@ -124,11 +147,22 @@ const DashboardTutorado = memo(props => {
         })
           redireccion();
         }else{
-          console.log('Algo aslio mal');
+          console.log('Algo salió mal');
         }
     }).catch(console.log);
-  },[nombre, status]);
-  
+    cargarSesion()
+    .then(result => {
+      if (result) {
+        setAgenda(result.data[0][0].indications);
+        setPlace(result.data[0][0].place);
+        setHour(result.data[0][0].startTime);
+      }
+    })
+  },[status]);
+  React.useEffect(()=>{
+    initNotifications();
+  }, []);
+
   function redireccion(){
     console.log(status);
     if(status == undefined){
@@ -137,27 +171,6 @@ const DashboardTutorado = memo(props => {
       redirectToAgendTutorado();
     }
   }
-
-  const test = `## Segunda Tutoría del Semestre\n#### April 1, 2020 by [@elrevo](https://twitter.com/elrevo)
-  Estimados tutorados
-
-  El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día de mañana en los siguientes horarios
-
-  9:00 am a 11:30 am  Atención a estudiantes de Ingeniería de Software
-
-  11:30 am a 14:30 pm Atención a estudiantes de Redes y Servicios de Cómputo
-
-  Les recuerdo a los tutorados de nuevo ingreso que traigan lo que es encargué en la primera tutoría. Los temas que vamos a platicar mañana son:
-
-  - Resultados de los primeros parciales
-  - Comentarios previos a la acreditación de la LIS
-  - Detectar problemas académicos que podamos atender a tiempo
-  - Asuntos generales.
-
-  Cualquier cosa estoy a sus órdenes
-
-  Saludos
-  `
 
   return (
           <div>
@@ -177,7 +190,7 @@ const DashboardTutorado = memo(props => {
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Cerrar Sesión">
-                    <IconButton color="inherit" label="Cerrar" href="/logout">
+                    <IconButton color="inherit" label="Cerrar" onClick={logout}>
                       <ExitToAppIcon />
                     </IconButton>
                   </Tooltip>
@@ -272,7 +285,7 @@ const DashboardTutorado = memo(props => {
               <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                  <Banner classes={classes} estado={false} />
+                  <Banner classes={classes} estado={false} room={matricula} />
                   <Grid container spacing={3}>
                     {/* Agenda */}
                     <Grid item xs={12} sm={8} lg={8} id="agenda">
@@ -281,7 +294,7 @@ const DashboardTutorado = memo(props => {
                         </Typography>
                       <Divider />
                       <Agenda className={classes.markdown}>
-                        {test}
+                        {agenda}
                       </Agenda>
                     </Grid>
                     {/* Temas Tutorado */}

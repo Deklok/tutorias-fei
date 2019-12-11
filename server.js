@@ -10,6 +10,7 @@ const cors = require('cors');
 const fs = require('fs');
 const spdy = require('spdy');
 const app = express();
+const socketio = require("socket.io");
 const auth = require('./server/authws/auth.js');
 const webpush = require('./server/webpush/webpush.js');
 const director = require('./requestDirector.js');
@@ -194,16 +195,23 @@ app.post('/api/user/login', function (request, res){
 *Response:
 *   400 = Parameters needed
 *   500 = Service not available
-*   200 = Suscribed
+*   201 = Suscribed
+*   200 = Did nothing
 */
 app.post('/api/notify/email/signup',async function (request, res){
   var personnelNum = request.body.user;
   var email = request.body.email;
+  console.log(personnelNum);
+  console.log(email);
   if (personnelNum && email) {
     var dataToPushRecord = {emailAddress: email,
               id: personnelNum};
-    var code = await director.setupTutorEmail(dataToPushRecord);
-    res.sendStatus(code);
+    director.setupTutorEmail(dataToPushRecord).then(function(responseCode){
+      res.sendStatus(responseCode);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
   } else {
     res.sendStatus(400);
   }
@@ -211,15 +219,15 @@ app.post('/api/notify/email/signup',async function (request, res){
 /*
 *Service to reset professor to email notifications.
 *NOTE: ONLY FOR PROFESSOR
-*Param: user = extenal professor ID/username (magarcia)
+*Param: user = extenal professor ID/personnelNum (12353)
 *   400 = Parameters needed
 *   500 = Service not available
 *   200 = reset email and status
 */
 app.post('/api/notify/email/reset',async function (request, res){
-  var username = request.body.user;
-  if (username) {
-    var code = await director.resetTutorEmail(username);
+  var personnelNum = request.body.user;
+  if (personnelNum) {
+    var code = await director.resetTutorEmail(personnelNum);
     res.sendStatus(code);
   } else {
     res.sendStatus(400);
@@ -604,6 +612,29 @@ app.post('/api/db/getpersonnelNumTutor', (req, res)=>{
     res.status(400);
   }
 });
+/*
+*Service to get username tutor
+*Params:
+*   personnelNum = tutor personnelNum
+*Returns:
+*   200: username
+*   400: Param expected
+*   500: DB not available
+*/
+app.post('/api/db/getUsernameTutor', (req, res)=>{
+  var personnelNum = req.body.personnelNum;
+  if(personnelNum){
+    database.getTutorUsername(personnelNum).then(function (response){
+      res.json(response);
+    }).catch(function (error) {
+      console.log(error);
+      res.sendStatus(500);
+    });
+  }else{
+    res.status(400);
+  }
+});
+
 /*
 *Service to retrieve all block data from tutorship
 *Params:
@@ -1010,7 +1041,21 @@ app.post('/api/db/updateBlock', (req, res) => {
   }
 });
 
+/*
+*The OneSignalSDKWorker file MUST be public
+*/
+app.get('/OneSignalSDKWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKWorker.js'));
+});
+/*
+*The OneSignalSDKUpdaterWorker file MUST be public
+*/
+app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
+  response.sendFile(path.join(__dirname+'/OneSignalSDKUpdaterWorker.js'));
+});
+
 // Use this code when is on production
+
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.get('*',(req,res) =>{
@@ -1030,6 +1075,25 @@ if (enableHttp === 'true') {
     throw new Error("Required ENV variable is not set: [HTTP_PORT]");
   }
   const httpServer = http.createServer(app);
+  const io = socketio(httpServer);
+
+  io.on('connection', socket => {
+    let room = socket.handshake.query.room;
+    socket.join(room);
+    socket.on("nextInLine", () => {
+      socket.to(room).emit("nextInLine");
+    })
+    socket.on("pupilReady", () =>{
+      socket.to(room).emit("pupilReady");
+    })
+    socket.on("startSession", () =>{
+      socket.to(room).emit("startSession");
+    })
+    socket.on("endSession",() => {
+      socket.to(room).emit("endSession");
+    });
+  });
+
   httpServer.listen(httpPort, () => {
     console.log(`HTTP Server is listening on port ${httpPort}`);
   });

@@ -14,6 +14,8 @@ import TemasTutorado from '../../components/TemasTutorado';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
+import notifier from 'simple-react-notifications';
+import io from 'socket.io-client';
 
 const cookies = new Cookies();
 const Main = memo(props => {
@@ -23,8 +25,8 @@ const Main = memo(props => {
 	const tutorados = props.tutorados;
 	const setTutorados = props.setTutorados;
 	const tutor = props.tutor;
-	const test = props.test;
 	const [tutorshipExists, setExists] = React.useState(true);
+	const [indications, setIndications] = React.useState('');
 	const [status, setStatus] = React.useState(0);
 	const [connect, setConnect]=React.useState(true);
 	const [currentPupil,setCurrentPupil] = React.useState([]);
@@ -36,8 +38,8 @@ const Main = memo(props => {
 	const [finalizar, setFinalizar]=React.useState(false);
 	const [redirect, setRedirect] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
-  	var role = utilities.splitCookie(cookies.get('token')).session;
-  	const route = process.env.REACT_APP_API_SERVER;
+	var role = utilities.splitCookie(cookies.get('token')).session;
+
   	
 	const comenzarTutoria = () =>{
 		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
@@ -47,9 +49,9 @@ const Main = memo(props => {
 	    },{
 	      headers: { Authorization: token + ";" + role }
 	    });
-		setPupil(tutorados[0]);
 		setStatus(1);
 		setComenzado(true);
+		siguienteTutorado();
 	}
 
 	const finalizarTutoria = () =>{
@@ -73,7 +75,26 @@ const Main = memo(props => {
 	    	setFinalizar(true);
 	    }
 	    setVerify(true);
-	    setPupil(tutorados_aux[0]);
+		setPupil(tutorados_aux[0]);
+		console.log(tutorados_aux[0]);
+		notifyYouAreNext(tutorados_aux[0].studentId);
+		const socket = io(process.env.REACT_APP_API_SERVER,{
+			query: {
+			  room: tutorados_aux[0].studentId
+			}
+		});
+		
+		socket.on("connect", () => {
+			console.log("Connected to socket.io on new pupil");
+		})
+
+		socket.on("pupilReady",() => {
+			console.log("event from pupil, is ready");
+			notifier.success("La sessión ha sido confirmada por el siguiente tutorado", {
+				position: "top-right",
+				autoClose: 3000
+			});
+		});
 	}
 
 	const redirectToCreation = () => {
@@ -90,14 +111,7 @@ const Main = memo(props => {
 		}
 	}
 	async function notifyYouAreNext(studentId){
-		axios.post(route+'api/notify/student/youarenext', {
-	      user: studentId
-	    },{
-	      headers: { Authorization: token + ";" + role }
-	    });
-	}
-	async function notifyYouWereCanceled(studentId){
-		axios.post(route+'api/notify/student/youwerecanceled', {
+		axios.post(process.env.REACT_APP_API_SERVER +'api/notify/student/youarenext', {
 	      user: studentId
 	    },{
 	      headers: { Authorization: token + ";" + role }
@@ -105,14 +119,15 @@ const Main = memo(props => {
 	}
 
 	React.useEffect(()=>{
-		setTemas('¿Quería comentar una situación que me está pasando con mi maestro de Estructuras de Datos, porque ya van dos semanas y aún no entrega los resultados de los exámenes parciales');
 		if(tutor != 0){
 			getNextTutorship()
 			.then(result=>{
 				if(result.data[0].length){
 					var tutorship_aux = result.data[0][0].idTutorship;
+					var indications_aux = result.data[0][0].indications;
 					setTutorship(tutorship_aux);
 					setStatus(result.data[0][0].status);
+					setIndications(indications_aux);
 					if(status == 1){
 						setComenzado(true);
 						if(tutorados.length){
@@ -166,7 +181,8 @@ const Main = memo(props => {
 		          	next={siguienteTutorado}
 		          	setCurrentPupil={setCurrentPupil}
 		          	setVerify = {setVerify}
-		          	tutorados = {tutorados}
+					tutorados = {tutorados}
+					setTemas = {setTemas}
 		          	/>
 		        </Grid>
 		      </Grid>
@@ -178,7 +194,7 @@ const Main = memo(props => {
 		            </Typography>
 		          <Divider />
 		          <Agenda className={classes.markdown}>
-		            {test}
+		            {indications}
 		          </Agenda>
 		        </Grid>
 		        <Grid item xs={12} md={3} lg={3}>
