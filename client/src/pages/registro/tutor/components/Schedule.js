@@ -144,6 +144,7 @@ const Schedule = memo(props => {
         if (result.data[0].length) {
           setIdTutorship(result.data[0][0].idTutorship);
           setOpenDialogMain(false);
+          props.loadBlocks();
         }
         console.log(idTutorship);
       });
@@ -179,6 +180,7 @@ const Schedule = memo(props => {
                   setMessage("La tutoria se ha calendarizado exitosamente.");
                   setOpenDialog(true);
                   setOpenDialogMain(false);
+                  props.loadBlocks();
                 }
               }).catch(console.log);
             }

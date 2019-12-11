@@ -108,8 +108,7 @@ const BlocksRegistry = memo(props => {
       });
   }
 
-  const closeSchedule = (e) => {
-    setEditingBlock(defaultBlock);
+  const loadBlocks = () => {
     getPersonnelNumTutor().then(result => {
       var personnelNum = result.data[0]['personnelNum'];
       getLastTutorship(personnelNum).then(tutorship => {
@@ -125,7 +124,6 @@ const BlocksRegistry = memo(props => {
         });
       });
     });
-    setOpenDialog(false);
   }
 
   const addBlock = (career, startTime, endTime) => {
@@ -179,7 +177,7 @@ const BlocksRegistry = memo(props => {
 
   return (
     <div>
-      <Schedule closeAction={closeSchedule} />
+      <Schedule loadBlocks={loadBlocks} />
       <AppBar position="static" className={clsx(globalClasses.appBar, globalClasses.appBarShift)}>
         <Toolbar className={globalClasses.toolbar}>
           <IconButton
