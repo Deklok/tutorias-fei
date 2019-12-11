@@ -211,8 +211,8 @@ const Schedule = memo(props => {
     getNextTutorship()
       .then(result => {
         if (result.data[0].length) {
-          setIdTutorship(result.data[0][0].idTutorship);
-          setOpenDialogMain(false);
+          idTutorship = result.data[0][0].idTutorship;
+          setDialogMain(false);
           props.loadBlocks();
         }
         console.log(idTutorship);
