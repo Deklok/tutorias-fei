@@ -26,8 +26,6 @@ const BlocksRegistry = memo(props => {
   const [blocks, setBlocks] = React.useState([]);
   const [blockCount, setBlockCount] = React.useState(1);
   const [editingBlock, setEditingBlock] = React.useState(defaultBlock);
-  const [openDialog, setOpenDialog] = React.useState(true);
-  const [hasEditedBlocks, setHasEditedBlock] = React.useState(false);
   const [tutorship, setTutorship] = React.useState(0);
   const [registeredBlocks, setRegisteredBlocks] = React.useState([]);
 
@@ -59,7 +57,7 @@ const BlocksRegistry = memo(props => {
     });
   }
 
-  async function saveBlock (block) {
+  async function saveBlock(block) {
     const idTutorship = tutorship;
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/addBlock', {
       idCareer: block.idCareer,
@@ -71,7 +69,7 @@ const BlocksRegistry = memo(props => {
       });
   }
 
-  async function editBlock (block) {
+  async function editBlock(block) {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateBlock', {
       idBlock: block.idBlock,
       idCareer: block.idCareer,
@@ -181,7 +179,7 @@ const BlocksRegistry = memo(props => {
 
   return (
     <div>
-      <Schedule open={openDialog} closeAction={closeSchedule} />
+      <Schedule closeAction={closeSchedule} />
       <AppBar position="static" className={clsx(globalClasses.appBar, globalClasses.appBarShift)}>
         <Toolbar className={globalClasses.toolbar}>
           <IconButton

@@ -4,9 +4,17 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Select } from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 
 
 const AddBox = memo(props => {
+
+    const [openDialog, setOpenDialog] = React.useState(false);
+    const [title, setTitle] = React.useState("");
+    const [message, setMessage] = React.useState("");
+
     const selectedInfo = props.editingBlock;
     var career = selectedInfo.idCareer;
     var startTime = selectedInfo.start;
@@ -35,7 +43,7 @@ const AddBox = memo(props => {
         const value = e.target.value;
         const endTime = selectedInfo.end;
 
-        
+
         if (value < endTime) {
             const block = {
                 idBlock: id,
@@ -43,7 +51,7 @@ const AddBox = memo(props => {
                 start: value,
                 end: endTime
             }
-    
+
             props.onChange(block);
         } else if (value === "") {
             e.target.value = startTime;
@@ -54,7 +62,7 @@ const AddBox = memo(props => {
                 start: endTime,
                 end: endTime
             }
-    
+
             props.onChange(block);
         }
     }
@@ -67,7 +75,9 @@ const AddBox = memo(props => {
         const endTime = e.target.value;
 
         if (endTime < startTime) {
-            alert("La hora de fin no debe ser menor a la de inicio");
+            setTitle("Inconcistencia en horarios");
+            setMessage("La hora de fin no debe ser menor a la de inicio");
+            setOpenDialog(true);
             e.target.value = startTime;
         } else if (endTime === "") {
             e.target.value = endTime;
@@ -78,7 +88,7 @@ const AddBox = memo(props => {
                 start: startTime,
                 end: endTime
             }
-    
+
             props.onChange(block);
         }
     }
@@ -94,11 +104,17 @@ const AddBox = memo(props => {
         });
 
         if (isRegistered) {
-            alert("El bloque de la carrera seleccionada ya ha sido registrado, " +
-                "para editarlo, seleccione el ícono de edición para editarlo.")
+            setTitle("Bloque duplicado");
+            setMessage("El bloque de la carrera seleccionada ya ha sido registrado, " +
+            "para editarlo, seleccione el ícono de edición para editarlo.");
+            setOpenDialog(true);
         } else {
             props.addBlock(career, startTime, endTime);
         }
+    }
+
+    const closeDialogError = (e) => {
+        setOpenDialog(false);
     }
 
     return (
@@ -160,6 +176,17 @@ const AddBox = memo(props => {
                     Añadir
             </Button>
             </Paper>
+            <Dialog open={openDialog}>
+                <div id="dialogError">
+                    <DialogTitle >
+                        {title}
+                    </DialogTitle>
+                    <DialogContentText>
+                        {message}
+                    </DialogContentText>
+                    <Button id="acceptBtn" onClick={closeDialogError}>Aceptar</Button>
+                </div>
+            </Dialog>
         </div>
     );
 });
