@@ -41,7 +41,8 @@ const Banner = memo(props => {
   const hour = props.hour;
   const [dateformat, setDate] = React.useState('');
   const [hourformat, setHour] = React.useState('')
-
+  const tutorshipNum = props.tutorshipNum;
+  const [title, setTitle] = React.useState('');
 
   React.useEffect(()=>{
     var date_aux = new Date(props.date);
@@ -50,7 +51,22 @@ const Banner = memo(props => {
     var hour_aux = new Date(props.hour);
     format = `${hour_aux.toLocaleTimeString()}`;
     setHour(format);
-  },[date, hour]);
+
+    switch (tutorshipNum) {
+      case 1:
+        setTitle('Primera tutoría');
+        break;
+      case 2:
+        setTitle('Segunda tutoría');
+        break;
+      case 3:
+        setTitle('Tercera tutoría');
+        break;
+      default:
+        // statements_def
+        break;
+    }
+  },[date, hour, tutorshipNum]);
 
   function confirmar() {
     //AQUI FALTA AGREGAR
@@ -89,7 +105,7 @@ const Banner = memo(props => {
 <Grid item md={6}>
 <div className={classes.mainFeaturedPostContent}>
 <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-Primera Tutoría
+{title}
 </Typography>
 <Typography variant="h5" color="inherit">
 {hourformat}

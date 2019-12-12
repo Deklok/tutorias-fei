@@ -65,6 +65,7 @@ const DashboardTutorado = memo(props => {
   const [authError, setAuthError] = React.useState(false);
   const [username, setUsername] = React.useState(utilities.splitCookie(cookies.get('token')).id);
 	const [password, setPassword] = React.useState("");
+  const [tutorshipNum, setNum] = React.useState(0);
   const [stateTerminos, setStateTerminos] = React.useState({
 		terminos: false,
   });
@@ -232,6 +233,7 @@ const DashboardTutorado = memo(props => {
                       setTopics(result.data[0][0].topics);
                       setContact(result.data[0][0].contact);
                       setDate(result.data[0][0].date);
+                      setNum(result.data[0][0].tutorshipNum);
                     }
                   }).catch(function (err) {
                     console.log(err);
@@ -493,6 +495,7 @@ const DashboardTutorado = memo(props => {
               place={place}
               hour={hour}
               date={date}
+              tutorshipNum = {tutorshipNum}
               contact={contact} />
             <Grid container spacing={3}>
               {/* Agenda */}
