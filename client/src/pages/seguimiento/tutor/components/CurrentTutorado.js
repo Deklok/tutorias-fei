@@ -72,7 +72,7 @@ const CurrentTutorado = memo(props => {
   const classes = useStyles();
   const currentPupil = props.currentPupil;
   const setAtendiendo = props.setAtendiendo;
-  const socket = props.socket;
+  const socket = props.currentSocket;
   const[connect, setConnect] = React.useState(false);
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;

@@ -84,15 +84,9 @@ const NextTutorado = memo(props => {
   const socket = props.socket;
   const pupilReady = props.pupilReady;
   const[connect, setConnect] = React.useState(true);
-  const [showPlayButton, setShowPlayButton] = React.useState(props.pupilReady);
 
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
-
-  React.useEffect(()=> {
-    console.log("prop to show button changed");
-    setShowPlayButton(props.pupilReady)
-  },props.pupilReady);
 
   async function comenzar() {
     if(connect){
@@ -152,7 +146,8 @@ const NextTutorado = memo(props => {
       });
   }
   function validate(){
-    return !atendiendo && tutorados.length > 0 && tutorados[0].name!=undefined;
+    //&& tutorados[0].name!=undefined
+    return !atendiendo && tutorados.length >= 0;
   }
 
   return (
