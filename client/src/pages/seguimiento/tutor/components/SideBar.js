@@ -18,7 +18,7 @@ import CancelPresentation from '@material-ui/icons/CancelPresentation';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DasboardIcon from '@material-ui/icons/Dashboard';
-import CachedIcon from '@material-ui/icons/Cached'
+import CachedIcon from '@material-ui/icons/Cached';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
