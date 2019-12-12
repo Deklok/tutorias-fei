@@ -1,0 +1,22 @@
+version: '3'
+services:
+
+  frontend:
+    build: client/.
+    env_file:
+      - client.env
+    command: npm run build
+    volumes:
+      - ./build/:/usr/app/build
+
+  backend:
+    build: server/.
+    env_file:
+      - server.env
+    ports:
+    - '8080:8080'
+    - '8443:8443'
+    command: npm run server
+    volumes:
+      - ./certs/:/usr/app/certs
+      - ./build/:/usr/app/client/build
