@@ -136,6 +136,8 @@ const AddBox = memo(props => {
                     <option value="1">Ingeniería de Software</option>
                     <option value="2">Redes</option>
                     <option value="3">Tecnologías Computacionales</option>
+                    <option value="4">Estadística</option>
+                    <option value="5">Carrera general</option>
                 </Select>
                 <TextField
                     id="outlined-textarea"
