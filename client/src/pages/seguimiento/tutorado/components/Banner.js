@@ -35,9 +35,25 @@ const Banner = memo(props => {
   const cancelButton = props.cancel;
   const setAcceptButton = props.setAccept;
   const setCancelButton = props.setCancel;
+  const tutorship = props.tutorship;
+  const [titulo, setTitulo]=React.useState('');
+  const date = props.date;
+  const hour = props.hour;
+  const [dateformat, setDate] = React.useState('');
+  const [hourformat, setHour] = React.useState('')
+
+
+  React.useEffect(()=>{
+    var date_aux = new Date(props.date);
+    var format = `${date_aux.getDate()}/${date_aux.getMonth()}/${date_aux.getFullYear()}`;
+    setDate(format);
+    var hour_aux = new Date(props.hour);
+    format = `${hour_aux.toLocaleTimeString()}`;
+    setHour(format);
+  },[date, hour]);
 
   function confirmar() {
-    //AQUI FALTA AGREGAR 
+    //AQUI FALTA AGREGAR
     socket.emit("pupilReady");
     notifier.success("La sessión ha sido confirmada", {
       position: "top-right",
@@ -46,8 +62,8 @@ const Banner = memo(props => {
     setAcceptButton(false);
   };
   function denegar() {
-    //AQUI FALTA AGREGAR 
-    notifyCancelSession();
+    //AQUI FALTA AGREGAR
+    //notifyCancelSession();
     notifier.error("Sesión cancelada", {
       position: "top-right",
       autoClose: 3000
@@ -76,7 +92,17 @@ const Banner = memo(props => {
 Primera Tutoría
 </Typography>
 <Typography variant="h5" color="inherit">
-El motivo de este correo es para recordarles que la 2a tutoría se llevará a cabo el día ...
+{props.contact}
+</Typography>
+<Typography variant="h5" color="inherit">
+{hourformat}
+</Typography>
+
+<Typography variant="h5" color="inherit">
+{props.place}
+</Typography>
+<Typography variant="h5" color="inherit">
+{dateformat}
 </Typography>
 <Link variant="subtitle1" href="#agenda">
 Continuar leyendo

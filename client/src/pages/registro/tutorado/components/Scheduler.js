@@ -22,7 +22,7 @@ import {
   const [sessions, setSessions] = React.useState('');
   const [agendarRoute, setAgendarRoute] = React.useState(false);
   const cookies = new Cookies();
-  
+
   const redirectToAgendar = () => {
     setAgendarRoute(true);
   }
@@ -54,7 +54,7 @@ import {
         }
       }).catch(console.log);
   },[bloque]);
-  
+
   var dataSession = [];
 
   if(sessions.length > 0){
@@ -65,7 +65,7 @@ import {
       }
     }
   }
-  
+
   if(inicioBloque.length > 1){
     var inicioHora = inicioBloque.split(":")[0];
     var inicioMin = inicioBloque.split(":")[1];
@@ -110,7 +110,7 @@ import {
     if(diaB !== undefined){
       var dia = diaB.split("T")[0];
     }
-    
+
     var count = 1;
     var valido = false;
 
@@ -154,7 +154,7 @@ import {
         count = count + 1;
       }
     }
-    
+
     var idSession;
 
     function loadPage(){

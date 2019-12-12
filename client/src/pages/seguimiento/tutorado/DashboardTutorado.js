@@ -56,6 +56,8 @@ const DashboardTutorado = memo(props => {
   const [place, setPlace] = React.useState('');
   const [hour, setHour] = React.useState('');
   const [topics, setTopics] = React.useState('');
+  const [contact, setContact] = React.useState('');
+  const [date, setDate] = React.useState('');
   const [socket, setSocket] = React.useState();
   const [terminosDialog, setTerminosDialog] = React.useState(false);
   const [loginDialog, setLoginDialog] = React.useState(false);
@@ -67,7 +69,7 @@ const DashboardTutorado = memo(props => {
 		terminos: false,
   });
   var initTerminos = false;
-  const[sessionId, setSessionId] = React.useState(0);
+  const [sessionId, setSessionId] = React.useState(0);
 
   var user = utilities.splitCookie(cookies.get('token')).id;
   var token = utilities.splitCookie(cookies.get('token')).token;
@@ -220,12 +222,16 @@ const DashboardTutorado = memo(props => {
                 setStatus(result.data[0][0]['status']);
                 cargarSesion()
                   .then(result => {
+                    console.log(result);
                     if (result) {
-                  setSessionId(result.data[0][0].idSession);
+                      console.log(result);
+                      setSessionId(result.data[0][0].idSession);
                       setAgenda(result.data[0][0].indications);
                       setPlace(result.data[0][0].place);
                       setHour(result.data[0][0].startTime);
                       setTopics(result.data[0][0].topics);
+                      setContact(result.data[0][0].contact);
+                      setDate(result.data[0][0].date);
                     }
                   }).catch(function (err) {
                     console.log(err);
@@ -269,6 +275,7 @@ const DashboardTutorado = memo(props => {
         }
       }).catch(console.log);
   }, [status]);
+
   React.useEffect(() => {
     initNotifications();
   }, []);
@@ -281,7 +288,7 @@ const DashboardTutorado = memo(props => {
       redirectToAgendTutorado();
     }
 
-    if (status == 11) { 
+    if (status == 11) {
       setAcceptButton(true);
     }
     if (status == 1) {
@@ -476,7 +483,17 @@ const DashboardTutorado = memo(props => {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
-            <Banner classes={classes} status={status} socket={socket} accept={acceptButton} cancel={cancelButton} setAccept={setAcceptButton} setCancel={setCancelButton} />
+            <Banner classes={classes}
+              status={status}
+              socket={socket}
+              accept={acceptButton}
+              cancel={cancelButton}
+              setAccept={setAcceptButton}
+              setCancel={setCancelButton}
+              place={place}
+              hour={hour}
+              date={date}
+              contact={contact} />
             <Grid container spacing={3}>
               {/* Agenda */}
               <Grid item xs={12} sm={8} lg={8} id="agenda">
