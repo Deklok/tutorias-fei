@@ -56,6 +56,7 @@ const DashboardTutorado = memo(props => {
   const [hour, setHour] = React.useState('');
   const [topics, setTopics] = React.useState('');
   const [socket, setSocket] = React.useState();
+  const[sessionId, setSessionId] = React.useState(0);
 
   var user = utilities.splitCookie(cookies.get('token')).id;
     var token = utilities.splitCookie(cookies.get('token')).token;
@@ -67,7 +68,7 @@ const DashboardTutorado = memo(props => {
     setRouteSessionsTutorado(true);
     setRouteAgendTutorado(false);
   }
-  
+
   const redirectToAgendTutorado = () => {
     setRouteSessionsTutorado(false);
     setRouteAgendTutorado(true);
@@ -85,6 +86,20 @@ const DashboardTutorado = memo(props => {
 
   const handleClose = () => {
     setOpen(false);
+    var comments = "";
+    for(var option in state){
+      if(state[option]){
+        comments+=option.split('ption')[1]+',';
+      }
+    }
+    axios.post(process.env.REACT_APP_API_SERVER + 'api/db/feedback/add',{
+      grade: value,
+      comments: comments,
+      session: sessionId
+    },{
+        headers: { Authorization: token + ";" + role }
+      });
+
   };
 
   const [state, setState] = React.useState({
@@ -160,6 +175,8 @@ const DashboardTutorado = memo(props => {
             cargarSesion()
               .then(result => {
                 if (result) {
+                  console.log(result);
+                  setSessionId(result.data[0][0].idSession);
                   setAgenda(result.data[0][0].indications);
                   setPlace(result.data[0][0].place);
                   setHour(result.data[0][0].startTime);
@@ -171,11 +188,11 @@ const DashboardTutorado = memo(props => {
           }
         })
         redireccion();
-        createSocket().then(socket => {          
+        createSocket().then(socket => {
           socket.on("connect", () => {
             console.log("Connected to socket.io on new pupil");
           })
-        
+
           socket.on("nextInLine", () => {
             setAcceptButton(true);
             notifier.success("Eres el siguiente en la cola. Porfavor confirma tu asistencia", {
@@ -183,7 +200,7 @@ const DashboardTutorado = memo(props => {
               autoClose: 10000
             });
           });
-        
+
           socket.on("startSession", () => {
             setAcceptButton(false);
             setCancelButton(false);
@@ -207,6 +224,7 @@ const DashboardTutorado = memo(props => {
         }
     }).catch(console.log);
   },[status]);
+
   React.useEffect(()=>{
     initNotifications();
   }, []);
@@ -354,9 +372,9 @@ const DashboardTutorado = memo(props => {
                   </Grid>
                 </Container>
               </main>
-            </div> 
+            </div>
           </div>
-          
+
   );
 });
 
