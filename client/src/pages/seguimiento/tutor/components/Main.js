@@ -51,45 +51,50 @@ const Main = memo(props => {
 	    },{
 	      headers: { Authorization: token + ";" + role }
 		});
-		var tutorados_aux = tutorados;
-		setStatus(1);
-		setComenzado(true);
-		setPupil(tutorados_aux[0]);
-		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
-			idTutorship: idTutorship,
-			idPupil: tutorados_aux[0]['studentId'],
-			new_status: 11,
-		  },{
-			headers: { Authorization: token + ";" + role }
-		  });
-
-		var socket = io(process.env.REACT_APP_API_SERVER,{
-			query: {
-			  room: tutorados_aux[0].studentId
-			}
-		});
-
-		socket.on("connect", () => {
-			console.log("Connected to socket.io on new pupil");
-		})
-
-		socket.on("pupilReady",() => {
-			notifier.success("La sesión ha sido confirmada por el siguiente tutorado", {
-				position: "top-right",
-				autoClose: 3000
-			});
-			setPupilReady(true);
+		if(tutorados.length){
+			var tutorados_aux = tutorados;
+			setStatus(1);
+			setComenzado(true);
+			setPupil(tutorados_aux[0]);
 			axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
 				idTutorship: idTutorship,
 				idPupil: tutorados_aux[0]['studentId'],
-				new_status: 12,
+				new_status: 11,
 			  },{
 				headers: { Authorization: token + ";" + role }
 			  });
-			console.log("event from pupil, is ready");
-		});
-		socket.emit("nextInLine");
-		setSocketNext(socket);
+
+			var socket = io(process.env.REACT_APP_API_SERVER,{
+				query: {
+				  room: tutorados_aux[0].studentId
+				}
+			});
+
+			socket.on("connect", () => {
+				console.log("Connected to socket.io on new pupil");
+			})
+
+			socket.on("pupilReady",() => {
+				notifier.success("La sesión ha sido confirmada por el siguiente tutorado", {
+					position: "top-right",
+					autoClose: 3000
+				});
+				setPupilReady(true);
+				axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
+					idTutorship: idTutorship,
+					idPupil: tutorados_aux[0]['studentId'],
+					new_status: 12,
+				  },{
+					headers: { Authorization: token + ";" + role }
+				  });
+				console.log("event from pupil, is ready");
+			});
+			socket.emit("nextInLine");
+			setSocketNext(socket);
+		}else{
+			setAtendiendo(true);
+			setFinalizar(true);
+		}
 	}
 
 	const finalizarTutoria = () =>{
@@ -121,7 +126,7 @@ const Main = memo(props => {
 			  },{
 				headers: { Authorization: token + ";" + role }
 			  });
-			  
+
 			var socket = io(process.env.REACT_APP_API_SERVER, {
 				query: {
 					room: tutorados_aux[0].studentId
