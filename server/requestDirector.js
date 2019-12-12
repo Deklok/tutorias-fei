@@ -1,5 +1,5 @@
-const database = require('./server/db/database.js');
-const emailpush = require('./server/webpush/emailIntegration.js');
+const database = require('./db/database.js');
+const emailpush = require('./webpush/emailIntegration.js');
 
 async function setupStudentData (studentData){
 	database.getStudentSuscribedStatus(studentData.studentId).then(function (responseStatus) {
