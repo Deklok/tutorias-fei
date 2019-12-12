@@ -29,13 +29,12 @@ async function notifyCancelSession() {
 
 const Banner = memo(props => {
   const classes = props.classes;
-  const estado = props.estado;
+  const status = props.status;
   const socket = props.socket;
   const acceptButton = props.accept;
   const cancelButton = props.cancel;
   const setAcceptButton = props.setAccept;
   const setCancelButton = props.setCancel;
-  const [estado_tuto,setEstado] = React.useState(estado);
 
   function confirmar() {
     //AQUI FALTA AGREGAR 

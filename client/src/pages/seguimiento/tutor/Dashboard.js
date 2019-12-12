@@ -141,6 +141,7 @@ const Dashboard = memo(props => {
             comenzado={comenzado}
             tutor={personnelNum}
             setComenzado = {setComenzado}
+            idTutorship = {idTutorship}
           />
         </Route>
         <Route path="/tutor/feedback">

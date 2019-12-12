@@ -456,7 +456,7 @@ app.post('/api/dataimport/tutor', (req,res) => {
  */
 app.post('/api/db/feedback/add', (req,res) => {
   var grade = req.body.grade;
-  var idSession = req.body.idSession;
+  var idSession = req.body.session;
   var comments = req.body.comments;
   if (grade && idSession) {
     if (comments) {

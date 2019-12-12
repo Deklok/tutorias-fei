@@ -33,7 +33,7 @@ const Main = memo(props => {
 	const [atendiendo,setAtendiendo] = React.useState(false);
 	const [nextPupil, setPupil] = React.useState([]);
 	const [verify, setVerify] = React.useState(true);
-	const [idTutorship, setTutorship] = React.useState(0);
+	const [idTutorship, setTutorship] = React.useState(props.idTutorship);
 	const [temas, setTemas]=React.useState('');
 	const [finalizar, setFinalizar]=React.useState(false);
 	const [redirect, setRedirect] = React.useState(false);
@@ -50,13 +50,22 @@ const Main = memo(props => {
 	      new_status: 1
 	    },{
 	      headers: { Authorization: token + ";" + role }
-	    });
+		});
+		var tutorados_aux = tutorados;
 		setStatus(1);
 		setComenzado(true);
-		setPupil(tutorados[0]);
+		setPupil(tutorados_aux[0]);
+		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
+			idTutorship: idTutorship,
+			idPupil: tutorados_aux[0]['studentId'],
+			new_status: 11,
+		  },{
+			headers: { Authorization: token + ";" + role }
+		  });
+
 		var socket = io(process.env.REACT_APP_API_SERVER,{
 			query: {
-			  room: tutorados[0].studentId
+			  room: tutorados_aux[0].studentId
 			}
 		});
 
@@ -70,12 +79,17 @@ const Main = memo(props => {
 				autoClose: 3000
 			});
 			setPupilReady(true);
+			axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
+				idTutorship: idTutorship,
+				idPupil: tutorados_aux[0]['studentId'],
+				new_status: 12,
+			  },{
+				headers: { Authorization: token + ";" + role }
+			  });
 			console.log("event from pupil, is ready");
 		});
 		socket.emit("nextInLine");
 		setSocketNext(socket);
-		var tutorados_aux = tutorados;
-		tutorados_aux.splice(0,1);
 	}
 
 	const finalizarTutoria = () =>{
@@ -100,16 +114,19 @@ const Main = memo(props => {
 			var tutorados_aux = tutorados;
 			setPupil(tutorados_aux[0]);
 			notifyYouAreNext(tutorados_aux[0].studentId);
+			axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
+				idTutorship: idTutorship,
+				idPupil: tutorados_aux[0]['studentId'],
+				new_status: 11,
+			  },{
+				headers: { Authorization: token + ";" + role }
+			  });
+			  
 			var socket = io(process.env.REACT_APP_API_SERVER, {
 				query: {
 					room: tutorados_aux[0].studentId
 				}
 			});
-			if(tutorados_aux.length == 1){
-				tutorados_aux.push([]);
-			}
-			tutorados_aux.splice(0, 1);
-			setTutorados(tutorados_aux);
 
 			socket.on("connect", () => {
 				console.log("Connected to socket.io on new pupil");
@@ -121,11 +138,23 @@ const Main = memo(props => {
 					autoClose: 3000
 				});
 				setPupilReady(true);
+				axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
+					idTutorship: idTutorship,
+					idPupil: tutorados_aux[0]['studentId'],
+					new_status: 12,
+				  },{
+					headers: { Authorization: token + ";" + role }
+				  });
 				console.log("event from pupil, is ready");
 			});
 			socket.emit("nextInLine");
 			setSocketCurrent(socketNext);
 			setSocketNext(socket);
+
+			if(tutorados_aux.length == 1){
+				tutorados_aux.push([]);
+			}
+			tutorados_aux.splice(0,1);
 		}
 	}
 
@@ -200,7 +229,7 @@ const Main = memo(props => {
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
 		          	>Comenzar Tutoría</Button>
-		          	:[atendiendo ? <CurrentTutorado currentSocket = {socketCurrent} currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
+		          	:[atendiendo ? <CurrentTutorado currentSocket = {socketCurrent} currentPupil = {currentPupil} setAtendiendo={setAtendiendo} idTutorship={idTutorship}/> : [
 		          		finalizar ? <Button
 		          	variant="contained"
 		          	color="primary"
@@ -223,6 +252,7 @@ const Main = memo(props => {
 					setTemas = {setTemas}
 					socket = {socketNext}
 					pupilReady = {pupilReady}
+					idTutorship={idTutorship}
 		          	/>
 		        </Grid>
 		      </Grid>

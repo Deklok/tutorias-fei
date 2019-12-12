@@ -83,6 +83,7 @@ const NextTutorado = memo(props => {
   const atendiendo = props.atendiendo;
   const socket = props.socket;
   const pupilReady = props.pupilReady;
+  const idTutorship = props.idTutorship;
   const[connect, setConnect] = React.useState(true);
 
   var token = utilities.splitCookie(cookies.get('token')).token;
@@ -91,7 +92,7 @@ const NextTutorado = memo(props => {
   async function comenzar() {
     if(connect){
       return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
-        idTutorship: 1,
+        idTutorship: idTutorship,
         idPupil: tutorado['studentId'],
         new_status: 1,
       },{
@@ -105,7 +106,7 @@ const NextTutorado = memo(props => {
   async function pass() {
     if(connect){
       return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
-        idTutorship: 1,
+        idTutorship: idTutorship,
         idPupil: tutorado['studentId'],
         new_status: 2,
       },{

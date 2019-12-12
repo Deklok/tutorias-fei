@@ -73,6 +73,7 @@ const CurrentTutorado = memo(props => {
   const currentPupil = props.currentPupil;
   const setAtendiendo = props.setAtendiendo;
   const socket = props.currentSocket;
+  const idTutorship = props.idTutorship;
   const[connect, setConnect] = React.useState(false);
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
@@ -88,7 +89,7 @@ const CurrentTutorado = memo(props => {
   function finalizarTutoria(){
     console.log(currentPupil['studentId']);
     axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
-      idTutorship: 1,
+      idTutorship: idTutorship,
       idPupil: currentPupil['studentId'],
       new_status: 3
     },{

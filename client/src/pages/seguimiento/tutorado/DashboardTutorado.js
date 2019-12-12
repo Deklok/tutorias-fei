@@ -42,7 +42,7 @@ const DashboardTutorado = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(5);
-  const [status, setStatus] = React.useState('');
+  const [status, setStatus] = React.useState(0);
   const [sessionsTutorado, setRouteSessionsTutorado] = React.useState(false);
   const [agendTutorado, setRouteAgendTutorado] = React.useState(false);
   const [acceptButton, setAcceptButton] = React.useState(false);
@@ -280,6 +280,13 @@ const DashboardTutorado = memo(props => {
     } else if (status == 2) {
       redirectToAgendTutorado();
     }
+
+    if (status == 11) { 
+      setAcceptButton(true);
+    }
+    if (status == 1) {
+      setCancelButton(false);
+    }
   }
 
   return (
@@ -469,7 +476,7 @@ const DashboardTutorado = memo(props => {
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
-            <Banner classes={classes} estado={false} socket={socket} accept={acceptButton} cancel={cancelButton} setAccept={setAcceptButton} setCancel={setCancelButton} />
+            <Banner classes={classes} status={status} socket={socket} accept={acceptButton} cancel={cancelButton} setAccept={setAcceptButton} setCancel={setCancelButton} />
             <Grid container spacing={3}>
               {/* Agenda */}
               <Grid item xs={12} sm={8} lg={8} id="agenda">
