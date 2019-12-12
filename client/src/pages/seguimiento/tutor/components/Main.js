@@ -53,7 +53,6 @@ const Main = memo(props => {
 	    });
 		setStatus(1);
 		setComenzado(true);
-		console.log("tutorship state of comenzado is now: "  + comenzado);
 		setPupil(tutorados[0]);
 		var socket = io(process.env.REACT_APP_API_SERVER,{
 			query: {
@@ -66,7 +65,7 @@ const Main = memo(props => {
 		})
 
 		socket.on("pupilReady",() => {
-			notifier.success("La sessión ha sido confirmada por el siguiente tutorado", {
+			notifier.success("La sesión ha sido confirmada por el siguiente tutorado", {
 				position: "top-right",
 				autoClose: 3000
 			});
@@ -75,6 +74,8 @@ const Main = memo(props => {
 		});
 		socket.emit("nextInLine");
 		setSocketNext(socket);
+		var tutorados_aux = tutorados;
+		tutorados_aux.splice(0,1);
 	}
 
 	const finalizarTutoria = () =>{
@@ -91,36 +92,39 @@ const Main = memo(props => {
 	}
 
 	const siguienteTutorado=()=>{
-	    var tutorados_aux = tutorados;
-	    tutorados_aux.splice(0,1);
-	    if(tutorados_aux.length == 0){
-	    	tutorados_aux.push([]);
+		if(tutorados.length == 0){
+	    	setTutorados([]);
 	    	setFinalizar(true);
-	    }
-	    setVerify(true);
-		setPupil(tutorados_aux[0]);
-		console.log(tutorados_aux[0]);
-		notifyYouAreNext(tutorados_aux[0].studentId);
-		var socket = io(process.env.REACT_APP_API_SERVER,{
-			query: {
-			  room: tutorados_aux[0].studentId
-			}
-		});
-		
-		socket.on("connect", () => {
-			console.log("Connected to socket.io on new pupil");
-		})
-
-		socket.on("pupilReady",() => {
-			notifier.success("La sessión ha sido confirmada por el siguiente tutorado", {
-				position: "top-right",
-				autoClose: 3000
+	    } else {
+			setVerify(true);
+			var tutorados_aux = tutorados;
+			setPupil(tutorados_aux[0]);
+			console.log(tutorados_aux[0]);
+			notifyYouAreNext(tutorados_aux[0].studentId);
+			var socket = io(process.env.REACT_APP_API_SERVER, {
+				query: {
+					room: tutorados_aux[0].studentId
+				}
 			});
-			setPupilReady(true);
-			console.log("event from pupil, is ready");
-		});
-		setSocketCurrent(socketNext);
-		setSocketNext(socket);
+			tutorados_aux.splice(0, 1);
+			setTutorados(tutorados_aux);
+
+			socket.on("connect", () => {
+				console.log("Connected to socket.io on new pupil");
+			})
+
+			socket.on("pupilReady", () => {
+				notifier.success("La sesión ha sido confirmada por el siguiente tutorado", {
+					position: "top-right",
+					autoClose: 3000
+				});
+				setPupilReady(true);
+				console.log("event from pupil, is ready");
+			});
+			socket.emit("nextInLine");
+			setSocketCurrent(socketNext);
+			setSocketNext(socket);
+		}
 	}
 
 	const redirectToCreation = () => {
@@ -191,7 +195,7 @@ const Main = memo(props => {
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
 		          	>Comenzar</Button>
-		          	:[atendiendo ? <CurrentTutorado socket = {socketCurrent} currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
+		          	:[atendiendo ? <CurrentTutorado currentSocket = {socketCurrent} currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
 		          		finalizar ? <Button
 		          	variant="contained"
 		          	color="primary"
