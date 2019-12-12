@@ -11,6 +11,10 @@ import {
     DayView,
     Appointments
   } from "@devexpress/dx-react-scheduler-material-ui";
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Button from '@material-ui/core/Button';
 
   const Schedule = memo(props => {
   const inicioBloque = props.inicioBloque;
@@ -21,6 +25,15 @@ import {
   const matricula = props.matricula;
   const [sessions, setSessions] = React.useState('');
   const [agendarRoute, setAgendarRoute] = React.useState(false);
+  const [title, setTitle] = React.useState('Confirmación');
+  const [message, setMessage] = React.useState('');
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [matriculaR, setMatriculaR] = React.useState('');
+  const [bloqueR, setBloqueR] = React.useState('');
+  const [fechaFIR, setFechaFIR] = React.useState('');
+  const [horaFIR, setHoraFIR] = React.useState('');
+  const [fechaFFR, setFechaFFR] = React.useState('');
+  const [horaFFR, setHoraFFR] = React.useState('');
   const cookies = new Cookies();
 
   const redirectToAgendar = () => {
@@ -71,7 +84,8 @@ import {
     var inicioMin = inicioBloque.split(":")[1];
   }
   if(finBloque.length > 1){
-    var finHora = finBloque.split(":")[0];
+    var finHora = parseInt(finBloque.split(":")[0],10);
+    finHora = finHora + 1;
   }
 
     async function reservarSesion(matricula, idBlock, fechaI, horaI, fechaF, horaF){
@@ -189,11 +203,13 @@ import {
                       var divisionI = formatoUTCI.split("T");
                       var fechaFI = divisionI[0];
                       var horaFI = divisionI[1].split(" ")[1];
-                      reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
-                        var sessionReserved = response;
-                        idSession = sessionReserved.data;
-                      });
-                      redirectToAgendar();
+                      setMatriculaR(matricula);
+                      setBloqueR(bloque);
+                      setFechaFIR(fechaFI);
+                      setHoraFIR(horaFI);
+                      setFechaFFR(fechaFF);
+                      setHoraFFR(horaFF);
+                      setMessage('Seleccionaste la hora ' + horaFI + ' del día ' + fechaFI + '\n ¿Esa es tú elección?');
                     }
                   }
                 }
@@ -217,11 +233,13 @@ import {
                         var divisionI = formatoUTCI.split("T");
                         var fechaFI = divisionI[0];
                         var horaFI = divisionI[1].split(" ")[1];
-                        reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
-                          var sessionReserved = response;
-                          idSession = sessionReserved.data;
-                        });
-                        redirectToAgendar();
+                        setMatriculaR(matricula);
+                        setBloqueR(bloque);
+                        setFechaFIR(fechaFI);
+                        setHoraFIR(horaFI);
+                        setFechaFFR(fechaFF);
+                        setHoraFFR(horaFF);
+                        setMessage('Seleccionaste la hora ' + horaFI + ' del día ' + fechaFI + '\n ¿Esa es tú elección?');
                       }
                     }
                   }
@@ -246,11 +264,13 @@ import {
                         var divisionI = formatoUTCI.split("T");
                         var fechaFI = divisionI[0];
                         var horaFI = divisionI[1].split(" ")[1];
-                        reservarSesion(matricula,bloque,fechaFI,horaFI,fechaFF,horaFF).then(response => {
-                          var sessionReserved = response;
-                          idSession = sessionReserved.data;
-                        });
-                        redirectToAgendar();
+                        setMatriculaR(matricula);
+                        setBloqueR(bloque);
+                        setFechaFIR(fechaFI);
+                        setHoraFIR(horaFI);
+                        setFechaFFR(fechaFF);
+                        setHoraFFR(horaFF);
+                        setMessage('Seleccionaste la hora ' + horaFI + ' del día ' + fechaFI + '\n ¿Esa es tú elección?');
                       }
                     }
                   }
@@ -268,18 +288,46 @@ import {
       texto = "La tutoría será el día "+ diaB.split("T")[0] + " del mes " + mesB + " del " + anioB;
     }
 
+    const okDialog = (e) => {
+      if(matriculaR,bloqueR,fechaFIR,fechaFFR,horaFFR,horaFIR){
+        reservarSesion(matriculaR,bloqueR,fechaFIR,horaFIR,fechaFFR,horaFFR).then(response => {
+          var sessionReserved = response;
+          idSession = sessionReserved.data;
+        });
+        redirectToAgendar();
+      }
+    }
+    
+    const closeDialog = (e) => {
+      setOpenDialog(false);
+    }
+
     return (
-          <Paper>
-            {agendarRoute && <Redirect to="/tutorado/agendar"/>}
-            <Title>{texto}</Title>
-            <p>Seleccione un bloque de tutoría, cada bloque cuenta con 15 minutos de duración.</p>
-              <Scheduler data={dataBlock} locale="es-MX">
-                  <ViewState currentDate={fechaDate} />
-                  <DayView startDayHour={inicioHora} endDayHour={finHora} />
-                  <Appointments />
-              </Scheduler>
-          </Paper>
-      );
+      <div>
+        <Paper>
+          {agendarRoute && <Redirect to="/tutorado/agendar"/>}
+          <Title>{texto}</Title>
+          <p>Seleccione un bloque de tutoría, cada bloque cuenta con 15 minutos de duración.</p>
+            <Scheduler data={dataBlock} locale="es-MX">
+                <ViewState currentDate={fechaDate} />
+                <DayView startDayHour={inicioHora} endDayHour={finHora} />
+                <Appointments />
+            </Scheduler>
+        </Paper>
+        <Dialog open={openDialog}>
+              <div id="dialogError">
+                  <DialogTitle >
+                      {title}
+                  </DialogTitle>
+                  <DialogContentText>
+                      {message}
+                  </DialogContentText>
+                  <Button id="acceptBtn" onClick={okDialog}>Aceptar</Button>
+                  <Button id="cancelBtn" onClick={closeDialog}>Cancelar</Button>
+              </div>
+          </Dialog>
+      </div>
+    );
 });
 
 export default Schedule;
