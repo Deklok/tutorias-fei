@@ -39,7 +39,7 @@ const DashboardInicio = memo(props => {
     setRouteMainTutorado(true);
     setRouteAgendTutorado(false);
   }
-  
+
   const redirectToAgendTutorado = () => {
     setRouteMainTutorado(false);
     setRouteAgendTutorado(true);
@@ -48,7 +48,7 @@ const DashboardInicio = memo(props => {
   const redirectToLogout = () => {
     setRouteLogout(true);
   }
-  
+
   const cookies = new Cookies();
   var cookie = cookies.get('token');
   var username = utilities.splitCookie(cookies.get('token')).id;
@@ -69,26 +69,20 @@ const DashboardInicio = memo(props => {
       });
     }
   }
-  
+
   async function getStatus(){
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getSessionStatus',{
       idPupil: username
     });
   }
-  
+
   async function obtenerIDs() {
     var user = utilities.splitCookie(cookies.get('token')).id;
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getcareerBlock', {
       idPupil: user,
     });
   }
-  
-  obtenerIDs()
-  .then(result => {
-    setIdCareer(result.data[0][0]['idCareer']);
-    setIdTutorship(result.data[0][0]['idTutorship']);
-  }).catch(console.log);
-  
+
   async function obtenerBloque(){
     if(career && tutorship){
       return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getOneBlock',{
@@ -97,16 +91,9 @@ const DashboardInicio = memo(props => {
       });
     }
   }
-  
+
   React.useEffect(()=>{
-    obtenerBloque()
-      .then(result => {
-      if(result.status === 200){
-        setInicioBloque(result.data[0]['start']);
-        setFinBloque(result.data[0]['end']);
-        setBloque(result.data[0]['idBlock']);
-      }
-    }).catch(console.log);
+
   },[career, tutorship]);
 
   React.useEffect(()=>{
@@ -126,24 +113,34 @@ const DashboardInicio = memo(props => {
           }else{
             setStatus(result.data[0][0]['status']);
           }
+          obtenerIDs()
+          .then(result => {
+            setIdCareer(result.data[0][0]['idCareer']);
+            setIdTutorship(result.data[0][0]['idTutorship']);
+            obtenerTutoria()
+              .then(result => {
+              if(result.status === 200){
+                setFecha(result.data[0]['date']);
+                setLugar(result.data[0]['place']);
+                obtenerBloque()
+                .then(result => {
+                if(result.status === 200){
+                  setInicioBloque(result.data[0]['start']);
+                  setFinBloque(result.data[0]['end']);
+                  setBloque(result.data[0]['idBlock']);
+                }
+              }).catch(console.log);
+              }
+            }).catch(console.log);
+          }).catch(console.log);
         })
           redireccion();
         }else{
           console.log('Algo aslio mal');
         }
     }).catch(console.log);
-  },[nombre, status]);
+  },[nombre, status, career, tutorship]);
 
-  React.useEffect(()=>{
-    obtenerTutoria()
-      .then(result => {
-      if(result.status === 200){
-        setFecha(result.data[0]['date']);
-        setLugar(result.data[0]['place']);
-      }
-    }).catch(console.log);
-  },[tutorship]);
-      
   function redireccion(){
     if(status == 3){
       redirectToMainTutorado();
@@ -182,7 +179,7 @@ const DashboardInicio = memo(props => {
             {/* Scheduler */}
               <Grid item xs={12} md={12} lg={12}>
                <div>
-                  <Schedule 
+                  <Schedule
                     inicioBloque = {inicioBloque}
                     finBloque = {finBloque}
                     bloque = {bloque}
