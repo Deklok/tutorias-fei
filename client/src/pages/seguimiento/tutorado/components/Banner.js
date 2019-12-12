@@ -92,21 +92,17 @@ const Banner = memo(props => {
 Primera Tutoría
 </Typography>
 <Typography variant="h5" color="inherit">
-{props.contact}
-</Typography>
-<Typography variant="h5" color="inherit">
 {hourformat}
-</Typography>
-
-<Typography variant="h5" color="inherit">
-{props.place}
 </Typography>
 <Typography variant="h5" color="inherit">
 {dateformat}
 </Typography>
-<Link variant="subtitle1" href="#agenda">
-Continuar leyendo
-</Link>
+<Typography variant="h5" color="inherit">
+{props.place}
+</Typography>
+<Typography variant="h6" color="inherit">
+Contacto: {props.contact}
+</Typography>
 <div className={classes.details}>
 <Button disabled={!acceptButton} variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
 <Button disabled={!cancelButton} variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
