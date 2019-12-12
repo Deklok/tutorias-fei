@@ -74,6 +74,18 @@ function getAllSessions(idTutorship){
 	});
 }
 
+function getAllPendingSessions(idTutorship) {
+	return new Promise((resolve,reject) => {
+		pool.query('call sp_get_pendingSessions(?)', [idTutorship], (err,results) => {
+			if (err) {
+				return reject(err);
+			} else {
+				return resolve(results);
+			}
+		})
+	});
+}
+
 function tutorDataImport(tutorPersonnelNum, tutorName, pupilsData, username) {
 	return new Promise((resolve, reject) => {
 		pool.query('call sp_tutor_data_import(?,?,?,?)',[tutorPersonnelNum, tutorName, pupilsData, username],(err,results) => {
@@ -513,6 +525,7 @@ module.exports = {
     addBlock: addBlock,
     getAllPupilByTutor: getAllPupilByTutor,
 	getAllSessions: getAllSessions,
+	getAllPendingSessions: getAllPendingSessions,
 	getBlock: getBlock,
     getOneBlock: getOneBlock,
     getBlockSessions: getBlockSessions,

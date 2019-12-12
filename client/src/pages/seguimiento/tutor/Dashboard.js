@@ -43,18 +43,6 @@ function cargarDatos() {
     });
 }
 
-function cargarTutorados(connect) {
-  if (connect){
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/sessions', {
-      idTutorship: 1,
-    },{
-      headers: { Authorization: token + ";" + role }
-    });
-  }else{
-    return null;
-  }
-}
-
 const Dashboard = memo(props => {
   const classes = props.classes;
   const [open, setOpen] = React.useState(true);
@@ -74,14 +62,6 @@ const Dashboard = memo(props => {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-  async function getNextTutorship(){
-    return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
-      idTutor: personnelNum
-    },{
-      headers: { Authorization: token + ";" + role }
-    });
-  }
-
   React.useEffect(()=>{
     cargarDatos()
     .then(result => {
@@ -91,25 +71,8 @@ const Dashboard = memo(props => {
         notifications(result.data[0]['username'], "");
         setPersonnel(result.data[0]['personnelNum']);
       }
-    }).then(()=>{
-      getNextTutorship()
-      .then((result)=>{
-        if(result.data[0].length){
-          var tutorship_aux = result.data[0][0].idTutorship;
-          setTutorship(tutorship_aux);
-          setIndications(result.data[0][0].indications);
-          console.log(indications);
-        }
-      });
-      cargarTutorados(connect)
-        .then(result=>{
-          if(result){
-            setTutorados(result.data[0]);
-            setConnect(false);
-          }
-        })
     }).catch(console.log);
-  },[idTutorship]);
+  },[]);
   React.useEffect(()=>{
     initNotifications();
   }, []);

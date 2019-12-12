@@ -72,8 +72,8 @@ const CurrentTutorado = memo(props => {
   const classes = useStyles();
   const currentPupil = props.currentPupil;
   const setAtendiendo = props.setAtendiendo;
-  const socket = props.currentSocket;
   const idTutorship = props.idTutorship;
+  const [socket, setSocket] = React.useState(props.currentSocket);
   const[connect, setConnect] = React.useState(false);
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
@@ -86,6 +86,10 @@ const CurrentTutorado = memo(props => {
     }
   }
 
+  React.useEffect(()=>{
+    setSocket(props.currentSocket);
+  },props.currentSocket,props.currentPupil);
+
   function finalizarTutoria(){
     console.log(currentPupil['studentId']);
     axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateStatus', {
@@ -96,7 +100,9 @@ const CurrentTutorado = memo(props => {
       headers: { Authorization: token + ";" + role }
     });
     setAtendiendo(false);
-    socket.emit("endSession");
+    if (socket!=undefined) {
+      socket.emit("endSession");
+    }
   }
 
   return (

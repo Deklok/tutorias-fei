@@ -24,7 +24,7 @@ const store = new MemoryStore({
   ttl: 3600000
 });
 
-const publicRoutes = ['/api/user/login','/api/test/session','/api/auth'];
+const publicRoutes = ['/api/user/login','/api/test/session','/api/auth','/api/db/getPendingSessions'];
 
 store.on("error", function(err) {
   console.log("Redis storage error: " + err);
@@ -377,6 +377,17 @@ app.post('/api/db/sessions', (req,res) => {
   }else {
     res.sendStatus(400);
   }  
+});
+
+app.post('/api/db/getPendingSessions', (req,res) => {
+  var idTutorship = req.body.idTutorship;
+  if(idTutorship) {
+    database.getAllPendingSessions(idTutorship).then(function(response){
+      res.json(response);
+    });
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 /*
@@ -801,6 +812,7 @@ app.post('/api/db/getSession', (req, res) => {
     res.sendStatus(400);
   }
 });
+
 /*
 *Service to delete a tutorship
 *Params:

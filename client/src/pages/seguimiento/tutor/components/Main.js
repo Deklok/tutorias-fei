@@ -155,6 +155,7 @@ const Main = memo(props => {
 			socket.emit("nextInLine");
 			setSocketCurrent(socketNext);
 			setSocketNext(socket);
+			setPupilReady(false);
 
 			if(tutorados_aux.length == 1){
 				tutorados_aux.push([]);
@@ -184,38 +185,86 @@ const Main = memo(props => {
 	    });
 	}
 
+	async function getPendingSessions(idTutorship) {
+		if (connect) {
+			return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getPendingSessions', {
+				idTutorship: idTutorship,
+			}, {
+				headers: { Authorization: token + ";" + role }
+			});
+		}
+	}
+
+	async function cargarTutorados(idTutorship) {
+		console.log("cargando sesiones de tutorados");
+		return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/sessions', {
+		  idTutorship: idTutorship,
+		},{
+		  headers: { Authorization: token + ";" + role }
+		});
+	}
+
 	React.useEffect(()=>{
 		if(tutor != 0){
 			getNextTutorship()
 			.then(result=>{
-				if(result.data[0].length){
-					var tutorship_aux = result.data[0][0].idTutorship;
-					var indications_aux = result.data[0][0].indications;
-					setTutorship(tutorship_aux);
-					setStatus(result.data[0][0].status);
-					setIndications(indications_aux);
-					setExists(true);
-				}else{
-					setExists(false);
+				if (result) {
+					if(result.data[0].length){
+						var tutorship_aux = result.data[0][0].idTutorship;
+						var indications_aux = result.data[0][0].indications;
+						setTutorship(tutorship_aux);
+						setStatus(result.data[0][0].status);
+						setIndications(indications_aux);
+						setExists(true);
+						cargarTutorados(tutorship_aux).then(result=>{
+							if (result) {
+								setTutorados(result.data[0]);
+							}
+						});
+					}else{
+						setExists(false);
+					}
 				}
 			});
 		}
 	},[tutor, tutorshipExists]);
 
 	React.useEffect(()=>{
-		if(status == 1){
+		if (status == 1) {
 			console.log(tutorados);
 			console.log(verify);
 			setComenzado(true);
-			if(tutorados.length){
-				setPupil(tutorados[0]);
-				siguienteTutorado();
-				setFinalizar(false);
-			}else{
-				setFinalizar(true);
-			}
-			setVerify(true);
-		}else{
+			getPendingSessions(idTutorship,connect).then(function (result) {
+				if (result) {
+					if (result.data[0].length) {
+						console.log("pending sessions found");
+						if (result.data[0].length == 1) {
+							var currentPupil = result.data[0][0];
+							setCurrentPupil(currentPupil);
+							setAtendiendo(true);
+							var socket = io(process.env.REACT_APP_API_SERVER,{
+								query: {
+								  room: currentPupil.studentId
+								}
+							});
+							socket.on("connect", () => {
+								console.log("Connected to socket.io on pending session");
+							});
+							setSocketCurrent(socket);
+						} 
+						setConnect(false);
+					}
+				}
+				if (tutorados.length) {
+					setPupil(tutorados[0]);
+					siguienteTutorado();
+					setFinalizar(false);
+				} else {
+					setFinalizar(true);
+				}
+				setVerify(true);
+			});
+		} else {
 			setComenzado(false);
 		}
 	},[status, tutorados])

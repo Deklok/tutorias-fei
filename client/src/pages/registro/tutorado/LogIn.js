@@ -174,8 +174,10 @@ const Inicio = memo(props =>  {
           })
           .catch((err) => {
             console.log(err);
-            if (err.response.status == 404) {
-              setAccountError(true);
+            if (err.response) {
+              if (err.response.status == 404) {
+                setAccountError(true);
+              }
             }
           });
       }
