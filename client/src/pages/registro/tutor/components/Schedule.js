@@ -321,9 +321,9 @@ const Schedule = memo(props => {
         <div>
           <h3>Indicaciones:</h3>
           <TextareaAutosize
-            rows={4}
-            rowsMax={10}
-            cols={25}
+            rows={8}
+            rowsMax={15}
+            cols={30}
             maxLength={600}
             onChange={event => indicationsChange(event)} />
         </div>
