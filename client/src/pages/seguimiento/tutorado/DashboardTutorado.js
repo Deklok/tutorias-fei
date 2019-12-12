@@ -96,9 +96,9 @@ const DashboardTutorado = memo(props => {
   const handleCheckTerminos = name => event => {
 		setStateTerminos({ ...stateTerminos, [name]: event.target.checked });
   };
-  
+
   const handleLogin = () => {
-		
+
 	}
 	const handleCerrarLogin = () => {
 		setLoginDialog(false);
@@ -109,9 +109,9 @@ const DashboardTutorado = memo(props => {
 		setLoginDialog(true);
 		if (!initTerminos) {
 			//setAgreement();
-		}	
+		}
 	};
-  
+
   const handleCerrarTerminosDialog = () => {
 		setTerminosDialog(false);
 		notifier.error("Para importar los datos es necesario aceptar los términos", {
@@ -228,8 +228,8 @@ const DashboardTutorado = memo(props => {
                       setTopics(result.data[0][0].topics);
                     }
                   }).catch(function (err) {
-                  })
                     console.log(err);
+                  });
               }
             })
           redireccion();

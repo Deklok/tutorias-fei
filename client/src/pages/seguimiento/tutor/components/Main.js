@@ -42,7 +42,7 @@ const Main = memo(props => {
 	const [pupilReady, setPupilReady] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
 	var role = utilities.splitCookie(cookies.get('token')).session;
-  	
+
 	const comenzarTutoria = () =>{
 		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
 	      idTutorship: idTutorship,
@@ -59,7 +59,7 @@ const Main = memo(props => {
 			  room: tutorados[0].studentId
 			}
 		});
-		
+
 		socket.on("connect", () => {
 			console.log("Connected to socket.io on new pupil");
 		})
@@ -99,13 +99,15 @@ const Main = memo(props => {
 			setVerify(true);
 			var tutorados_aux = tutorados;
 			setPupil(tutorados_aux[0]);
-			console.log(tutorados_aux[0]);
 			notifyYouAreNext(tutorados_aux[0].studentId);
 			var socket = io(process.env.REACT_APP_API_SERVER, {
 				query: {
 					room: tutorados_aux[0].studentId
 				}
 			});
+			if(tutorados_aux.length == 1){
+				tutorados_aux.push([]);
+			}
 			tutorados_aux.splice(0, 1);
 			setTutorados(tutorados_aux);
 
@@ -168,9 +170,12 @@ const Main = memo(props => {
 
 	React.useEffect(()=>{
 		if(status == 1){
+			console.log(tutorados);
+			console.log(verify);
 			setComenzado(true);
-			if(tutorados.length && verify){
+			if(tutorados.length){
 				setPupil(tutorados[0]);
+				siguienteTutorado();
 				setFinalizar(false);
 			}else{
 				setFinalizar(true);
@@ -179,7 +184,7 @@ const Main = memo(props => {
 		}else{
 			setComenzado(false);
 		}
-	},[status])
+	},[status, tutorados])
 
 	return (
 		<main className={classes.content}>
@@ -194,7 +199,7 @@ const Main = memo(props => {
 		          	color="primary"
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
-		          	>Comenzar</Button>
+		          	>Comenzar Tutoría</Button>
 		          	:[atendiendo ? <CurrentTutorado currentSocket = {socketCurrent} currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
 		          		finalizar ? <Button
 		          	variant="contained"

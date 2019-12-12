@@ -132,7 +132,7 @@ const CurrentTutorado = memo(props => {
             {currentPupil['name']}
             </Typography>
             <div className={classes.options}>
-              <Tooltip title="Finalizar Tutoría">
+              <Tooltip title="Terminar Sesión">
                 <IconButton onClick={finalizarTutoria} aria-label="stop" size="small">
                   <StopIcon className={classes.stopIcon} />
                 </IconButton>
