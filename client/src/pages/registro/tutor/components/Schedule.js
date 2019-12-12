@@ -67,7 +67,7 @@ const Schedule = memo(props => {
    * false = close dialog main
    */
   const [dialogMain, setDialogMain] = React.useState(true);
-  
+
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -104,15 +104,15 @@ const Schedule = memo(props => {
    */
   var countPupils = 0;
 
-  const closeDialogMain = () =>{
+  const closeDialogMain = () => {
     setDialogMain(false);
   };
 
-  const openDialogError = () =>{
+  const openDialogError = () => {
     setDialogNotification(true);
   };
 
-  const closeDialogError = () =>{
+  const closeDialogError = () => {
     setDialogNotification(false);
   };
 
@@ -215,20 +215,8 @@ const Schedule = memo(props => {
           setDialogMain(false);
           props.loadBlocks();
         }
-        console.log(idTutorship);
       });
   }, [idTutorship]);
-
-  getPersonnelNumTutor().then(result => {
-    if (result) {
-      personnelNum = result.data[0]['personnelNum'];
-      getPupil().then(result => {
-        if (result) {
-          countPupils = result.data[0]['size'];
-        }
-      }).catch(console.log);
-    }
-  }).catch(console.log);
 
   const save = () => {
     var dateActual = new Date();
@@ -236,22 +224,35 @@ const Schedule = memo(props => {
     if (date != "" && indications != "" && place != "" && indications.trim() && place.trim()) {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (!regExp.test(indications) && !regExp.test(place)) {
-          calculatePeriod();
-          calculateTime();
-          saveTutorialship().then(result => {
+
+          getPersonnelNumTutor().then(result => {
             if (result) {
-              idTutorship = result.data['insertId'];
-              saveBlock().then(result => {
+              personnelNum = result.data[0]['personnelNum'];
+              getPupil().then(result => {
                 if (result) {
-                  setTitle("Éxito");
-                  setMessage("La tutoria se ha calendarizado exitosamente.");
-                  openDialogError();
-                  closeDialogMain();
-                  props.loadBlocks();
+                  countPupils = result.data[0]['size'];
+
+                  calculatePeriod();
+                  calculateTime();
+                  saveTutorialship().then(result => {
+                    if (result) {
+                      idTutorship = result.data['insertId'];
+                      saveBlock().then(result => {
+                        if (result) {
+                          setTitle("Éxito");
+                          setMessage("La tutoria se ha calendarizado exitosamente.");
+                          openDialogError();
+                          closeDialogMain();
+                          props.loadBlocks();
+                        }
+                      }).catch(console.log);
+                    }
+                  }).catch(console.log);
                 }
               }).catch(console.log);
-            } 
+            }
           }).catch(console.log);
+
         } else {
           setTitle("Error de redacción.");
           setMessage("Hubo un error al redactar las indicaciones o al definir el lugar.");
@@ -272,81 +273,81 @@ const Schedule = memo(props => {
   return (
     <div>
       <Dialog id="schedularDialog" disableBackdropClick disableEscapeKeyDown open={dialogMain} >
-      <div className="dialog">
-        <h3>Calendarizar tutoria:</h3>
-        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
-          <KeyboardDatePicker
-            margin="normal"
-            format="dd/MM/yyyy"
-            id="date-picker-inline"
-            label="Fecha de tutoría (dd/mm/aaaa):"
-            autoOk
-            value={date}
-            disablePast="false"
-            onChange={event => dateChange(event)}
-            cancelLabel="Cancelar"
-            okLabel="Aceptar"
-            invalidDateMessage="Formato de la fecha invalida."
-            minDateMessage="No puedes ingresar una fecha menor a la fecha actual."
-            maxDateMessage="No puedes ingresar una fecha muy lejana."
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-          />
+        <div className="dialog">
+          <h3>Calendarizar tutoria:</h3>
+          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={es}>
+            <KeyboardDatePicker
+              margin="normal"
+              format="dd/MM/yyyy"
+              id="date-picker-inline"
+              label="Fecha de tutoría (dd/mm/aaaa):"
+              autoOk
+              value={date}
+              disablePast="false"
+              onChange={event => dateChange(event)}
+              cancelLabel="Cancelar"
+              okLabel="Aceptar"
+              invalidDateMessage="Formato de la fecha invalida."
+              minDateMessage="No puedes ingresar una fecha menor a la fecha actual."
+              maxDateMessage="No puedes ingresar una fecha muy lejana."
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
 
-        </MuiPickersUtilsProvider>
-        <div>
-          <FormControl>
-            <h3>Tipo de tutoría:</h3>
-            <Select
-              id="demo-customized-select-native"
-              label="Tipo de tutoría:"
-              value={typeTutorship}
-              onChange={tutorshipNumChange}>
-              <MenuItem value={1}>Tutoría 1</MenuItem>
-              <MenuItem value={2}>Tutoría 2</MenuItem>
-              <MenuItem value={3}>Tutoría 3</MenuItem>
-              <MenuItem value={4}>Tutoría extraordinaria</MenuItem>
-            </Select>
-          </FormControl>
+          </MuiPickersUtilsProvider>
+          <div>
+            <FormControl>
+              <h3>Tipo de tutoría:</h3>
+              <Select
+                id="demo-customized-select-native"
+                label="Tipo de tutoría:"
+                value={typeTutorship}
+                onChange={tutorshipNumChange}>
+                <MenuItem value={1}>Tutoría 1</MenuItem>
+                <MenuItem value={2}>Tutoría 2</MenuItem>
+                <MenuItem value={3}>Tutoría 3</MenuItem>
+                <MenuItem value={4}>Tutoría extraordinaria</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div>
+            <h3>Lugar:</h3>
+            <Input
+              placeholder="Aula 103"
+              maxLength={30}
+              onChange={event => placeChange(event)}
+            />
+          </div>
+          <div>
+            <h3>Indicaciones:</h3>
+            <TextareaAutosize
+              rows={8}
+              rowsMax={15}
+              cols={30}
+              maxLength={600}
+              onChange={event => indicationsChange(event)} />
+          </div>
+          <div>
+            <Link style={{ textDecoration: 'none' }} to='/'>
+              <Button id="cancelBtn" variant="contained" onClick={closeDialogMain} >Cancelar</Button>
+            </Link>
+            <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
+          </div>
         </div>
-        <div>
-          <h3>Lugar:</h3>
-          <Input
-            placeholder="Aula 103"
-            maxLength={30}
-            onChange={event => placeChange(event)}
-          />
-        </div>
-        <div>
-          <h3>Indicaciones:</h3>
-          <TextareaAutosize
-            rows={8}
-            rowsMax={15}
-            cols={30}
-            maxLength={600}
-            onChange={event => indicationsChange(event)} />
-        </div>
-        <div>
-        <Link style={{textDecoration: 'none'}} to='/'>
-          <Button id="cancelBtn" variant="contained" onClick={closeDialogMain} >Cancelar</Button>
-        </Link>
-          <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
-        </div>
-      </div>
 
-    </Dialog>
-     <Dialog open={dialogNotification}>
-     <div id="dialogError">
-       <DialogTitle >
-         {title}
-       </DialogTitle>
-       <DialogContentText>
-         {message}
-       </DialogContentText>
-       <Button id="acceptBtn" onClick={closeDialogError}>Aceptar</Button>
-     </div>
-   </Dialog>
+      </Dialog>
+      <Dialog open={dialogNotification}>
+        <div id="dialogError">
+          <DialogTitle >
+            {title}
+          </DialogTitle>
+          <DialogContentText>
+            {message}
+          </DialogContentText>
+          <Button id="acceptBtn" onClick={closeDialogError}>Aceptar</Button>
+        </div>
+      </Dialog>
     </div>
   );
 });
