@@ -37,9 +37,11 @@ const Main = memo(props => {
 	const [temas, setTemas]=React.useState('');
 	const [finalizar, setFinalizar]=React.useState(false);
 	const [redirect, setRedirect] = React.useState(false);
+	const [socketCurrent, setSocketCurrent] = React.useState();
+	const [socketNext, setSocketNext] = React.useState();
+	const [pupilReady, setPupilReady] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
 	var role = utilities.splitCookie(cookies.get('token')).session;
-
   	
 	const comenzarTutoria = () =>{
 		axios.post(process.env.REACT_APP_API_SERVER + 'api/db/updateTutorshipStatus', {
@@ -51,7 +53,28 @@ const Main = memo(props => {
 	    });
 		setStatus(1);
 		setComenzado(true);
-		siguienteTutorado();
+		console.log("tutorship state of comenzado is now: "  + comenzado);
+		setPupil(tutorados[0]);
+		var socket = io(process.env.REACT_APP_API_SERVER,{
+			query: {
+			  room: tutorados[0].studentId
+			}
+		});
+		
+		socket.on("connect", () => {
+			console.log("Connected to socket.io on new pupil");
+		})
+
+		socket.on("pupilReady",() => {
+			notifier.success("La sessión ha sido confirmada por el siguiente tutorado", {
+				position: "top-right",
+				autoClose: 3000
+			});
+			setPupilReady(true);
+			console.log("event from pupil, is ready");
+		});
+		socket.emit("nextInLine");
+		setSocketNext(socket);
 	}
 
 	const finalizarTutoria = () =>{
@@ -61,7 +84,7 @@ const Main = memo(props => {
 	      new_status: 2
 	    },{
 	      headers: { Authorization: token + ";" + role }
-	    });
+		});
 		setPupil(tutorados[0]);
 		setStatus(2);
 		setComenzado(true);
@@ -78,7 +101,7 @@ const Main = memo(props => {
 		setPupil(tutorados_aux[0]);
 		console.log(tutorados_aux[0]);
 		notifyYouAreNext(tutorados_aux[0].studentId);
-		const socket = io(process.env.REACT_APP_API_SERVER,{
+		var socket = io(process.env.REACT_APP_API_SERVER,{
 			query: {
 			  room: tutorados_aux[0].studentId
 			}
@@ -89,12 +112,15 @@ const Main = memo(props => {
 		})
 
 		socket.on("pupilReady",() => {
-			console.log("event from pupil, is ready");
 			notifier.success("La sessión ha sido confirmada por el siguiente tutorado", {
 				position: "top-right",
 				autoClose: 3000
 			});
+			setPupilReady(true);
+			console.log("event from pupil, is ready");
 		});
+		setSocketCurrent(socketNext);
+		setSocketNext(socket);
 	}
 
 	const redirectToCreation = () => {
@@ -128,25 +154,28 @@ const Main = memo(props => {
 					setTutorship(tutorship_aux);
 					setStatus(result.data[0][0].status);
 					setIndications(indications_aux);
-					if(status == 1){
-						setComenzado(true);
-						if(tutorados.length){
-							setPupil(tutorados[0]);
-							setFinalizar(false);
-						}else{
-							setFinalizar(true);
-						}
-						setVerify(true);
-					}else{
-						setComenzado(false);
-					}
 					setExists(true);
 				}else{
 					setExists(false);
 				}
 			});
 		}
-	},[tutor, status, tutorshipExists]);
+	},[tutor, tutorshipExists]);
+
+	React.useEffect(()=>{
+		if(status == 1){
+			setComenzado(true);
+			if(tutorados.length && verify){
+				setPupil(tutorados[0]);
+				setFinalizar(false);
+			}else{
+				setFinalizar(true);
+			}
+			setVerify(true);
+		}else{
+			setComenzado(false);
+		}
+	},[status])
 
 	return (
 		<main className={classes.content}>
@@ -162,7 +191,7 @@ const Main = memo(props => {
 		          	className={classes.button}
 		          	onClick={comenzarTutoria}
 		          	>Comenzar</Button>
-		          	:[atendiendo ? <CurrentTutorado currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
+		          	:[atendiendo ? <CurrentTutorado socket = {socketCurrent} currentPupil = {currentPupil} setAtendiendo={setAtendiendo}/> : [
 		          		finalizar ? <Button
 		          	variant="contained"
 		          	color="primary"
@@ -183,6 +212,8 @@ const Main = memo(props => {
 		          	setVerify = {setVerify}
 					tutorados = {tutorados}
 					setTemas = {setTemas}
+					socket = {socketNext}
+					pupilReady = {pupilReady}
 		          	/>
 		        </Grid>
 		      </Grid>

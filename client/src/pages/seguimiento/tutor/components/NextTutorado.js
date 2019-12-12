@@ -81,10 +81,18 @@ const NextTutorado = memo(props => {
   const setTemas = props.setTemas;
   const tutorados = props.tutorados;
   const atendiendo = props.atendiendo;
+  const socket = props.socket;
+  const pupilReady = props.pupilReady;
   const[connect, setConnect] = React.useState(true);
+  const [showPlayButton, setShowPlayButton] = React.useState(props.pupilReady);
 
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
+
+  React.useEffect(()=> {
+    console.log("prop to show button changed");
+    setShowPlayButton(props.pupilReady)
+  },props.pupilReady);
 
   async function comenzar() {
     if(connect){
@@ -122,6 +130,7 @@ const NextTutorado = memo(props => {
         setCurrentPupil(tutorado);
         setAtendiendo(true);
         setTemas(tutorado['topics']);
+        socket.emit("startSession");
       }
     });
   }
@@ -191,11 +200,12 @@ const NextTutorado = memo(props => {
             <div className={classes.options}>
               {comenzado && validate()?
                 <div>
+                  { pupilReady ? 
                   <Tooltip title="Atender">
                     <IconButton onClick={comenzarTutoria} aria-label="play" size="small">
                       <PlayArrowIcon className={classes.playIcon} />
                     </IconButton>
-                  </Tooltip>
+                  </Tooltip> : null}
                   <Tooltip title="Saltar">
                     <IconButton onClick={saltar} aria-label="skip" size="small">
                       <SkipNextIcon />

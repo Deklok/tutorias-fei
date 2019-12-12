@@ -433,7 +433,7 @@ app.post('/api/db/setAgreement', async (req,res) => {
 app.post('/api/dataimport/tutor', (req,res) => {
   let user = req.body["user"];
   let pass = req.body["pass"];
-  if(username){
+  if(user){
     dataimport.importTutor(user, pass).then(function (response) {
       res.send(response);
     });

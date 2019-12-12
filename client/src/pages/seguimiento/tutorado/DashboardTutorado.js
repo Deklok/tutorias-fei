@@ -31,6 +31,9 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { notifications, initNotifications } from '../../pushOneSignal';
 import { Redirect, Route, Switch } from 'react-router-dom';
+import io from 'socket.io-client';
+import notifier from 'simple-react-notifications';
+import { createSocket } from 'dgram';
 
 const cookies = new Cookies();
 
@@ -41,6 +44,24 @@ const DashboardTutorado = memo(props => {
   const [status, setStatus] = React.useState('');
   const [sessionsTutorado, setRouteSessionsTutorado] = React.useState(false);
   const [agendTutorado, setRouteAgendTutorado] = React.useState(false);
+  const [acceptButton, setAcceptButton] = React.useState(false);
+  const [cancelButton, setCancelButton] = React.useState(true);
+  const [matricula, setMatricula] = React.useState('');
+  const [nombre, setNombre] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [carrera, setCarrera] = React.useState('');
+  const [idTutor, setidTutor] = React.useState('');
+  const [agenda, setAgenda] = React.useState('');
+  const [place, setPlace] = React.useState('');
+  const [hour, setHour] = React.useState('');
+  const [topics, setTopics] = React.useState('');
+  const [socket, setSocket] = React.useState();
+
+  var user = utilities.splitCookie(cookies.get('token')).id;
+    var token = utilities.splitCookie(cookies.get('token')).token;
+    var role = utilities.splitCookie(cookies.get('token')).session;
+
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const redirectToSessionsTutorado = () => {
     setRouteSessionsTutorado(true);
@@ -78,20 +99,13 @@ const DashboardTutorado = memo(props => {
     setState({ ...state, [name]: event.target.checked });
   };
 
-  const [matricula, setMatricula] = React.useState('');
-  const [nombre, setNombre] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [carrera, setCarrera] = React.useState('');
-  const [idTutor, setidTutor] = React.useState('');
-  const [agenda, setAgenda] = React.useState('');
-  const [place, setPlace] = React.useState('');
-  const [hour, setHour] = React.useState('');
-
-  var user = utilities.splitCookie(cookies.get('token')).id;
-    var token = utilities.splitCookie(cookies.get('token')).token;
-    var role = utilities.splitCookie(cookies.get('token')).session;
-
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  async function createSocket() {
+    return io(process.env.REACT_APP_API_SERVER,{
+      query: {
+        room: matricula
+      }
+    });
+  }
 
   function logout() {
     console.log("Loggin out");
@@ -143,21 +157,55 @@ const DashboardTutorado = memo(props => {
             setStatus(undefined);
           }else{
             setStatus(result.data[0][0]['status']);
+            cargarSesion()
+              .then(result => {
+                if (result) {
+                  setAgenda(result.data[0][0].indications);
+                  setPlace(result.data[0][0].place);
+                  setHour(result.data[0][0].startTime);
+                  setTopics(result.data[0][0].topics);
+                }
+              }).catch(function(err){
+                console.log(err);
+              })
           }
         })
-          redireccion();
+        redireccion();
+        createSocket().then(socket => {          
+          socket.on("connect", () => {
+            console.log("Connected to socket.io on new pupil");
+          })
+        
+          socket.on("nextInLine", () => {
+            setAcceptButton(true);
+            notifier.success("Eres el siguiente en la cola. Porfavor confirma tu asistencia", {
+              position: "top-right",
+              autoClose: 10000
+            });
+          });
+        
+          socket.on("startSession", () => {
+            setAcceptButton(false);
+            setCancelButton(false);
+            notifier.success("Tu tutor ha iniciado la tutoria", {
+              position: "top-right",
+              autoClose: 10000
+            });
+          })
+
+          socket.on("endSession", ()=> {
+            setOpen(true);
+            console.log("Sesion finalizada");
+          })
+
+          setSocket(socket);
+        }).catch(error => {
+          console.log("error while creating socket: " + error);
+        });
         }else{
           console.log('Algo salió mal');
         }
     }).catch(console.log);
-    cargarSesion()
-    .then(result => {
-      if (result) {
-        setAgenda(result.data[0][0].indications);
-        setPlace(result.data[0][0].place);
-        setHour(result.data[0][0].startTime);
-      }
-    })
   },[status]);
   React.useEffect(()=>{
     initNotifications();
@@ -285,7 +333,7 @@ const DashboardTutorado = memo(props => {
               <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
-                  <Banner classes={classes} estado={false} room={matricula} />
+                  <Banner classes={classes} estado={false} socket={socket} accept={acceptButton} cancel={cancelButton} setAccept={setAcceptButton} setCancel={setCancelButton} />
                   <Grid container spacing={3}>
                     {/* Agenda */}
                     <Grid item xs={12} sm={8} lg={8} id="agenda">
@@ -300,7 +348,7 @@ const DashboardTutorado = memo(props => {
                     {/* Temas Tutorado */}
                     <Grid item xs={12} sm={4} lg={4}>
                       <Paper elevation={0} className={classes.sidebarAboutBox}>
-                        <TemasTutorado />
+                        <TemasTutorado temasTutorado = {topics} />
                       </Paper>
                     </Grid>
                   </Grid>

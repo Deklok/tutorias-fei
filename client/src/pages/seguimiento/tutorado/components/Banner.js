@@ -11,7 +11,6 @@ import 'simple-react-notifications/dist/index.css';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import utilities from '../../../../utilities';
-import io from 'socket.io-client';
 
 const cookies = new Cookies();
 const route = process.env.REACT_APP_API_SERVER;
@@ -31,19 +30,12 @@ async function notifyCancelSession() {
 const Banner = memo(props => {
   const classes = props.classes;
   const estado = props.estado;
-  const room = props.room;
+  const socket = props.socket;
+  const acceptButton = props.accept;
+  const cancelButton = props.cancel;
+  const setAcceptButton = props.setAccept;
+  const setCancelButton = props.setCancel;
   const [estado_tuto,setEstado] = React.useState(estado);
-  const [acceptButton, setAcceptButton] = React.useState(false);
-  const [cancelButton, setCancelButton] = React.useState(true);
-  const socket = io(process.env.REACT_APP_API_SERVER,{
-    query: {
-      room: room
-    }
-  });
-
-  socket.on("connect", () => {
-    console.log("Connected to socket.io on new pupil");
-  })
 
   function confirmar() {
     //AQUI FALTA AGREGAR 
@@ -52,6 +44,7 @@ const Banner = memo(props => {
       position: "top-right",
       autoClose: 3000
     });
+    setAcceptButton(false);
   };
   function denegar() {
     //AQUI FALTA AGREGAR 
@@ -60,6 +53,8 @@ const Banner = memo(props => {
       position: "top-right",
       autoClose: 3000
     });
+    setAcceptButton(false);
+    setCancelButton(false);
   };
 
   return (
@@ -88,8 +83,8 @@ El motivo de este correo es para recordarles que la 2a tutoría se llevará a ca
 Continuar leyendo
 </Link>
 <div className={classes.details}>
-<Button variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
-<Button variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
+<Button disabled={!acceptButton} variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
+<Button disabled={!cancelButton} variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
 </div>
 </div>
 </Grid>
