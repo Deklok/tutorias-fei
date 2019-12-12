@@ -13,6 +13,9 @@ import { Button } from '@material-ui/core';
 import Schedule from './components/Schedule';
 import Cookies from 'universal-cookie';
 import utilities from '../../../utilities';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContentText from '@material-ui/core/DialogContentText';
 
 const cookies = new Cookies();
 
@@ -33,6 +36,10 @@ const BlocksRegistry = memo(props => {
   var role = utilities.splitCookie(cookies.get('token')).session;
   var username = utilities.splitCookie(cookies.get('token')).id;
   var route = process.env.REACT_APP_API_SERVER;
+
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const [title, setTitle] = React.useState("");
+  const [message, setMessage] = React.useState("");
 
   async function getPersonnelNumTutor() {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getpersonnelNumTutor', {
@@ -96,6 +103,10 @@ const BlocksRegistry = memo(props => {
       } else {
         saveBlock(block)
       }
+
+      setTitle("Bloques guardados");
+      setMessage("Los bloques se han guardado correctamente");
+      setOpenDialog(true);
     });
     notifyPublishedDay();
   }
@@ -172,35 +183,30 @@ const BlocksRegistry = memo(props => {
     console.log(block);
   }
 
+  const closeDialogError = (e) => {
+    setOpenDialog(false);
+  }
+
   const globalClasses = props.classes
   const classes = props.registryBlockClasses;
 
   return (
     <div>
-      <Schedule loadBlocks={loadBlocks} />
-      <AppBar position="static" className={clsx(globalClasses.appBar, globalClasses.appBarShift)}>
-        <Toolbar className={globalClasses.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            className={globalClasses.menuButton}
-          >
-            <ArrowBackIosIcon />
-          </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Registro de bloques
-                      </Typography>
-          <Button color="inherit" component="a" onClick={saveBlocks}>Continuar</Button>
-        </Toolbar>
-      </AppBar>
       <div>
+        <Schedule loadBlocks={loadBlocks} />
         <AddBox blocks={blocks}
           editingBlock={editingBlock}
           classes={classes}
           addBlock={addBlock}
           onChange={changeEditingBlock}>
         </AddBox>
+        <Button color="primary"
+          variant="contained"
+          component="a"
+          className={classes.saveButton}
+          onClick={saveBlocks}>
+          Guardar
+        </Button>
       </div>
       <div className={classes.blockList}>
         <BlockList classes={classes}
@@ -208,8 +214,19 @@ const BlocksRegistry = memo(props => {
           editBlock={loadToEditBlock}
           deleteBlock={deleteBlock} />
       </div>
+      <Dialog open={openDialog}>
+        <div id="dialogError">
+          <DialogTitle >
+            {title}
+          </DialogTitle>
+          <DialogContentText>
+            {message}
+          </DialogContentText>
+          <Button id="acceptBtn" onClick={closeDialogError}>Aceptar</Button>
+        </div>
+      </Dialog>
     </div>
   );
 });
 
-export default BlocksRegistry;
+export default BlocksRegistry; 

@@ -314,7 +314,7 @@ function getBlock(idTutorship){
 
 function getOneBlock(idCareer, idTutorship){
     return new Promise((resolve,reject) => {
-        pool.query('SELECT idBlock, start, end FROM Block WHERE idCareer = ? AND idTutorship = ?',
+        pool.query('SELECT Block.idBlock, Block.start, Block.end FROM Block INNER JOIN Tutorship ON Tutorship.idTutorship = Block.idTutorship WHERE Block.idCareer = ? AND Block.idTutorship = ? AND Tutorship.status <= 1',
         [idCareer,idTutorship],(err,results) => {
             if(err){
                 return reject(err);

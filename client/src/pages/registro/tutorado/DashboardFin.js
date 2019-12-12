@@ -116,11 +116,6 @@ const DashboardFin = memo(props => {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
           <Tooltip title="Cerrar Sesión">
             <IconButton color="inherit" label="Cerrar" href="/logout">
               <ExitToAppIcon />

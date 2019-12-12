@@ -26,7 +26,7 @@ export const registryBlockStyles = makeStyles(theme => ({
         height: 240,
     },
     registryBox: {
-        marginTop: 30,
+        marginTop: 80,
         marginRight: 'auto',
         marginLeft: 'auto',
         width: '60%',
@@ -54,6 +54,11 @@ export const registryBlockStyles = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1),
         width: "95%",
+    },
+    saveButton: {
+        marginTop: 30,
+        float: 'right',
+        marginRight: 120,
     },
     careerField: {
         marginLeft: theme.spacing(1),
