@@ -90,43 +90,50 @@ const Banner = memo(props => {
 
   return (
     <React.Fragment>
-  {/* Main featured post */}
-  <Paper className={classes.mainFeaturedPost}>
-{/* Increase the priority of the hero background image */}
-{
-  <img
-  style={{ display: 'none' }}
-  src="https://images.unsplash.com/photo-1504275107627-0c2ba7a43dba?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1334&q=80"
-  alt="background"
-  />
-}
-<div className={classes.overlay} />
-<Grid container>
-<Grid item md={6}>
-<div className={classes.mainFeaturedPostContent}>
-<Typography component="h1" variant="h3" color="inherit" gutterBottom>
-{title}
-</Typography>
-<Typography variant="h5" color="inherit">
-{hourformat}
-</Typography>
-<Typography variant="h5" color="inherit">
-{dateformat}
-</Typography>
-<Typography variant="h5" color="inherit">
-{props.place}
-</Typography>
-<Typography variant="h6" color="inherit">
-Contacto: {props.contact}
-</Typography>
-<div className={classes.details}>
-<Button disabled={!acceptButton} variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
-<Button disabled={!cancelButton} variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
-</div>
-</div>
-</Grid>
-</Grid>
-</Paper>
+      {/* Main featured post */}
+        <Paper className={classes.mainFeaturedPost}>
+      {/* Increase the priority of the hero background image */}
+      {
+        <img
+        style={{ display: 'none' }}
+        src="https://images.unsplash.com/photo-1504275107627-0c2ba7a43dba?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1334&q=80"
+        alt="background"
+        />
+      }
+        <div className={classes.overlay} />
+        <Grid container>
+          <Grid item md={6}>
+            {date ?
+              <div className={classes.mainFeaturedPostContent}>
+            <Typography component="h1" variant="h3" color="inherit" gutterBottom>
+              {title}
+            </Typography>
+            <Typography variant="h5" color="inherit">
+              {hourformat}
+            </Typography>
+            <Typography variant="h5" color="inherit">
+              {dateformat}
+            </Typography>
+            <Typography variant="h5" color="inherit">
+              {props.place}
+            </Typography>
+            <Typography variant="h6" color="inherit">
+              Contacto: {props.contact}
+            </Typography>
+            <div className={classes.details}>
+              <Button disabled={!acceptButton} variant="contained" color="primary" className={classes.button} onClick={confirmar}>Confirmar asistencia</Button>
+              <Button disabled={!cancelButton} variant="contained" className={classes.button} onClick={denegar}>Cancelar asistencia</Button>
+            </div>
+          </div> :
+          <div className={classes.mainFeaturedPostContent}>
+            <Typography component="h1" variant="h3" color="inherit" gutterBottom>
+              Sin información para mostrar
+            </Typography>
+          </div>
+            }
+        </Grid>
+      </Grid>
+    </Paper>
 </React.Fragment >
 );
 });

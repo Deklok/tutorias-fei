@@ -95,7 +95,8 @@ const Dashboard = memo(props => {
           idTutorship = {idTutorship}
           contacto = {contacto}
       />
-      <Switch>
+      {nombre ?
+        <Switch>
         <Route exact path="/tutor">
           <Main
             classes={classes}
@@ -119,6 +120,9 @@ const Dashboard = memo(props => {
             />
         </Route>
       </Switch>
+      :
+      null
+      }
     </div>
   );
 });

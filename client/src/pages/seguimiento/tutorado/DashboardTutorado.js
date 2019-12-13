@@ -338,9 +338,13 @@ const DashboardTutorado = memo(props => {
         <AppBar>
           <Toolbar>
             <div id="userData" data-userid={matricula}></div>
-            <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+            {nombre ? <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
               {matricula} {nombre}, Carrera: {carrera}, contacto: {email}
             </Typography>
+            : <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+              Porfavor actualice sus datos personales y recargue la página
+            </Typography>
+          }
             <Tooltip title="Actualizar Datos">
               <IconButton onClick={handleAbrirTerminos} color="inherit">
                 <CachedIcon />

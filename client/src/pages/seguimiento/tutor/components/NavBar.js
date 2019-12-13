@@ -25,9 +25,12 @@ const NavBar = memo(props=>{
           >
             <MenuIcon />
           </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+          {nombre ? <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Tutor {`${nombre}, ${contacto}`}
-          </Typography>
+          </Typography> :
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+              Porfavor actualice su contacto y sus datos personales y recargue la página
+            </Typography>}
         </Toolbar>
       </AppBar>
   );

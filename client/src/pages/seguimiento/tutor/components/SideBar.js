@@ -40,6 +40,7 @@ const SideBar = memo(props => {
 	const classes = props.classes;
 	const tutor = props.idTutor;
 	const contacto = props.contacto;
+	const idTutorship = props.idTutorship;
 	const [email, setEmail] = React.useState(contacto);
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
 	const [loginDialog, setLoginDialog] = React.useState(false);
@@ -160,7 +161,7 @@ const SideBar = memo(props => {
 		setLoginDialog(true);
 		if (!initTerminos) {
 			setAgreement();
-		}	
+		}
 	};
 	const handleCerrarTerminosDialog = () => {
 		setTerminosDialog(false);
@@ -206,7 +207,7 @@ const SideBar = memo(props => {
 					menssageError();
 				}
 				setContactoDialog(false);
-			});		
+			});
 		} else {
 			notifier.error("Esto no parece un correo válido", {
 				position: "top-right",
@@ -249,7 +250,7 @@ const SideBar = memo(props => {
 				  });
 			}
 		});
-	
+
 	}
 	async function notifySetupEmail(){
 		return axios.post(route + 'api/notify/email/signup', {
@@ -474,6 +475,7 @@ Se informa que no realizarán transferencias que requieren de su consentimiento
 						Cancelar
           			</Button>
 			</Dialog>
+			{idTutorship ?
 			<Dialog open={cancelarTutoriaDialog}
 				scroll={'paper'}
 				aria-labelledby="scroll-dialog-title"
@@ -494,6 +496,8 @@ Se informa que no realizarán transferencias que requieren de su consentimiento
           			</Button>
 				</DialogActions>
 			</Dialog>
+			:
+			null}
 		</Drawer >
 	);
 });
