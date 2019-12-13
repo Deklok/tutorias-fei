@@ -1068,10 +1068,10 @@ app.get('/OneSignalSDKUpdaterWorker.js', function (request, response){
 
 // Use this code when is on production
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('*',(req,res) =>{
-  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+  res.sendFile(path.join(__dirname+'../client/build/index.html'));
 });
 
 let enableHttp = process.env.ENABLE_HTTP;
