@@ -24,7 +24,7 @@ const store = new MemoryStore({
   ttl: 3600000
 });
 
-const publicRoutes = ['/api/user/login','/api/test/session','/api/auth','/api/db/getPendingSessions'];
+const publicRoutes = ['/api/user/login','/api/test/session','/api/auth'];
 
 store.on("error", function(err) {
   console.log("Redis storage error: " + err);

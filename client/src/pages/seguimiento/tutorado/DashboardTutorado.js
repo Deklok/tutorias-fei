@@ -71,6 +71,7 @@ const DashboardTutorado = memo(props => {
   });
   var initTerminos = false;
   const [sessionId, setSessionId] = React.useState(0);
+  const [loginButtons, setLoginButtons] = React.useState(false);
 
   var user = utilities.splitCookie(cookies.get('token')).id;
   var token = utilities.splitCookie(cookies.get('token')).token;
@@ -101,7 +102,27 @@ const DashboardTutorado = memo(props => {
   };
 
   const handleLogin = () => {
-
+    setLoginButtons(true);
+    setErrors(false);
+    setAuthError(false);
+    if (username.length < 2 || password.length < 2) {
+			setErrors(true);
+			setLoginButtons(false);
+		} else {
+      actualizarDatos().then(()=>{
+        notifier.success("Datos actualizados correctamente", {
+          position: "top-right",
+          autoClose: 5000
+        });
+        window.location.reload();
+      }).catch((error)=>{
+        notifier.error("Error durante el proceso de actualización de datos", {
+          position: "top-right",
+          autoClose: 5000
+        });
+      });
+      setLoginDialog(false);
+    }
 	}
 	const handleCerrarLogin = () => {
 		setLoginDialog(false);
@@ -175,6 +196,16 @@ const DashboardTutorado = memo(props => {
     console.log("Loggin out");
     cookies.remove('token');
     window.location.reload();
+  }
+
+  async function actualizarDatos() {
+    return axios.post(process.env.REACT_APP_API_SERVER + 'api/miuv/student', {
+      user: username,
+      pass: password
+    },
+      {
+        headers: { Authorization: token + ";" + role }
+      });
   }
 
   async function cargarDatos() {
@@ -473,10 +504,10 @@ const DashboardTutorado = memo(props => {
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCerrarLogin} color="secondary">
+              <Button onClick={handleCerrarLogin} color="secondary" disabled={loginButtons}>
                 Cancelar
           			</Button>
-              <Button onClick={handleLogin} color="primary">
+              <Button onClick={handleLogin} color="primary" disabled={loginButtons}>
                 Enviar
           			</Button>
             </DialogActions>

@@ -22,16 +22,18 @@ function importTutor(user, pass) {
         }
     };
 
+    /*
     return auth.authentication(user, pass) // authenticate tutor
         .then(authResponse => {
             if (authResponse !== "200") {
                 throw new Error("auth");
             }
         })
-        .then(() => { // get data from miuv web scraper
-            return miuv.tutor(user, pass);
-        })
+        .then(() => { // get data from miuv web scraper */
+            return miuv.tutor(user, pass)
+        // })
         .then(scraperResponse => {
+            console.log(scraperResponse);
             if (scraperResponse.error) {
                 throw new Error("miuv");
             }

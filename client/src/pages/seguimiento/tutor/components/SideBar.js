@@ -39,7 +39,6 @@ const SideBar = memo(props => {
 	const open = props.open;
 	const classes = props.classes;
 	const tutor = props.idTutor;
-	const idTutorship = props.idTutorship;
 	const contacto = props.contacto;
 	const [email, setEmail] = React.useState(contacto);
 	const [terminosDialog, setTerminosDialog] = React.useState(false);
@@ -54,6 +53,8 @@ const SideBar = memo(props => {
 	const [contactoDialog, setContactoDialog] = React.useState(false);
 	const [contactoPermitirCambio, setContactoCambio] = React.useState(contacto == null);
 	const [authError, setAuthError] = React.useState(false);
+	const [buttonAccept, setButtonAccept] = React.useState(false);
+	const [buttonCancel, setButtonCancel] = React.useState(false);
 	var token = utilities.splitCookie(cookies.get('token')).token;
   	var role = utilities.splitCookie(cookies.get('token')).session;
 	const [state, setState] = React.useState({
@@ -84,8 +85,12 @@ const SideBar = memo(props => {
 	const handleLogin = () => {
 		setErrors(false);
 		setAuthError(false);
-		if (username.length < 2 || username.length < 2) {
+		setButtonAccept(true);
+		setButtonCancel(true);
+		if (username.length < 2 || password.length < 2) {
 			setErrors(true);
+			setButtonAccept(false);
+			setButtonCancel(false);
 		} else {
 			axios.post(route + 'api/dataimport/tutor', {
 				user: username,
@@ -109,6 +114,8 @@ const SideBar = memo(props => {
 					}
 					setLoginDialog(false);
 				}
+				setButtonAccept(false);
+				setButtonCancel(false);
 			}).catch(function(err){
 				console.log(err.response);
 				notifier.error("Error en el proceso de importación - Error inesperado", {
@@ -127,7 +134,16 @@ const SideBar = memo(props => {
 		notifyAllCanceledDay();
 		cancelarTutoria()
 		.then(()=>{
+			notifier.success("Tutoría cancelada. Sus tutorados han sido notificados", {
+				position: "top-right",
+				autoClose: 10000
+			});
 			window.location.reload();
+		}).catch(()=>{
+			notifier.error("Error al cancelar la tutoría", {
+				position: "top-right",
+				autoClose: 5000
+			});
 		});
 	}
 
@@ -218,13 +234,22 @@ const SideBar = memo(props => {
 	}
 
 	async function cancelarTutoria(){
-		axios.post(route + 'api/db/updateTutorshipStatus', {
-	      idTutorship: idTutorship,
-	      idTutor: tutor,
-	      new_status: 3
-	    },{
-	      headers: { Authorization: token + ";" + role }
-	    });
+		return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getNextTutorship', {
+			idTutor: tutor
+		  },{
+			headers: { Authorization: token + ";" + role }
+		}).then((response)=>{
+			if (response.data[0].length) {
+				axios.post(route + 'api/db/updateTutorshipStatus', {
+					idTutorship: response.data[0][0].idTutorship,
+					idTutor: tutor,
+					new_status: 3
+				  },{
+					headers: { Authorization: token + ";" + role }
+				  });
+			}
+		});
+	
 	}
 	async function notifySetupEmail(){
 		return axios.post(route + 'api/notify/email/signup', {
@@ -412,10 +437,10 @@ Se informa que no realizarán transferencias que requieren de su consentimiento
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleCerrarLogin} color="secondary">
+					<Button onClick={handleCerrarLogin} color="secondary" disabled={buttonCancel}>
 						Cancelar
           			</Button>
-					<Button onClick={handleLogin} color="primary">
+					<Button onClick={handleLogin} color="primary" disabled={buttonAccept}>
 						Enviar
           			</Button>
 				</DialogActions>
