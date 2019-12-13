@@ -68,6 +68,8 @@ const Schedule = memo(props => {
    */
   const [dialogMain, setDialogMain] = React.useState(true);
 
+  const [buttonDisabled, setButtonDisabled] = React.useState(false);
+
   var token = utilities.splitCookie(cookies.get('token')).token;
   var role = utilities.splitCookie(cookies.get('token')).session;
 
@@ -224,6 +226,8 @@ const Schedule = memo(props => {
     if (date != "" && indications != "" && place != "" && indications.trim() && place.trim()) {
       if (date.getFullYear() == dateActual.getFullYear()) {
         if (!regExp.test(indications) && !regExp.test(place)) {
+          
+          setButtonDisabled(true);
 
           getPersonnelNumTutor().then(result => {
             if (result) {
@@ -231,7 +235,6 @@ const Schedule = memo(props => {
               getPupil().then(result => {
                 if (result) {
                   countPupils = result.data[0]['size'];
-
                   calculatePeriod();
                   calculateTime();
                   saveTutorialship().then(result => {
@@ -244,6 +247,8 @@ const Schedule = memo(props => {
                           openDialogError();
                           closeDialogMain();
                           props.loadBlocks();
+                        }else{
+                          setButtonDisabled(false);
                         }
                       }).catch(console.log);
                     }
@@ -330,9 +335,9 @@ const Schedule = memo(props => {
           </div>
           <div>
             <Link style={{ textDecoration: 'none' }} to='/'>
-              <Button id="cancelBtn" variant="contained" onClick={closeDialogMain} >Cancelar</Button>
+              <Button id="cancelBtn" disabled={buttonDisabled} variant="contained" onClick={closeDialogMain} >Cancelar</Button>
             </Link>
-            <Button id="acceptBtn" variant="contained" onClick={save}>Aceptar</Button>
+            <Button id="acceptBtn" disabled={buttonDisabled} variant="contained" onClick={save}>Aceptar</Button>
           </div>
         </div>
 
