@@ -57,10 +57,11 @@ const BlocksRegistry = memo(props => {
       });
   }
 
-  async function getBlocks(idTutorship, idCareer) {
+  async function getBlocks(idTutorship) {
     return axios.post(process.env.REACT_APP_API_SERVER + 'api/db/getBlock', {
-      idCareer: idCareer,
       idTutorship: idTutorship
+    }, {
+      headers: { Authorization: token + ";" + role }
     });
   }
 
@@ -88,11 +89,10 @@ const BlocksRegistry = memo(props => {
   }
 
   async function saveBlocks() {
-    const actualBlocks = blocks;
-    const registerBlocks = registeredBlocks;
-    actualBlocks.forEach(block => {
+    blocks.forEach(block => {
       var isRegistered = false;
-      registerBlocks.forEach(registeredBlock => {
+      registeredBlocks.forEach(registeredBlock => {
+        console.log(`${block.idBlock} - ${registeredBlock.idBlock}`);
         if (block.idBlock === registeredBlock.idBlock) {
           isRegistered = true
         }
@@ -125,13 +125,24 @@ const BlocksRegistry = memo(props => {
       getLastTutorship(personnelNum).then(tutorship => {
         console.log(tutorship)
         var idTutorship = tutorship.data[0].idTutorship;
-        getBlocks(idTutorship, 5).then(result2 => {
+        getBlocks(idTutorship).then(result2 => {
           console.log(result2)
-          const blocks = result2.data;
+          var blocks = result2.data;
           console.log(blocks);
           setBlocks(blocks);
           setTutorship(idTutorship);
-          setRegisteredBlocks(blocks);
+          var registered = [];
+          blocks.forEach(block => {
+            const registredBlock = {
+              idBlock: block.idBlock,
+              idCareer: block.idCareer,
+              start: block.start,
+              end: block.end,
+              idTutorship: block.idTutorship
+            }
+            registered.push(registredBlock);
+          });
+          setRegisteredBlocks(registered);
         });
       });
     });
