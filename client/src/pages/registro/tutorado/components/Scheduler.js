@@ -85,6 +85,8 @@ import Button from '@material-ui/core/Button';
   }
   if(finBloque.length > 1){
     var finHora = parseInt(finBloque.split(":")[0],10);
+    var auxFinHora = parseInt(finBloque.split(":")[0],10);
+    var auxFinMin = parseInt(finBloque.split(":")[1],10);
     finHora = finHora + 1;
   }
 
@@ -128,12 +130,15 @@ import Button from '@material-ui/core/Button';
     var count = 1;
     var valido = false;
 
-    while(count <= (((finHora - inicioHora)*4)+1)){
+    while(count <= ((finHora - inicioHora)*4)){
+      if(auxFinHora+":"+auxFinMin === auxHora+":"+auxMin){
+        break;
+      }
       if(auxMin === 45){
         valido = false;
-        for (var p = 0; p < dataSession.length; p++){
-          if (dataSession[p]['horas'] === auxHora){
-            if(dataSession[p]['minutos'] === 45){
+        for (var j = 0; j < dataSession.length; j++){
+          if (dataSession[j]['horas'] === auxHora){
+            if(dataSession[j]['minutos'] === 45){
               valido = true;
             }
           }
@@ -168,8 +173,6 @@ import Button from '@material-ui/core/Button';
         count = count + 1;
       }
     }
-
-    var idSession;
 
     function loadPage(){
       var makeStyleNumber = 413;
@@ -210,6 +213,7 @@ import Button from '@material-ui/core/Button';
                       setFechaFFR(fechaFF);
                       setHoraFFR(horaFF);
                       setMessage('Seleccionaste la hora ' + horaFI + ' del día ' + fechaFI + '\n ¿Esa es tú elección?');
+                      setOpenDialog(true);
                     }
                   }
                 }
@@ -240,6 +244,7 @@ import Button from '@material-ui/core/Button';
                         setFechaFFR(fechaFF);
                         setHoraFFR(horaFF);
                         setMessage('Seleccionaste la hora ' + horaFI + ' del día ' + fechaFI + '\n ¿Esa es tú elección?');
+                        setOpenDialog(true);
                       }
                     }
                   }
@@ -271,6 +276,7 @@ import Button from '@material-ui/core/Button';
                         setFechaFFR(fechaFF);
                         setHoraFFR(horaFF);
                         setMessage('Seleccionaste la hora ' + horaFI + ' del día ' + fechaFI + '\n ¿Esa es tú elección?');
+                        setOpenDialog(true);
                       }
                     }
                   }
@@ -288,6 +294,7 @@ import Button from '@material-ui/core/Button';
       texto = "La tutoría será el día "+ diaB.split("T")[0] + " del mes " + mesB + " del " + anioB;
     }
 
+    var idSession;
     const okDialog = (e) => {
       if(matriculaR,bloqueR,fechaFIR,fechaFFR,horaFFR,horaFIR){
         reservarSesion(matriculaR,bloqueR,fechaFIR,horaFIR,fechaFFR,horaFFR).then(response => {
